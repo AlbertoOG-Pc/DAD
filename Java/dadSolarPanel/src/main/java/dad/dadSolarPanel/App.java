@@ -4,6 +4,7 @@ import dad.data.Board;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mysqlclient.MySQLConnectOptions;
@@ -24,28 +25,34 @@ public class App extends AbstractVerticle {
 		PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
 
 		mySqlClient = MySQLPool.pool(vertx, connectOptions, poolOptions);
-
-		getAll();
-
+		
+		getVertx().eventBus().consumer("consulta", message -> {
+			JsonArray result = getAll();
+			message.reply(result.toString());
+		});
+			
 	}
 
-	private void getAll() {
+	private JsonArray getAll() {
+		JsonArray result = new JsonArray();
+		
 		mySqlClient.query("SELECT * FROM dad.placa;", res -> {
 			if (res.succeeded()) {
 				// Get the result set
 				RowSet<Row> resultSet = res.result();
 				// System.out.println(resultSet.size());
-				JsonArray result = new JsonArray();
 				for (Row elem : resultSet) {
-					System.out.println(elem);
+					System.out.println("Elementos " + elem);
 					result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"), elem.getDouble("latitude"),
 							elem.getDouble("longitude"), elem.getDouble("energiaMaxima"))));
 				}
-				System.out.println(result.toString());
+				//resultado = result.toString();
 			} else {
-				System.out.println("Error: " + res.cause().getLocalizedMessage());
+				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+				//resultado = "Error: " + res.cause().getLocalizedMessage();
 			}
 		});
+		return result;
 	}
 
 	@Override
