@@ -5,6 +5,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mysqlclient.MySQLConnectOptions;
@@ -27,13 +28,14 @@ public class App extends AbstractVerticle {
 		mySqlClient = MySQLPool.pool(vertx, connectOptions, poolOptions);
 		
 		getVertx().eventBus().consumer("consulta", message -> {
-			JsonArray result = getAll();
-			message.reply(result.toString());
+			//JsonArray result = getAll();
+			getAll(message);
+			//message.reply(result.toString());
 		});
 			
 	}
 
-	private JsonArray getAll() {
+	private void getAll(Message<?> message) {
 		JsonArray result = new JsonArray();
 		
 		mySqlClient.query("SELECT * FROM dad.placa;", res -> {
@@ -51,8 +53,9 @@ public class App extends AbstractVerticle {
 				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
 				//resultado = "Error: " + res.cause().getLocalizedMessage();
 			}
+			message.reply(result.toString());
 		});
-		return result;
+		//return result;
 	}
 
 	@Override
