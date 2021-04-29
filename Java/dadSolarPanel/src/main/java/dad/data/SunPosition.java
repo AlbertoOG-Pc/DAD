@@ -1,18 +1,18 @@
 package dad.data;
 
-public class PosicionSol {
+public class SunPosition {
 
 	private int id;
-	private int id_coordenadas;
+	private int id_coordinates;
 	
-	public PosicionSol() {
+	public SunPosition() {
 		super();
 	}
 	
-	public PosicionSol(int id, int id_coordenadas) {
+	public SunPosition(int id, int id_coordinates) {
 		super();
 		this.id = id;
-		this.id_coordenadas = id_coordenadas;
+		this.id_coordinates = id_coordinates;
 	}
 
 	public int getId() {
@@ -23,12 +23,12 @@ public class PosicionSol {
 		this.id = id;
 	}
 
-	public int getId_coordenadas() {
-		return id_coordenadas;
+	public int getId_coordinates() {
+		return id_coordinates;
 	}
 
-	public void setId_coordenadas(int id_coordenadas) {
-		this.id_coordenadas = id_coordenadas;
+	public void setId_coordinates(int id_coordinates) {
+		this.id_coordinates = id_coordinates;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class PosicionSol {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + id;
-		result = prime * result + id_coordenadas;
+		result = prime * result + id_coordinates;
 		return result;
 	}
 
@@ -48,17 +48,17 @@ public class PosicionSol {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PosicionSol other = (PosicionSol) obj;
+		SunPosition other = (SunPosition) obj;
 		if (id != other.id)
 			return false;
-		if (id_coordenadas != other.id_coordenadas)
+		if (id_coordinates != other.id_coordinates)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "PosicionSol [id=" + id + ", id_coordenadas=" + id_coordenadas + "]";
+		return "PosicionSol [id=" + id + ", id_coordinates=" + id_coordinates + "]";
 	}
 
 	
