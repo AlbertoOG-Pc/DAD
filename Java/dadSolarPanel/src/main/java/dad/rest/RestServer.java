@@ -1,26 +1,18 @@
 package dad.rest;
 
-
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import dad.data.Board;
+import dad.dadSolarPanel.App;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
 
 public class RestServer extends AbstractVerticle {
 
-	//private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
-	private Gson gson;
-
 	public void start(Promise<Void> startFuture) {
-		EventBus eventBus = getVertx().eventBus();
-		// Instantiating a Gson serialize object using specific date format
-		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		getVertx().eventBus();
+		new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
 		// Defining the router object
 		Router router = Router.router(vertx);
@@ -33,25 +25,23 @@ public class RestServer extends AbstractVerticle {
 				startFuture.fail(result.cause());
 			}
 		});
-
-		// Defining URI paths for each method in RESTful interface, including body
-		// handling by /api/users* or /api/users/*
-		router.route("/api/boards*").handler(BodyHandler.create());
-		router.get("/api/board").handler(this::getAllWithParams);
-	}
-
-
-	private void getAllWithParams(RoutingContext routingContext) {
-		eventBus.send("mensaje-punto-a-punto”,"Soy Local,¿alguien me escucha?",reply-> {
-				workerVerticleID = res.result();			
-				if (reply.succeeded()) {
-					String replyMessage = (String) reply.result().body();
-					System.out.println("Respuesta recibida: " + replyMessage);
-				} else {
-					System.out.println("No ha habido respuesta");
-				}
-			});
-		routingContext.response().putHeader("content-type", "application/json; charset=utf-8").setStatusCode(200)
-				.end(gson.toJson(new Board(1,"0.4",2.3)));
+		//Desplegar bbdd
+		getVertx().deployVerticle(App.class.getName(), deployResult -> {
+			if (deployResult.succeeded()) {
+				System.out.println("App ha sido desplegado correctamente");
+			} else {
+				deployResult.cause().printStackTrace();
+				System.out.println("No se ha podio desplegar");
+			}
+		});
+		//Desplegar rutas Board
+		getVertx().deployVerticle(RestServerBoard.class.getName(), deployResult -> {
+			if (deployResult.succeeded()) {
+				System.out.println("RestServerBoard ha sido desplegado correctamente");
+			} else {
+				deployResult.cause().printStackTrace();
+				System.out.println("No se ha podio desplegar");
+			}
+		});
 	}
 }
