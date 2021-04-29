@@ -1,4 +1,4 @@
-package dad.data;
+package dad.entity;
 
 public class Board {
 	private int id;
@@ -50,7 +50,7 @@ public class Board {
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

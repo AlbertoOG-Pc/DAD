@@ -3,8 +3,8 @@ package dad.rest;
 import com.google.gson.GsonBuilder;
 
 import dad.dadSolarPanel.App;
+import dad.dadSolarPanel.Database;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
 
@@ -34,6 +34,14 @@ public class RestServer extends AbstractVerticle {
 				System.out.println("No se ha podio desplegar");
 			}
 		});
+		getVertx().deployVerticle(Database.class.getName(), deployResult -> {
+					if (deployResult.succeeded()) {
+						System.out.println("App ha sido desplegado correctamente");
+					} else {
+						deployResult.cause().printStackTrace();
+						System.out.println("No se ha podio desplegar");
+					}
+				});
 		//Desplegar rutas Board
 		getVertx().deployVerticle(RestServerBoard.class.getName(), deployResult -> {
 			if (deployResult.succeeded()) {
