@@ -1,59 +1,35 @@
 package dad.dadSolarPanel;
 
-import dad.data.Board;
+import dad.entityImpl.BoardImpl;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.mysqlclient.MySQLConnectOptions;
-import io.vertx.mysqlclient.MySQLPool;
-import io.vertx.sqlclient.PoolOptions;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
+
 
 public class App extends AbstractVerticle {
-
-	MySQLPool mySqlClient;
+	
 
 	@Override
-	public void start(Promise<Void> startFuture) {
-		MySQLConnectOptions connectOptions = new MySQLConnectOptions().setPort(3306).setHost("localhost")
-				.setDatabase("dad").setUser("dad").setPassword("Solarpanel1");
-
-		PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
-
-		mySqlClient = MySQLPool.pool(vertx, connectOptions, poolOptions);
-		
+	public void start(Promise<Void> startFuture) {		
 		getVertx().eventBus().consumer("consulta", message -> {
-			//JsonArray result = getAll();
-			getAll(message);
-			//message.reply(result.toString());
+			getQuery(message);
 		});
 			
 	}
 
-	private void getAll(Message<?> message) {
-		JsonArray result = new JsonArray();
+	private void getQuery(Message<?> message) {
 		
-		mySqlClient.query("SELECT * FROM dad.placa;", res -> {
-			if (res.succeeded()) {
-				// Get the result set
-				RowSet<Row> resultSet = res.result();
-				// System.out.println(resultSet.size());
-				for (Row elem : resultSet) {
-					System.out.println("Elementos " + elem);
-					result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"), elem.getDouble("latitude"),
-							elem.getDouble("longitude"), elem.getDouble("energiaMaxima"))));
-				}
-				//resultado = result.toString();
-			} else {
-				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-				//resultado = "Error: " + res.cause().getLocalizedMessage();
-			}
-			message.reply(result.toString());
-		});
+		JsonArray result = new JsonArray();
+		switch(message.body().toString()) {
+		case "board_ALL": BoardImpl.getALLBoard(message); break;
+			default: 
+				result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
+				message.reply(result.toString());
+		}
+		
 		//return result;
 	}
 

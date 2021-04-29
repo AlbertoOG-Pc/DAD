@@ -7,7 +7,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
-public class RestServerBoard extends AbstractVerticle {
+public class RestServerLog extends AbstractVerticle {
 
 	// private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
 	private EventBus eventBus;
@@ -29,12 +29,12 @@ public class RestServerBoard extends AbstractVerticle {
 
 		// Defining URI paths for each method in RESTful interface, including body
 		// handling by /api/users* or /api/users/*
-		router.route("/api/board*").handler(BodyHandler.create());
-		router.get("/api/board").handler(this::getAll);
+		router.route("/api/log*").handler(BodyHandler.create());
+		router.get("/api/log").handler(this::getAll);
 	}
 
 	private void getAll(RoutingContext routingContext) {
-		eventBus.request("consulta", "board_ALL", reply -> {
+		eventBus.request("consulta", "log_ALL", reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
 				System.out.println("Respuesta recibida: " + replyMessage);

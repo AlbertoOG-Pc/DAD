@@ -1,13 +1,13 @@
-package dad.data;
+package dad.entity;
 
 import java.time.*;
 
 public class Log {
 
 	private int id;
-	private int id_placa;
-	private LocalDateTime fecha;
-	private String asunto;
+	private int id_board;
+	private LocalDateTime date;
+	private String issue;
 	
 	public Log()  {
 		super();
@@ -16,9 +16,9 @@ public class Log {
 	public Log(int id, int id_placa, LocalDateTime fecha, String asunto) {
 		super();
 		this.id = id;
-		this.id_placa = id_placa;
-		this.fecha = fecha;
-		this.asunto = asunto;		
+		this.id_board = id_placa;
+		this.date = fecha;
+		this.issue = asunto;		
 	}
 
 	public int getId() {
@@ -30,37 +30,37 @@ public class Log {
 	}
 
 	public int getId_placa() {
-		return id_placa;
+		return id_board;
 	}
 
 	public void setId_placa(int id_placa) {
-		this.id_placa = id_placa;
+		this.id_board = id_placa;
 	}
 
 	public LocalDateTime getFecha() {
-		return fecha;
+		return date;
 	}
 
 	public void setFecha(LocalDateTime fecha) {
-		this.fecha = fecha;
+		this.date = fecha;
 	}
 
 	public String getAsunto() {
-		return asunto;
+		return issue;
 	}
 
 	public void setAsunto(String asunto) {
-		this.asunto = asunto;
+		this.issue = asunto;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((asunto == null) ? 0 : asunto.hashCode());
-		result = prime * result + ((fecha == null) ? 0 : fecha.hashCode());
+		result = prime * result + ((issue == null) ? 0 : issue.hashCode());
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + id;
-		result = prime * result + id_placa;
+		result = prime * result + id_board;
 		return result;
 	}
 
@@ -73,26 +73,26 @@ public class Log {
 		if (getClass() != obj.getClass())
 			return false;
 		Log other = (Log) obj;
-		if (asunto == null) {
-			if (other.asunto != null)
+		if (issue == null) {
+			if (other.issue != null)
 				return false;
-		} else if (!asunto.equals(other.asunto))
+		} else if (!issue.equals(other.issue))
 			return false;
-		if (fecha == null) {
-			if (other.fecha != null)
+		if (date == null) {
+			if (other.date != null)
 				return false;
-		} else if (!fecha.equals(other.fecha))
+		} else if (!date.equals(other.date))
 			return false;
 		if (id != other.id)
 			return false;
-		if (id_placa != other.id_placa)
+		if (id_board != other.id_board)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Log [id=" + id + ", id_placa=" + id_placa + ", fecha=" + fecha + ", asunto=" + asunto + "]";
+		return "Log [id=" + id + ", id_placa=" + id_board + ", fecha=" + date + ", asunto=" + issue + "]";
 	}
 	
 	
