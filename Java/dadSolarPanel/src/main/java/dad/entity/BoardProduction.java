@@ -1,4 +1,4 @@
-package dad.data;
+package dad.entity;
 
 import java.time.*;
 

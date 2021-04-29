@@ -8,29 +8,29 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-
 public class App extends AbstractVerticle {
-	
 
 	@Override
-	public void start(Promise<Void> startFuture) {		
+	public void start(Promise<Void> startFuture) {
 		getVertx().eventBus().consumer("consulta", message -> {
 			getQuery(message);
 		});
-		
+
 	}
 
 	private void getQuery(Message<?> message) {
-		
+
 		JsonArray result = new JsonArray();
-		switch(message.body().toString()) {
-		case "board_ALL": BoardImpl.getALLBoard(message); break;
-			default: 
-				result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
-				message.reply(result.toString());
+		switch (message.body().toString()) {
+		case "board_ALL":
+			BoardImpl.getALLBoard(message);
+			break;
+		default:
+			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
+			message.reply(result.toString());
 		}
-		
-		//return result;
+
+		// return result;
 	}
 
 	@Override
@@ -39,4 +39,3 @@ public class App extends AbstractVerticle {
 	}
 
 }
-
