@@ -31,7 +31,7 @@ public class App extends AbstractVerticle {
 			getAll(message);
 			//message.reply(result.toString());
 		});
-			
+		
 	}
 
 	private void getAll(Message<?> message) {
