@@ -2,19 +2,17 @@ package dad.entity;
 
 public class Board {
 	private int id;
-	private double latitude;
-	private double longitude;
+	private Coordinates coordinates;
 	private double energy;
 	
 	public Board() {
 		super();
 	}
 
-	public Board(int id, double latitude, double longitude, double energy) {
+	public Board(int id, Coordinates coordinates, double energy) {
 		super();
 		this.id = id;
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.coordinates = coordinates;
 		this.energy = energy;
 	}
 
@@ -35,34 +33,23 @@ public class Board {
 		this.energy = energy;
 	}
 
-	public double getLatitude() {
-		return latitude;
+	public Coordinates getCoordinates() {
+		return coordinates;
 	}
 
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
+	public void setCoordinates(Coordinates coordinates) {
+		this.coordinates = coordinates;
 	}
 
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((coordinates == null) ? 0 : coordinates.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(energy);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + id;
-		temp = Double.doubleToLongBits(latitude);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(longitude);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -75,21 +62,24 @@ public class Board {
 		if (getClass() != obj.getClass())
 			return false;
 		Board other = (Board) obj;
+		if (coordinates == null) {
+			if (other.coordinates != null)
+				return false;
+		} else if (!coordinates.equals(other.coordinates))
+			return false;
 		if (Double.doubleToLongBits(energy) != Double.doubleToLongBits(other.energy))
 			return false;
 		if (id != other.id)
-			return false;
-		if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude))
-			return false;
-		if (Double.doubleToLongBits(longitude) != Double.doubleToLongBits(other.longitude))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Board [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + ", energy=" + energy + "]";
+		return "Board [id=" + id + ", coordinates=" + coordinates + ", energy=" + energy + "]";
 	}
+	
+
 
 	
 }
