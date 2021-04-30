@@ -4,6 +4,7 @@ import java.util.List;
 
 import dad.dadSolarPanel.Database;
 import dad.entity.Board;
+import dad.entity.Coordinates;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -12,7 +13,7 @@ import io.vertx.sqlclient.RowSet;
 
 public class BoardImpl {
 	private List<Board> boardList;
-	
+
 	public BoardImpl() {
 		super();
 	}
@@ -24,27 +25,31 @@ public class BoardImpl {
 	public void setBoardList(List<Board> boardList) {
 		this.boardList = boardList;
 	}
-	
+
 	public static void getALLBoard(Message<?> message) {
 		JsonArray result = new JsonArray();
-		Database.mySqlClient.query("SELECT * FROM dad.placa;", res -> {
-			if (res.succeeded()) {
-				// Get the result set
-				RowSet<Row> resultSet = res.result();
-				// System.out.println(resultSet.size());
-				for (Row elem : resultSet) {
-					System.out.println("Elementos " + elem);
-					result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"), elem.getDouble("latitude"),
-							elem.getDouble("longitude"), elem.getDouble("energiaMaxima"))));
-				}
-				//resultado = result.toString();
-			} else {
-				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-				//resultado = "Error: " + res.cause().getLocalizedMessage();
-			}
-			message.reply(result.toString());
-		});
+		Database.mySqlClient.query("SELECT board.*, coordinates.latitude, coordinates.longitude FROM dad.board INNER "
+				+ "JOIN dad.coordinates ON board.id_coordinates = coordinates.id;", res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						// System.out.println(resultSet.size());
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
+									new Coordinates(elem.getInteger("id_coordinates"),elem.getDouble("latitude"),
+											elem.getDouble("longitude")),
+									elem.getDouble("energiaMaxima"))));
+						}
+						// resultado = result.toString();
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -75,5 +80,4 @@ public class BoardImpl {
 		return "BoardImpl [boardList=" + boardList + "]";
 	}
 
-	
 }
