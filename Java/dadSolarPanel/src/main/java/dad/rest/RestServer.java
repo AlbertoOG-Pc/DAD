@@ -16,7 +16,6 @@ public class RestServer extends AbstractVerticle {
 
 		// Defining the router object
 		Router router = Router.router(vertx);
-
 		// Handling any server startup result
 		vertx.createHttpServer().requestHandler(router::handle).listen(8089, result -> {
 			if (result.succeeded()) {
