@@ -16,26 +16,85 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `coordenadas`
+-- Table structure for table `board`
 --
 
-DROP TABLE IF EXISTS `coordenadas`;
+DROP TABLE IF EXISTS `board`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `coordenadas` (
+CREATE TABLE `board` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `latlong` json NOT NULL,
-  PRIMARY KEY (`id`)
+  `id_coordinates` int DEFAULT NULL,
+  `maxPower` decimal(6,4) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_coordinates` (`id_coordinates`),
+  CONSTRAINT `fk_coordinates` FOREIGN KEY (`id_coordinates`) REFERENCES `coordinates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `board`
+--
+
+LOCK TABLES `board` WRITE;
+/*!40000 ALTER TABLE `board` DISABLE KEYS */;
+INSERT INTO `board` VALUES (1,2,5.8000),(2,1,4.0000);
+/*!40000 ALTER TABLE `board` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `board_production`
+--
+
+DROP TABLE IF EXISTS `board_production`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `board_production` (
+  `id_board` int NOT NULL,
+  `id_sun` int NOT NULL,
+  `postionServo` int NOT NULL,
+  `date` datetime NOT NULL,
+  `production` decimal(6,4) NOT NULL,
+  PRIMARY KEY (`id_board`,`id_sun`),
+  KEY `pk_sol_idx` (`id_sun`),
+  CONSTRAINT `pk_board_sun` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`),
+  CONSTRAINT `pk_sun` FOREIGN KEY (`id_sun`) REFERENCES `sunposition` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `coordenadas`
+-- Dumping data for table `board_production`
 --
 
-LOCK TABLES `coordenadas` WRITE;
-/*!40000 ALTER TABLE `coordenadas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `coordenadas` ENABLE KEYS */;
+LOCK TABLES `board_production` WRITE;
+/*!40000 ALTER TABLE `board_production` DISABLE KEYS */;
+INSERT INTO `board_production` VALUES (1,2,25,'2021-04-30 17:00:00',50.0000);
+/*!40000 ALTER TABLE `board_production` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `coordinates`
+--
+
+DROP TABLE IF EXISTS `coordinates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `coordinates` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `latitude` double NOT NULL,
+  `longitude` double NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `coordinates`
+--
+
+LOCK TABLES `coordinates` WRITE;
+/*!40000 ALTER TABLE `coordinates` DISABLE KEYS */;
+INSERT INTO `coordinates` VALUES (1,25,25),(2,30,30),(3,35,35),(4,40,40);
+/*!40000 ALTER TABLE `coordinates` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -47,13 +106,13 @@ DROP TABLE IF EXISTS `log`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `log` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `id_placa` int NOT NULL,
-  `fecha` datetime NOT NULL,
-  `asunto` longtext COLLATE utf8_spanish_ci NOT NULL,
+  `id_board` int NOT NULL,
+  `date` datetime NOT NULL,
+  `issue` longtext COLLATE utf8_spanish_ci NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `pk_placa` (`id_placa`),
-  CONSTRAINT `pk_placa` FOREIGN KEY (`id_placa`) REFERENCES `placa` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+  KEY `pk_board` (`id_board`),
+  CONSTRAINT `pk_board` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,87 +121,36 @@ CREATE TABLE `log` (
 
 LOCK TABLES `log` WRITE;
 /*!40000 ALTER TABLE `log` DISABLE KEYS */;
+INSERT INTO `log` VALUES (1,1,'2021-04-30 18:00:00','Primer log');
 /*!40000 ALTER TABLE `log` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `placa`
+-- Table structure for table `sunposition`
 --
 
-DROP TABLE IF EXISTS `placa`;
+DROP TABLE IF EXISTS `sunposition`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `placa` (
+CREATE TABLE `sunposition` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `latitude` double NOT NULL,
-  `longitude` double NOT NULL,
-  `energiaMaxima` decimal(6,4) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `placa`
---
-
-LOCK TABLES `placa` WRITE;
-/*!40000 ALTER TABLE `placa` DISABLE KEYS */;
-INSERT INTO `placa` VALUES (1,0,0,5.8000);
-/*!40000 ALTER TABLE `placa` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `placa_produccion`
---
-
-DROP TABLE IF EXISTS `placa_produccion`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `placa_produccion` (
-  `id_placa` int NOT NULL,
-  `id_sol` int NOT NULL,
-  `posicionServo` int NOT NULL,
-  `fecha` datetime NOT NULL,
-  `produccion` decimal(6,4) NOT NULL,
-  PRIMARY KEY (`id_placa`,`id_sol`),
-  KEY `pk_sol_idx` (`id_sol`),
-  CONSTRAINT `pk_placa_sol` FOREIGN KEY (`id_placa`) REFERENCES `placa` (`id`),
-  CONSTRAINT `pk_sol` FOREIGN KEY (`id_sol`) REFERENCES `posicionsol` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `placa_produccion`
---
-
-LOCK TABLES `placa_produccion` WRITE;
-/*!40000 ALTER TABLE `placa_produccion` DISABLE KEYS */;
-/*!40000 ALTER TABLE `placa_produccion` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `posicionsol`
---
-
-DROP TABLE IF EXISTS `posicionsol`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `posicionsol` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `id_coordenadas` int DEFAULT NULL,
+  `id_coordinates` int NOT NULL,
+  `date` datetime NOT NULL,
+  `elevation` double NOT NULL,
+  `azimut` double NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_coordenadas` (`id_coordenadas`),
-  CONSTRAINT `fk_coordenadas` FOREIGN KEY (`id_coordenadas`) REFERENCES `coordenadas` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+  KEY `fk_coordinates` (`id_coordinates`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `posicionsol`
+-- Dumping data for table `sunposition`
 --
 
-LOCK TABLES `posicionsol` WRITE;
-/*!40000 ALTER TABLE `posicionsol` DISABLE KEYS */;
-/*!40000 ALTER TABLE `posicionsol` ENABLE KEYS */;
+LOCK TABLES `sunposition` WRITE;
+/*!40000 ALTER TABLE `sunposition` DISABLE KEYS */;
+INSERT INTO `sunposition` VALUES (1,2,'2020-04-30 17:00:00',25,30),(2,3,'2020-04-28 17:00:00',10,58),(3,1,'2020-04-20 12:00:00',40,15);
+/*!40000 ALTER TABLE `sunposition` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -154,4 +162,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-22 13:53:19
+-- Dump completed on 2021-04-30 17:18:07
