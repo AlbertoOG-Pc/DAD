@@ -43,11 +43,11 @@ public class Log {
 //	public LocalDateTime getFecha() {
 //		return date;
 //	}
-	
+
 	// Get format String
-    public String getDate() {
-        return date.format(formatter);
-    }
+	public String getDate() {
+		return date.format(formatter);
+	}
 
 	public void setDate(LocalDateTime date) {
 		this.date = date;

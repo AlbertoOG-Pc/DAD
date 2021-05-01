@@ -71,7 +71,7 @@ public class App extends AbstractVerticle {
 			BoardProductionImpl.getALLBoardProduction(message);
 			break;
 		case "sunPosition_ONE":
-			SunPositionImpl.getALLSunPosition(message);
+			SunPositionImpl.createSunPosition(message);
 			break;
 		default:
 			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
