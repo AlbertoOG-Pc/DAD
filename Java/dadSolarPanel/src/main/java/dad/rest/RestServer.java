@@ -7,6 +7,7 @@ import dad.dadSolarPanel.Database;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 
 public class RestServer extends AbstractVerticle {
 
@@ -39,18 +40,27 @@ public class RestServer extends AbstractVerticle {
 				}
 			});
 		});
-
+		
 		/* DEFINING GENERAL ROUTES */
 
 		// Log Router
+		router.route("/api/log*").handler(BodyHandler.create());
 		router.route("/api/log*").handler(RestServerLog.create(vertx, router));
+		
 		// Board Router
+		router.route("/api/board*").handler(BodyHandler.create());
 		router.route("/api/board*").handler(RestServerBoard.create(vertx, router));
+		
 		// Coordinates Router
+		router.route("/api/coordinates*").handler(BodyHandler.create());
 		router.route("/api/coordinates*").handler(RestServerCoordinates.create(vertx, router));
+		
 		// Board Production Router
+		router.route("/api/boardProduction*").handler(BodyHandler.create());
 		router.route("/api/boardProduction*").handler(RestServerBoardProduction.create(vertx, router));
+		
 		// Sun Position Router
+		router.route("/api/sunPosition*").handler(BodyHandler.create());
 		router.route("/api/sunPosition*").handler(RestServerSunPosition.create(vertx, router));
 
 

@@ -5,7 +5,6 @@ import dad.entityImpl.BoardProductionImpl;
 import dad.entityImpl.CoordinatesImpl;
 import dad.entityImpl.LogImpl;
 import dad.entityImpl.SunPositionImpl;
-import dad.interfaces.SunPositionHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -29,8 +28,8 @@ public class App extends AbstractVerticle {
 	}
 
 	private void getQuery(Message<?> message) {
-
 		JsonArray result = new JsonArray();
+		
 		switch (message.body().toString()) {
 		case "board_ALL":
 			BoardImpl.getALLBoard(message);
@@ -57,10 +56,11 @@ public class App extends AbstractVerticle {
 	
 	private void getQueryPost(Message<?> message) {
 
+		System.out.println("Aqui llego");
 		JsonArray result = new JsonArray();
-		switch (message.body().toString()) {
-		case "board_ONE":
-			BoardImpl.getALLBoard(message);
+		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
+		case "Board":
+			BoardImpl.createBoard(message);
 			break;
 		case "log_ONE":
 			LogImpl.getALLLog(message);
