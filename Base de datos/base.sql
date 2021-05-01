@@ -52,7 +52,7 @@ DROP TABLE IF EXISTS `board_production`;
 CREATE TABLE `board_production` (
   `id_board` int NOT NULL,
   `id_sun` int NOT NULL,
-  `postionServo` int NOT NULL,
+  `positionServo` int NOT NULL,
   `date` datetime NOT NULL,
   `production` decimal(6,4) NOT NULL,
   PRIMARY KEY (`id_board`,`id_sun`),
