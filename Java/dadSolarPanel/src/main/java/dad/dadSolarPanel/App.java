@@ -5,7 +5,6 @@ import dad.entityImpl.BoardProductionImpl;
 import dad.entityImpl.CoordinatesImpl;
 import dad.entityImpl.LogImpl;
 import dad.entityImpl.SunPositionImpl;
-import dad.interfaces.SunPositionHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -21,12 +20,16 @@ public class App extends AbstractVerticle {
 			System.out.println("APP consulta");
 			getQuery(message);
 		});
+		getVertx().eventBus().consumer("POST", message -> {
+			System.out.println("APP POST");
+			getQueryPost(message);
+		});
 
 	}
 
 	private void getQuery(Message<?> message) {
-
 		JsonArray result = new JsonArray();
+		
 		switch (message.body().toString()) {
 		case "board_ALL":
 			BoardImpl.getALLBoard(message);
@@ -41,6 +44,33 @@ public class App extends AbstractVerticle {
 			BoardProductionImpl.getALLBoardProduction(message);
 			break;
 		case "sunPosition_ALL":
+			SunPositionImpl.getALLSunPosition(message);
+			break;
+		default:
+			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
+			message.reply(result.toString());
+		}
+
+		// return result;
+	}
+	
+	private void getQueryPost(Message<?> message) {
+		System.out.println("Aqui llego");
+		JsonArray result = new JsonArray();
+		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
+		case "Board":
+			BoardImpl.createBoard(message);
+			break;
+		case "log_ONE":
+			LogImpl.getALLLog(message);
+			break;
+		case "coordinates_ONE":
+			CoordinatesImpl.getALLCoordinates(message);
+			break;
+		case "boardProduction_ONE":
+			BoardProductionImpl.getALLBoardProduction(message);
+			break;
+		case "sunPosition_ONE":
 			SunPositionImpl.getALLSunPosition(message);
 			break;
 		default:
