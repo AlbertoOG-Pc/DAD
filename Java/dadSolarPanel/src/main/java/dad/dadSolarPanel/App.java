@@ -1,8 +1,11 @@
 package dad.dadSolarPanel;
 
 import dad.entityImpl.BoardImpl;
+import dad.entityImpl.BoardProductionImpl;
 import dad.entityImpl.CoordinatesImpl;
 import dad.entityImpl.LogImpl;
+import dad.entityImpl.SunPositionImpl;
+import dad.interfaces.SunPositionHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -32,7 +35,13 @@ public class App extends AbstractVerticle {
 			LogImpl.getALLLog(message);
 			break;
 		case "coordinates_ALL":
-			CoordinatesImpl.getALLLog(message);
+			CoordinatesImpl.getALLCoordinates(message);
+			break;
+		case "boardProduction_ALL":
+			BoardProductionImpl.getALLBoardProduction(message);
+			break;
+		case "sunPosition_ALL":
+			SunPositionImpl.getALLSunPosition(message);
 			break;
 		default:
 			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));

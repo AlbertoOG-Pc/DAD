@@ -1,6 +1,7 @@
 package dad.entity;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 public class BoardProduction {
 	private int id_board;
@@ -8,11 +9,13 @@ public class BoardProduction {
 	private int servoPosition;
 	private LocalDateTime date;
 	private Double production;
-	
+
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
 	public BoardProduction() {
 		super();
 	}
-	
+
 	public BoardProduction(int id_board, int id_sun, int servoPosition, LocalDateTime date, Double production) {
 		super();
 		this.id_board = id_board;
@@ -46,9 +49,14 @@ public class BoardProduction {
 		this.servoPosition = servoPosition;
 	}
 
-	public LocalDateTime getDate() {
+	/*public LocalDateTime getDate() {
 		return date;
-	}
+	}*/
+	
+	// Get format String
+    public String getDate() {
+        return date.format(formatter);
+    }
 
 	public void setDate(LocalDateTime date) {
 		this.date = date;
@@ -108,7 +116,4 @@ public class BoardProduction {
 				+ ", date=" + date + ", production=" + production + "]";
 	}
 
-	
 }
-
-

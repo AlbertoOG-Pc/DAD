@@ -48,6 +48,11 @@ public class RestServer extends AbstractVerticle {
 		router.route("/api/board*").handler(RestServerBoard.create(vertx, router));
 		// Coordinates Router
 		router.route("/api/coordinates*").handler(RestServerCoordinates.create(vertx, router));
+		// Board Production Router
+		router.route("/api/boardProduction*").handler(RestServerBoardProduction.create(vertx, router));
+		// Sun Position Router
+		router.route("/api/sunPosition*").handler(RestServerSunPosition.create(vertx, router));
+
 
 	}
 }
