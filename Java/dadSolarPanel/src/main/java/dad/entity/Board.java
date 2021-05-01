@@ -2,20 +2,20 @@ package dad.entity;
 
 public class Board {
 	private int id;
-	private Coordinates coordinates;
-	private double energy;
+	private int id_coordinates;
+	private double maxPower;
 	
 	public Board() {
 		super();
 	}
 
-	public Board(int id, Coordinates coordinates, double energy) {
+	public Board(int id, int id_coordinates, double maxPower) {
 		super();
 		this.id = id;
-		this.coordinates = coordinates;
-		this.energy = energy;
+		this.id_coordinates = id_coordinates;
+		this.maxPower = maxPower;
 	}
-
+	
 	public int getId() {
 		return id;
 	}
@@ -25,31 +25,33 @@ public class Board {
 	}
 
 
-	public double getEnergy() {
-		return energy;
+	public double getMaxPower() {
+		return maxPower;
 	}
 
-	public void setEnergy(double energy) {
-		this.energy = energy;
+	public void setMaxPower(double maxPower) {
+		this.maxPower = maxPower;
 	}
 
-	public Coordinates getCoordinates() {
-		return coordinates;
+	public int getId_coordinates() {
+		return id_coordinates;
 	}
 
-	public void setCoordinates(Coordinates coordinates) {
-		this.coordinates = coordinates;
+	public void setId_coordinates(int id_coordinates) {
+		this.id_coordinates = id_coordinates;
 	}
+
+
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((coordinates == null) ? 0 : coordinates.hashCode());
 		long temp;
-		temp = Double.doubleToLongBits(energy);
+		temp = Double.doubleToLongBits(maxPower);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + id;
+		result = prime * result + id_coordinates;
 		return result;
 	}
 
@@ -62,21 +64,18 @@ public class Board {
 		if (getClass() != obj.getClass())
 			return false;
 		Board other = (Board) obj;
-		if (coordinates == null) {
-			if (other.coordinates != null)
-				return false;
-		} else if (!coordinates.equals(other.coordinates))
-			return false;
-		if (Double.doubleToLongBits(energy) != Double.doubleToLongBits(other.energy))
+		if (Double.doubleToLongBits(maxPower) != Double.doubleToLongBits(other.maxPower))
 			return false;
 		if (id != other.id)
+			return false;
+		if (id_coordinates != other.id_coordinates)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Board [id=" + id + ", coordinates=" + coordinates + ", energy=" + energy + "]";
+		return "Board [id=" + id + ", id_coordinates=" + id_coordinates + ", energy=" + maxPower + "]";
 	}
 	
 
