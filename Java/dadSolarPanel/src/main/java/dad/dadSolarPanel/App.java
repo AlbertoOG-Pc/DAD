@@ -1,6 +1,8 @@
 package dad.dadSolarPanel;
 
 import dad.entityImpl.BoardImpl;
+import dad.entityImpl.CoordinatesImpl;
+import dad.entityImpl.LogImpl;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -13,6 +15,7 @@ public class App extends AbstractVerticle {
 	@Override
 	public void start(Promise<Void> startFuture) {
 		getVertx().eventBus().consumer("consulta", message -> {
+			System.out.println("APP consulta");
 			getQuery(message);
 		});
 
@@ -24,6 +27,12 @@ public class App extends AbstractVerticle {
 		switch (message.body().toString()) {
 		case "board_ALL":
 			BoardImpl.getALLBoard(message);
+			break;
+		case "log_ALL":
+			LogImpl.getALLLog(message);
+			break;
+		case "coordinates_ALL":
+			CoordinatesImpl.getALLLog(message);
 			break;
 		default:
 			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));

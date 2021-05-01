@@ -1,35 +1,31 @@
 package dad.rest;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import dad.interfaces.BoardHandler;
+import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
 
-public class RestServerBoard extends AbstractVerticle {
+
+public class RestServerBoard implements BoardHandler {
 
 	// private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
 	private EventBus eventBus;
-
-	public void start(Promise<Void> startFuture) {
-		eventBus = getVertx().eventBus();
-
-		// Defining the router object
-		Router router = Router.router(vertx);
-
-		// Handling any server startup result
-		vertx.createHttpServer().requestHandler(router::handle).listen(8089, result -> {
-			if (result.succeeded()) {
-				startFuture.complete();
-			} else {
-				startFuture.fail(result.cause());
-			}
-		});
-
-		// Defining URI paths for each method in RESTful interface, including body
-		// handling by /api/users* or /api/users/*
-		router.route("/api/board*").handler(BodyHandler.create());
+	private Router router;
+	
+	static RestServerBoard create(Vertx vertx, Router router) {
+        return new RestServerBoard(vertx, router);
+    }
+	@Override
+	public void handle(RoutingContext event) {
+		// TODO Auto-generated method stub
+		router.handleContext(event);
+	}
+	
+	public RestServerBoard(Vertx vertx, Router router) {
+		this.router = router;
+		
+		eventBus = vertx.eventBus();
 		router.get("/api/board").handler(this::getAll);
 	}
 
@@ -45,4 +41,6 @@ public class RestServerBoard extends AbstractVerticle {
 			}
 		});
 	}
+
+	
 }

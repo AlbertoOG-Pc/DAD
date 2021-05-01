@@ -1,36 +1,32 @@
 package dad.rest;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import dad.interfaces.CoordinatesHandler;
+import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
 
-public class RestServerCoordinates extends AbstractVerticle {
+public class RestServerCoordinates implements CoordinatesHandler {
 
 	// private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
 	private EventBus eventBus;
+	private Router router;
 
-	public void start(Promise<Void> startFuture) {
-		eventBus = getVertx().eventBus();
-
-		// Defining the router object
-		Router router = Router.router(vertx);
-
-		// Handling any server startup result
-		vertx.createHttpServer().requestHandler(router::handle).listen(8089, result -> {
-			if (result.succeeded()) {
-				startFuture.complete();
-			} else {
-				startFuture.fail(result.cause());
-			}
-		});
-
-		// Defining URI paths for each method in RESTful interface, including body
-		// handling by /api/users* or /api/users/*
-		router.route("/api/coordinates*").handler(BodyHandler.create());
+	static RestServerCoordinates create(Vertx vertx, Router router) {
+        return new RestServerCoordinates(vertx, router);
+    }
+	
+	public RestServerCoordinates(Vertx vertx, Router router) {
+		this.router = router;
+		
+		eventBus = vertx.eventBus();
 		router.get("/api/coordinates").handler(this::getAll);
+	}
+	
+	@Override
+	public void handle(RoutingContext event) {
+		// TODO Auto-generated method stub
+		router.handleContext(event);
 	}
 
 	private void getAll(RoutingContext routingContext) {
@@ -45,4 +41,6 @@ public class RestServerCoordinates extends AbstractVerticle {
 			}
 		});
 	}
+
+	
 }
