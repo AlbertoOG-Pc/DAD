@@ -1,37 +1,27 @@
 package dad.rest;
 
+import dad.interfaces.SunPositionHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
-public class RestServerSunPosition extends AbstractVerticle {
+public class RestServerSunPosition implements SunPositionHandler {
 
 	// private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
 	private EventBus eventBus;
+	private Router router;
 
-	public void start(Promise<Void> startFuture) {
-		eventBus = getVertx().eventBus();
-
-		// Defining the router object
-		Router router = Router.router(vertx);
-
-		// Handling any server startup result
-		vertx.createHttpServer().requestHandler(router::handle).listen(8089, result -> {
-			if (result.succeeded()) {
-				startFuture.complete();
-			} else {
-				startFuture.fail(result.cause());
-			}
-		});
-
-		// Defining URI paths for each method in RESTful interface, including body
-		// handling by /api/users* or /api/users/*
-		router.route("/api/sunPosition*").handler(BodyHandler.create());
+	public RestServerSunPosition(Vertx vertx, Router router) {
+		this.router = router;
+		eventBus = vertx.eventBus();
 		router.get("/api/sunPosition").handler(this::getAll);
+
 	}
+
 
 	private void getAll(RoutingContext routingContext) {
 		eventBus.request("consulta", "sunPosition_ALL", reply -> {
@@ -45,4 +35,13 @@ public class RestServerSunPosition extends AbstractVerticle {
 			}
 		});
 	}
+
+	static RestServerSunPosition create(Vertx vertx, Router router) {
+		return new RestServerSunPosition(vertx, router);
+	}
+
+	public void handle(RoutingContext event) {
+		router.handleContext(event);
+	}
+
 }

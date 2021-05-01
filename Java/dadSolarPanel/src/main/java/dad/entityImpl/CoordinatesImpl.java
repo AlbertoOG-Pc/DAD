@@ -25,7 +25,7 @@ public class CoordinatesImpl {
 		this.coordinatesList = coordinatesList;
 	}
 
-	public static void getALLLog(Message<?> message) {
+	public static void getALLCoordinates(Message<?> message) {
 		JsonArray result = new JsonArray();
 		Database.mySqlClient.query("SELECT * FROM dad.coordinates;", res -> {
 			if (res.succeeded()) {

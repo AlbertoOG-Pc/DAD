@@ -1,6 +1,7 @@
 package dad.entity;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 public class Log {
 
@@ -8,17 +9,19 @@ public class Log {
 	private int id_board;
 	private LocalDateTime date;
 	private String issue;
-	
-	public Log()  {
+
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+	public Log() {
 		super();
 	}
-	
+
 	public Log(int id, int id_board, LocalDateTime date, String issue) {
 		super();
 		this.id = id;
 		this.id_board = id_board;
 		this.date = date;
-		this.issue = issue;		
+		this.issue = issue;
 	}
 
 	public int getId() {
@@ -29,27 +32,32 @@ public class Log {
 		this.id = id;
 	}
 
-	public int getId_placa() {
+	public int getId_board() {
 		return id_board;
 	}
 
-	public void setId_placa(int id_board) {
+	public void setId_board(int id_board) {
 		this.id_board = id_board;
 	}
 
-	public LocalDateTime getFecha() {
-		return date;
-	}
+//	public LocalDateTime getFecha() {
+//		return date;
+//	}
+	
+	// Get format String
+    public String getDate() {
+        return date.format(formatter);
+    }
 
-	public void setFecha(LocalDateTime date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
-	public String getAsunto() {
+	public String getIssue() {
 		return issue;
 	}
 
-	public void setAsunto(String issue) {
+	public void setIssue(String issue) {
 		this.issue = issue;
 	}
 
@@ -92,10 +100,7 @@ public class Log {
 
 	@Override
 	public String toString() {
-		return "Log [id=" + id + ", id_placa=" + id_board + ", fecha=" + date + ", asunto=" + issue + "]";
+		return "Log [id=" + id + ", id_board=" + id_board + ", date=" + date + ", issue=" + issue + "]";
 	}
-	
-	
-	
-	
+
 }
