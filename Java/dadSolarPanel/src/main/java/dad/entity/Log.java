@@ -13,12 +13,12 @@ public class Log {
 		super();
 	}
 	
-	public Log(int id, int id_placa, LocalDateTime fecha, String asunto) {
+	public Log(int id, int id_board, LocalDateTime date, String issue) {
 		super();
 		this.id = id;
-		this.id_board = id_placa;
-		this.date = fecha;
-		this.issue = asunto;		
+		this.id_board = id_board;
+		this.date = date;
+		this.issue = issue;		
 	}
 
 	public int getId() {
@@ -33,24 +33,24 @@ public class Log {
 		return id_board;
 	}
 
-	public void setId_placa(int id_placa) {
-		this.id_board = id_placa;
+	public void setId_placa(int id_board) {
+		this.id_board = id_board;
 	}
 
 	public LocalDateTime getFecha() {
 		return date;
 	}
 
-	public void setFecha(LocalDateTime fecha) {
-		this.date = fecha;
+	public void setFecha(LocalDateTime date) {
+		this.date = date;
 	}
 
 	public String getAsunto() {
 		return issue;
 	}
 
-	public void setAsunto(String asunto) {
-		this.issue = asunto;
+	public void setAsunto(String issue) {
+		this.issue = issue;
 	}
 
 	@Override

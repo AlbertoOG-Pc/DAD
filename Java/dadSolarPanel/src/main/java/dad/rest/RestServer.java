@@ -1,6 +1,6 @@
 package dad.rest;
 
-import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
 
 import dad.dadSolarPanel.App;
 import dad.dadSolarPanel.Database;
@@ -12,10 +12,10 @@ public class RestServer extends AbstractVerticle {
 
 	public void start(Promise<Void> startFuture) {
 		getVertx().eventBus();
-		new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
 		// Defining the router object
 		Router router = Router.router(vertx);
+
 		// Handling any server startup result
 		vertx.createHttpServer().requestHandler(router::handle).listen(8089, result -> {
 			if (result.succeeded()) {
@@ -24,31 +24,30 @@ public class RestServer extends AbstractVerticle {
 				startFuture.fail(result.cause());
 			}
 		});
-		//Desplegar bbdd
-		getVertx().deployVerticle(App.class.getName(), deployResult -> {
-			if (deployResult.succeeded()) {
-				System.out.println("App ha sido desplegado correctamente");
-			} else {
-				deployResult.cause().printStackTrace();
-				System.out.println("No se ha podio desplegar");
-			}
+
+		ArrayList<String> verticles = new ArrayList<>();
+		verticles.add(App.class.getName());
+		verticles.add(Database.class.getName());
+
+		verticles.stream().forEach(verticle -> {
+			getVertx().deployVerticle(verticle, deployResult -> {
+				if (deployResult.succeeded()) {
+					System.out.println(verticle + " ha sido desplegado correctamente");
+				} else {
+					deployResult.cause().printStackTrace();
+					System.out.println("No se ha podio desplegar");
+				}
+			});
 		});
-		getVertx().deployVerticle(Database.class.getName(), deployResult -> {
-					if (deployResult.succeeded()) {
-						System.out.println("App ha sido desplegado correctamente");
-					} else {
-						deployResult.cause().printStackTrace();
-						System.out.println("No se ha podio desplegar");
-					}
-				});
-		//Desplegar rutas Board
-		getVertx().deployVerticle(RestServerBoard.class.getName(), deployResult -> {
-			if (deployResult.succeeded()) {
-				System.out.println("RestServerBoard ha sido desplegado correctamente");
-			} else {
-				deployResult.cause().printStackTrace();
-				System.out.println("No se ha podio desplegar");
-			}
-		});
+
+		/* DEFINING GENERAL ROUTES */
+
+		// Log Router
+		router.route("/api/log*").handler(RestServerLog.create(vertx, router));
+		// Board Router
+		router.route("/api/board*").handler(RestServerBoard.create(vertx, router));
+		// Coordinates Router
+		router.route("/api/coordinates*").handler(RestServerCoordinates.create(vertx, router));
+
 	}
 }

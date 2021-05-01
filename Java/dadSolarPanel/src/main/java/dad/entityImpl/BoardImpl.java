@@ -39,7 +39,7 @@ public class BoardImpl {
 							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
 									new Coordinates(elem.getInteger("id_coordinates"),elem.getDouble("latitude"),
 											elem.getDouble("longitude")),
-									elem.getDouble("energiaMaxima"))));
+									elem.getDouble("maxPower"))));
 						}
 						// resultado = result.toString();
 					} else {
