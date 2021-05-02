@@ -55,17 +55,17 @@ public class App extends AbstractVerticle {
 	}
 	
 	private void getQueryPost(Message<?> message) {
-		System.out.println("Aqui llego");
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
 			BoardImpl.createBoard(message);
 			break;
-		case "log_ONE":
-			LogImpl.getALLLog(message);
+		case "Log":
+			//System.out.println("Aqui llego");
+			LogImpl.createLog(message);
 			break;
-		case "coordinates_ONE":
-			CoordinatesImpl.getALLCoordinates(message);
+		case "Coordinates":
+			CoordinatesImpl.createCoordinates(message);
 			break;
 		case "boardProduction_ONE":
 			BoardProductionImpl.getALLBoardProduction(message);

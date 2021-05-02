@@ -47,6 +47,7 @@ public class BoardImpl {
 			message.reply(result.toString());
 		});
 	}
+	
 
 	public static void createBoard(Message<?> message) {
 		JsonArray result = new JsonArray();
