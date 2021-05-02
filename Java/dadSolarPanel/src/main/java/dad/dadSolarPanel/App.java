@@ -58,19 +58,20 @@ public class App extends AbstractVerticle {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
+			System.out.println("Aqui llego");
 			BoardImpl.createBoard(message);
 			break;
 		case "Log":
 			//System.out.println("Aqui llego");
 			LogImpl.createLog(message);
 			break;
-		case "Coordinates":
+		case "coordinates":
 			CoordinatesImpl.createCoordinates(message);
 			break;
-		case "boardProduction_ONE":
-			BoardProductionImpl.getALLBoardProduction(message);
+		case "boardProduction":
+			BoardProductionImpl.createBoardProduction(message);
 			break;
-		case "sunPosition_ONE":
+		case "sunPosition":
 			SunPositionImpl.createSunPosition(message);
 			break;
 		default:

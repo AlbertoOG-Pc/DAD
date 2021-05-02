@@ -6,21 +6,21 @@ import java.time.format.DateTimeFormatter;
 public class BoardProduction {
 	private int id_board;
 	private int id_sun;
-	private int servoPosition;
+	private int positionServo;
 	private LocalDateTime date;
 	private Double production;
 
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	public BoardProduction() {
 		super();
 	}
 
-	public BoardProduction(int id_board, int id_sun, int servoPosition, LocalDateTime date, Double production) {
+	public BoardProduction(int id_board, int id_sun, int positionServo, LocalDateTime date, Double production) {
 		super();
 		this.id_board = id_board;
 		this.id_sun = id_sun;
-		this.servoPosition = servoPosition;
+		this.positionServo = positionServo;
 		this.date = date;
 		this.production = production;
 	}
@@ -41,22 +41,22 @@ public class BoardProduction {
 		this.id_sun = id_sun;
 	}
 
-	public int getServoPosition() {
-		return servoPosition;
+	public int getPositionServo() {
+		return positionServo;
 	}
 
-	public void setServoPosition(int servoPosition) {
-		this.servoPosition = servoPosition;
+	public void setPositionServo(int positionServo) {
+		this.positionServo = positionServo;
 	}
 
-	/*public LocalDateTime getDate() {
-		return date;
-	}*/
-	
+	/*
+	 * public LocalDateTime getDate() { return date; }
+	 */
+
 	// Get format String
-    public String getDate() {
-        return date.format(formatter);
-    }
+	public String getDate() {
+		return date.format(formatter);
+	}
 
 	public void setDate(LocalDateTime date) {
 		this.date = date;
@@ -78,7 +78,7 @@ public class BoardProduction {
 		result = prime * result + id_board;
 		result = prime * result + id_sun;
 		result = prime * result + ((production == null) ? 0 : production.hashCode());
-		result = prime * result + servoPosition;
+		result = prime * result + positionServo;
 		return result;
 	}
 
@@ -105,14 +105,14 @@ public class BoardProduction {
 				return false;
 		} else if (!production.equals(other.production))
 			return false;
-		if (servoPosition != other.servoPosition)
+		if (positionServo != other.positionServo)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "BoardProduction [id_board=" + id_board + ", id_sun=" + id_sun + ", servoPosition=" + servoPosition
+		return "BoardProduction [id_board=" + id_board + ", id_sun=" + id_sun + ", positionServo=" + positionServo
 				+ ", date=" + date + ", production=" + production + "]";
 	}
 

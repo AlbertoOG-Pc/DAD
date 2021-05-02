@@ -29,7 +29,7 @@ CREATE TABLE `board` (
   PRIMARY KEY (`id`),
   KEY `fk_coordinates` (`id_coordinates`),
   CONSTRAINT `fk_coordinates` FOREIGN KEY (`id_coordinates`) REFERENCES `coordinates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `board` (
 
 LOCK TABLES `board` WRITE;
 /*!40000 ALTER TABLE `board` DISABLE KEYS */;
-INSERT INTO `board` VALUES (1,2,5.8000),(2,1,4.0000);
+INSERT INTO `board` VALUES (1,2,5.8000),(2,1,4.0000),(5,2,33.0000),(7,1,14.1400),(8,2,14.0000),(9,2,14.0000),(10,2,14.0000);
 /*!40000 ALTER TABLE `board` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,10 +54,10 @@ CREATE TABLE `board_production` (
   `id_sun` int NOT NULL,
   `positionServo` int NOT NULL,
   `date` datetime NOT NULL,
-  `production` decimal(6,4) NOT NULL,
+  `production` float NOT NULL,
   PRIMARY KEY (`id_board`,`id_sun`),
   KEY `pk_sol_idx` (`id_sun`),
-  CONSTRAINT `pk_board_sun` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`),
+  CONSTRAINT `pk_board_production` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `pk_sun` FOREIGN KEY (`id_sun`) REFERENCES `sunposition` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -68,7 +68,7 @@ CREATE TABLE `board_production` (
 
 LOCK TABLES `board_production` WRITE;
 /*!40000 ALTER TABLE `board_production` DISABLE KEYS */;
-INSERT INTO `board_production` VALUES (1,2,25,'2021-04-30 17:00:00',50.0000);
+INSERT INTO `board_production` VALUES (1,2,44,'1212-12-12 12:12:12',14.14),(2,1,44,'1212-12-12 12:12:12',14.14),(2,2,44,'1212-12-12 12:12:12',14.14);
 /*!40000 ALTER TABLE `board_production` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -108,7 +108,7 @@ CREATE TABLE `log` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_board` int NOT NULL,
   `date` datetime NOT NULL,
-  `issue` longtext COLLATE utf8_spanish_ci NOT NULL,
+  `issue` longtext CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `pk_board` (`id_board`),
   CONSTRAINT `pk_board` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE
@@ -140,7 +140,7 @@ CREATE TABLE `sunposition` (
   `azimut` double NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_coordinates` (`id_coordinates`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +149,7 @@ CREATE TABLE `sunposition` (
 
 LOCK TABLES `sunposition` WRITE;
 /*!40000 ALTER TABLE `sunposition` DISABLE KEYS */;
-INSERT INTO `sunposition` VALUES (1,2,'2020-04-30 17:00:00',25,30),(2,3,'2020-04-28 17:00:00',10,58),(3,1,'2020-04-20 12:00:00',40,15);
+INSERT INTO `sunposition` VALUES (1,2,'2020-04-30 17:00:00',25,30),(2,3,'2020-04-28 17:00:00',10,58),(3,1,'2020-04-20 12:00:00',40,15),(4,2,'1212-12-12 12:12:12',4.800000190734863,14),(5,4,'1212-12-12 12:12:12',4.800000190734863,14.699999809265137),(6,4,'1212-12-12 12:12:12',4.800000190734863,14.699999809265137);
 /*!40000 ALTER TABLE `sunposition` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -162,4 +162,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-30 17:18:07
+-- Dump completed on 2021-05-02 17:34:11

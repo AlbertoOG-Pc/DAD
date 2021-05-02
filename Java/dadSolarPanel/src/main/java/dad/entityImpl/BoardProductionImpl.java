@@ -7,8 +7,10 @@ import dad.entity.BoardProduction;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.Tuple;
 
 public class BoardProductionImpl {
 
@@ -28,23 +30,46 @@ public class BoardProductionImpl {
 
 	public static void getALLBoardProduction(Message<?> message) {
 		JsonArray result = new JsonArray();
-		Database.mySqlClient.query(
-				"SELECT * FROM dad.board_production",
+		Database.mySqlClient.query("SELECT * FROM dad.board_production", res -> {
+			if (res.succeeded()) {
+				// Get the result set
+				RowSet<Row> resultSet = res.result();
+				// System.out.println(resultSet.size());
+				for (Row elem : resultSet) {
+					System.out.println("Elementos " + elem);
+					result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id_board"),
+							elem.getInteger("id_sun"), elem.getInteger("positionServo"), elem.getLocalDateTime("date"),
+							elem.getDouble("production"))));
+				}
+				// resultado = result.toString();
+			} else {
+				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+				// resultado = "Error: " + res.cause().getLocalizedMessage();
+			}
+			message.reply(result.toString());
+		});
+	}
+
+	public static void createBoardProduction(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		//result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery(
+				"INSERT INTO dad.board_production (id_board, id_sun, positionServo, date, production) VALUES (?,?,?,?,?);",
+				Tuple.of(data.getInteger("id_board"), data.getInteger("id_sun"), data.getInteger("positionServo"),
+						data.getValue("date"), data.getFloat("production")),
 				res -> {
 					if (res.succeeded()) {
 						// Get the result set
-						RowSet<Row> resultSet = res.result();
-						// System.out.println(resultSet.size());
-						for (Row elem : resultSet) {
-							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id_board"),
-									elem.getInteger("id_sun"), elem.getInteger("positionServo"),
-									elem.getLocalDateTime("date"), elem.getDouble("production"))));
-						}
-						// resultado = result.toString();
+						// RowSet<Row> resultSet = res.result();
+						data.remove("CLASS");
+						// data.put("id", resultSet.property(MySQLClient.LAST_INSERTED_ID));
+						result.add(data);
+
 					} else {
-						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-						// resultado = "Error: " + res.cause().getLocalizedMessage();
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						//resultado = "Error: " + res.cause().getLocalizedMessage();
 					}
 					message.reply(result.toString());
 				});

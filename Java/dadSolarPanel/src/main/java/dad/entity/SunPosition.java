@@ -11,7 +11,7 @@ public class SunPosition {
 	private double elevation;
 	private double azimut;
 
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	public SunPosition() {
 		super();
@@ -45,11 +45,11 @@ public class SunPosition {
 //	public LocalDateTime getDateTime() {
 //		return dateTime;
 //	}
-	
+
 	// Get format String
-    public String getDate() {
-        return date.format(formatter);
-    }
+	public String getDate() {
+		return date.format(formatter);
+	}
 
 	public void setDateTime(LocalDateTime date) {
 		this.date = date;
@@ -113,8 +113,8 @@ public class SunPosition {
 
 	@Override
 	public String toString() {
-		return "SunPosition [id=" + id + ", id_coordinates=" + id_coordinates + ", date=" + date
-				+ ", elevation=" + elevation + ", azimut=" + azimut + "]";
+		return "SunPosition [id=" + id + ", id_coordinates=" + id_coordinates + ", date=" + date + ", elevation="
+				+ elevation + ", azimut=" + azimut + "]";
 	}
 
 }
