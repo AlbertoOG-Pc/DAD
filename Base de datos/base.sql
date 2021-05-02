@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `board`;
 CREATE TABLE `board` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_coordinates` int DEFAULT NULL,
-  `maxPower` decimal(6,4) NOT NULL,
+  `maxPower` decimal(6,2) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_coordinates` (`id_coordinates`),
   CONSTRAINT `fk_coordinates` FOREIGN KEY (`id_coordinates`) REFERENCES `coordinates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -38,7 +38,7 @@ CREATE TABLE `board` (
 
 LOCK TABLES `board` WRITE;
 /*!40000 ALTER TABLE `board` DISABLE KEYS */;
-INSERT INTO `board` VALUES (1,2,5.8000),(2,1,4.0000),(5,2,33.0000),(7,1,14.1400),(8,2,14.0000),(9,2,14.0000),(10,2,14.0000);
+INSERT INTO `board` VALUES (1,2,5.80),(2,1,4.00),(5,2,33.00),(7,1,14.14),(8,2,14.00),(9,2,14.00),(10,2,14.00);
 /*!40000 ALTER TABLE `board` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,15 +50,14 @@ DROP TABLE IF EXISTS `board_production`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `board_production` (
+  `id` int NOT NULL,
   `id_board` int NOT NULL,
-  `id_sun` int NOT NULL,
   `positionServo` int NOT NULL,
   `date` datetime NOT NULL,
   `production` float NOT NULL,
-  PRIMARY KEY (`id_board`,`id_sun`),
-  KEY `pk_sol_idx` (`id_sun`),
-  CONSTRAINT `pk_board_production` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `pk_sun` FOREIGN KEY (`id_sun`) REFERENCES `sunposition` (`id`) ON UPDATE CASCADE
+  PRIMARY KEY (`id`),
+  KEY `fk_board_production` (`id_board`),
+  CONSTRAINT `fk_board_production` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -68,7 +67,6 @@ CREATE TABLE `board_production` (
 
 LOCK TABLES `board_production` WRITE;
 /*!40000 ALTER TABLE `board_production` DISABLE KEYS */;
-INSERT INTO `board_production` VALUES (1,2,44,'1212-12-12 12:12:12',14.14),(2,1,44,'1212-12-12 12:12:12',14.14),(2,2,44,'1212-12-12 12:12:12',14.14);
 /*!40000 ALTER TABLE `board_production` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,10 +79,10 @@ DROP TABLE IF EXISTS `coordinates`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `coordinates` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `latitude` double NOT NULL,
-  `longitude` double NOT NULL,
+  `latitude` float NOT NULL,
+  `longitude` float NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +91,7 @@ CREATE TABLE `coordinates` (
 
 LOCK TABLES `coordinates` WRITE;
 /*!40000 ALTER TABLE `coordinates` DISABLE KEYS */;
-INSERT INTO `coordinates` VALUES (1,25,25),(2,30,30),(3,35,35),(4,40,40);
+INSERT INTO `coordinates` VALUES (1,25,25),(2,30,30),(3,35,35),(4,40,40),(5,20.2,20.888);
 /*!40000 ALTER TABLE `coordinates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,10 +134,11 @@ CREATE TABLE `sunposition` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_coordinates` int NOT NULL,
   `date` datetime NOT NULL,
-  `elevation` double NOT NULL,
-  `azimut` double NOT NULL,
+  `elevation` float NOT NULL,
+  `azimut` float NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_coordinates` (`id_coordinates`)
+  KEY `fk_coordinates` (`id_coordinates`),
+  CONSTRAINT `fk_id_coordinates` FOREIGN KEY (`id_coordinates`) REFERENCES `coordinates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -149,7 +148,7 @@ CREATE TABLE `sunposition` (
 
 LOCK TABLES `sunposition` WRITE;
 /*!40000 ALTER TABLE `sunposition` DISABLE KEYS */;
-INSERT INTO `sunposition` VALUES (1,2,'2020-04-30 17:00:00',25,30),(2,3,'2020-04-28 17:00:00',10,58),(3,1,'2020-04-20 12:00:00',40,15),(4,2,'1212-12-12 12:12:12',4.800000190734863,14),(5,4,'1212-12-12 12:12:12',4.800000190734863,14.699999809265137),(6,4,'1212-12-12 12:12:12',4.800000190734863,14.699999809265137);
+INSERT INTO `sunposition` VALUES (1,2,'2020-04-30 17:00:00',25,30),(2,3,'2020-04-28 17:00:00',10,58),(3,1,'2020-04-20 12:00:00',40,15),(4,2,'1212-12-12 12:12:12',4.8,14),(5,4,'1212-12-12 12:12:12',4.8,14.7),(6,4,'1212-12-12 12:12:12',4.8,14.7);
 /*!40000 ALTER TABLE `sunposition` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -162,4 +161,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-02 17:34:11
+-- Dump completed on 2021-05-02 18:42:06
