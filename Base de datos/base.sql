@@ -50,12 +50,14 @@ DROP TABLE IF EXISTS `board_production`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `board_production` (
+  `id` int NOT NULL,
   `id_board` int NOT NULL,
   `positionServo` int NOT NULL,
   `date` datetime NOT NULL,
   `production` float NOT NULL,
-  PRIMARY KEY (`id_board`),
-  CONSTRAINT `pk_board_production` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE
+  PRIMARY KEY (`id`),
+  KEY `fk_board_production` (`id_board`),
+  CONSTRAINT `fk_board_production` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -159,4 +161,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-02 18:27:33
+-- Dump completed on 2021-05-02 18:42:06
