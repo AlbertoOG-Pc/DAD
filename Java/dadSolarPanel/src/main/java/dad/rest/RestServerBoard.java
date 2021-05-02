@@ -37,6 +37,8 @@ public class RestServerBoard implements BoardHandler {
 		
 		router.get("/api/board").handler(this::getAll);
 		router.post("/api/board").handler(this::createBoard);
+		router.put("/api/board").handler(this::updateBoard);
+		router.delete("/api/board/:id").handler(this::deleteBoard);
 	}
 
 	private void getAll(RoutingContext routingContext) {
@@ -58,6 +60,40 @@ public class RestServerBoard implements BoardHandler {
 
 		final Board board = gson.fromJson(routingContext.getBodyAsString(), Board.class);
 		eventBus.request("POST", JsonObject.mapFrom(board).put("CLASS", "Board"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+	
+	private void updateBoard(RoutingContext routingContext) {
+		//System.out.println(routingContext.getBodyAsString());
+
+		final Board board = gson.fromJson(routingContext.getBodyAsString(), Board.class);
+		eventBus.request("PUT", JsonObject.mapFrom(board).put("CLASS", "Board"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+	
+	private void deleteBoard(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "Board").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+		
+		eventBus.request("DELETE", obj, reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
