@@ -4,11 +4,11 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 public class BoardProduction {
+	private int id;
 	private int id_board;
-	private int id_sun;
 	private int positionServo;
 	private LocalDateTime date;
-	private Double production;
+	private Float production;
 
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -16,13 +16,21 @@ public class BoardProduction {
 		super();
 	}
 
-	public BoardProduction(int id_board, int id_sun, int positionServo, LocalDateTime date, Double production) {
+	public BoardProduction(int id, int id_board, int positionServo, LocalDateTime date, Float production) {
 		super();
+		this.id = id;
 		this.id_board = id_board;
-		this.id_sun = id_sun;
 		this.positionServo = positionServo;
 		this.date = date;
 		this.production = production;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getId_board() {
@@ -31,14 +39,6 @@ public class BoardProduction {
 
 	public void setId_board(int id_board) {
 		this.id_board = id_board;
-	}
-
-	public int getId_sun() {
-		return id_sun;
-	}
-
-	public void setId_sun(int id_sun) {
-		this.id_sun = id_sun;
 	}
 
 	public int getPositionServo() {
@@ -62,11 +62,11 @@ public class BoardProduction {
 		this.date = date;
 	}
 
-	public Double getProduction() {
+	public Float getProduction() {
 		return production;
 	}
 
-	public void setProduction(Double production) {
+	public void setProduction(Float production) {
 		this.production = production;
 	}
 
@@ -75,10 +75,10 @@ public class BoardProduction {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + id;
 		result = prime * result + id_board;
-		result = prime * result + id_sun;
-		result = prime * result + ((production == null) ? 0 : production.hashCode());
 		result = prime * result + positionServo;
+		result = prime * result + ((production == null) ? 0 : production.hashCode());
 		return result;
 	}
 
@@ -96,24 +96,24 @@ public class BoardProduction {
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
+		if (id != other.id)
+			return false;
 		if (id_board != other.id_board)
 			return false;
-		if (id_sun != other.id_sun)
+		if (positionServo != other.positionServo)
 			return false;
 		if (production == null) {
 			if (other.production != null)
 				return false;
 		} else if (!production.equals(other.production))
 			return false;
-		if (positionServo != other.positionServo)
-			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "BoardProduction [id_board=" + id_board + ", id_sun=" + id_sun + ", positionServo=" + positionServo
-				+ ", date=" + date + ", production=" + production + "]";
+		return "BoardProduction [id=" + id + ", id_board=" + id_board + ", positionServo=" + positionServo + ", date="
+				+ date + ", production=" + production + "]";
 	}
 
 }

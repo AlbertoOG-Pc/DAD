@@ -71,7 +71,7 @@ public class RestServerSunPosition implements SunPositionHandler {
 		// System.out.println(routingContext.getBodyAsString());
 
 		final SunPosition sunPosition = gson.fromJson(routingContext.getBodyAsString(), SunPosition.class);
-		eventBus.request("POST", JsonObject.mapFrom(sunPosition).put("CLASS", "sunPosition"), reply -> {
+		eventBus.request("POST", JsonObject.mapFrom(sunPosition).put("CLASS", "SunPosition"), reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();

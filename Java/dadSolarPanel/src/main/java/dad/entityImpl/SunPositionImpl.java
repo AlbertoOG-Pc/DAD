@@ -43,7 +43,7 @@ public class SunPositionImpl {
 					System.out.println("Elementos " + elem);
 					result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
 							elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
-							elem.getDouble("elevation"), elem.getDouble("azimut"))));
+							elem.getFloat("elevation"), elem.getFloat("azimut"))));
 				}
 				// resultado = result.toString();
 			} else {

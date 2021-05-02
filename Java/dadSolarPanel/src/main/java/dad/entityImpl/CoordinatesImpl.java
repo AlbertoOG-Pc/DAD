@@ -36,8 +36,8 @@ public class CoordinatesImpl {
 				// System.out.println(resultSet.size());
 				for (Row elem : resultSet) {
 					System.out.println("Elementos " + elem);
-					result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"), elem.getDouble("latitude"),
-							elem.getDouble("longitude"))));
+					result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"), elem.getFloat("latitude"),
+							elem.getFloat("longitude"))));
 				}
 				// resultado = result.toString();
 			} else {
