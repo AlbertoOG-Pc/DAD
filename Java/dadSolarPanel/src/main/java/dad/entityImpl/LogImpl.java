@@ -3,14 +3,14 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
-import dad.entity.Board;
-import dad.entity.Coordinates;
 import dad.entity.Log;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.Tuple;
 
 public class LogImpl {
 	private List<Log> logList;
@@ -46,6 +46,30 @@ public class LogImpl {
 			}
 			message.reply(result.toString());
 		});
+	}
+
+	public static void createLog(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		//System.out.println("Fecha : " + data.getString("date"));
+		//result.add(message.body().toString());
+			Database.mySqlClient.preparedQuery("INSERT INTO dad.log (id_board, date, issue) VALUES (?,?,?);",
+				Tuple.of(data.getInteger("id_board"), data.getValue("date"), data.getString("issue")),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						data.remove("CLASS");
+						data.put("id", resultSet.property(MySQLClient.LAST_INSERTED_ID));
+						result.add(data);
+
+					} else {
+						System.out.println("Failure: " + res.cause());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
 	}
 
 	@Override

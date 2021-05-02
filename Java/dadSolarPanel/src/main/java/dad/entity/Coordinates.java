@@ -9,11 +9,11 @@ public class Coordinates {
 	public Coordinates() {
 		super();
 	}
-	public Coordinates(int id, Double longitud, Double latitud) {
+	public Coordinates(int id, Double longitude, Double latitude) {
 		super();
 		this.id = id;
-		this.longitude = longitud;
-		this.latitude = latitud;
+		this.longitude = longitude;
+		this.latitude = latitude;
 	}
 	public int getId() {
 		return id;
@@ -21,16 +21,16 @@ public class Coordinates {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public Double getLongitud() {
+	public Double getLongitude() {
 		return longitude;
 	}
-	public void setLongitud(Double longitud) {
+	public void setLongitude(Double longitud) {
 		this.longitude = longitud;
 	}
-	public Double getLatitud() {
+	public Double getLatitude() {
 		return latitude;
 	}
-	public void setLatitud(Double latitud) {
+	public void setLatitude(Double latitud) {
 		this.latitude = latitud;
 	}
 	@Override

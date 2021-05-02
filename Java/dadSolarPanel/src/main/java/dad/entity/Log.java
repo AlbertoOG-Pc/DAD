@@ -10,7 +10,7 @@ public class Log {
 	private LocalDateTime date;
 	private String issue;
 
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	public Log() {
 		super();
