@@ -29,7 +29,7 @@ public class App extends AbstractVerticle {
 
 	private void getQuery(Message<?> message) {
 		JsonArray result = new JsonArray();
-		
+
 		switch (message.body().toString()) {
 		case "board_ALL":
 			BoardImpl.getALLBoard(message);
@@ -53,25 +53,25 @@ public class App extends AbstractVerticle {
 
 		// return result;
 	}
-	
+
 	private void getQueryPost(Message<?> message) {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
-			System.out.println("Aqui llego");
+			//System.out.println("Aqui llego");
 			BoardImpl.createBoard(message);
 			break;
 		case "Log":
-			//System.out.println("Aqui llego");
+			// System.out.println("Aqui llego");
 			LogImpl.createLog(message);
 			break;
-		case "coordinates":
+		case "Coordinates":
 			CoordinatesImpl.createCoordinates(message);
 			break;
-		case "boardProduction":
+		case "BoardProduction":
 			BoardProductionImpl.createBoardProduction(message);
 			break;
-		case "sunPosition":
+		case "SunPosition":
 			SunPositionImpl.createSunPosition(message);
 			break;
 		default:

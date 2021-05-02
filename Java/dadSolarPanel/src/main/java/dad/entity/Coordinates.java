@@ -2,37 +2,44 @@ package dad.entity;
 
 public class Coordinates {
 	private int id;
-	private Double longitude;
-	private Double latitude;
-	
-	
+	private Float longitude;
+	private Float latitude;
+
 	public Coordinates() {
 		super();
 	}
-	public Coordinates(int id, Double longitude, Double latitude) {
+
+	public Coordinates(int id, Float longitude, Float latitude) {
 		super();
 		this.id = id;
 		this.longitude = longitude;
 		this.latitude = latitude;
 	}
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	public Double getLongitude() {
+
+	public Float getLongitude() {
 		return longitude;
 	}
-	public void setLongitude(Double longitud) {
+
+	public void setLongitude(Float longitud) {
 		this.longitude = longitud;
 	}
-	public Double getLatitude() {
+
+	public Float getLatitude() {
 		return latitude;
 	}
-	public void setLatitude(Double latitud) {
+
+	public void setLatitude(Float latitud) {
 		this.latitude = latitud;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -42,6 +49,7 @@ public class Coordinates {
 		result = prime * result + ((longitude == null) ? 0 : longitude.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -65,10 +73,10 @@ public class Coordinates {
 			return false;
 		return true;
 	}
+
 	@Override
 	public String toString() {
 		return "Coordenadas [id=" + id + ", longitud=" + longitude + ", latitud=" + latitude + "]";
 	}
-	
-	
+
 }

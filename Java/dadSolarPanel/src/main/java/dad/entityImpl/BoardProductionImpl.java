@@ -37,9 +37,9 @@ public class BoardProductionImpl {
 				// System.out.println(resultSet.size());
 				for (Row elem : resultSet) {
 					System.out.println("Elementos " + elem);
-					result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id_board"),
-							elem.getInteger("id_sun"), elem.getInteger("positionServo"), elem.getLocalDateTime("date"),
-							elem.getDouble("production"))));
+					result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
+							elem.getInteger("id_board"), elem.getInteger("positionServo"),
+							elem.getLocalDateTime("date"), elem.getFloat("production"))));
 				}
 				// resultado = result.toString();
 			} else {
@@ -53,23 +53,23 @@ public class BoardProductionImpl {
 	public static void createBoardProduction(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
-		//result.add(message.body().toString());
+		// result.add(message.body().toString());
 		Database.mySqlClient.preparedQuery(
-				"INSERT INTO dad.board_production (id_board, id_sun, positionServo, date, production) VALUES (?,?,?,?,?);",
-				Tuple.of(data.getInteger("id_board"), data.getInteger("id_sun"), data.getInteger("positionServo"),
-						data.getValue("date"), data.getFloat("production")),
+				"INSERT INTO dad.board_production (id_board, positionServo, date, production) VALUES (?,?,?,?);",
+				Tuple.of(data.getInteger("id_board"), data.getInteger("positionServo"), data.getValue("date"),
+						data.getFloat("production")),
 				res -> {
 					if (res.succeeded()) {
 						// Get the result set
-						// RowSet<Row> resultSet = res.result();
+						RowSet<Row> resultSet = res.result();
 						data.remove("CLASS");
-						// data.put("id", resultSet.property(MySQLClient.LAST_INSERTED_ID));
+						data.put("id", resultSet.property(MySQLClient.LAST_INSERTED_ID));
 						result.add(data);
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
-						//resultado = "Error: " + res.cause().getLocalizedMessage();
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
 					}
 					message.reply(result.toString());
 				});

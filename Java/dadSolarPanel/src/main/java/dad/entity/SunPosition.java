@@ -8,8 +8,8 @@ public class SunPosition {
 	private int id;
 	private int id_coordinates;
 	private LocalDateTime date;
-	private double elevation;
-	private double azimut;
+	private Float elevation;
+	private Float azimut;
 
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -17,7 +17,7 @@ public class SunPosition {
 		super();
 	}
 
-	public SunPosition(int id, int id_coordinates, LocalDateTime date, double elevation, double azimut) {
+	public SunPosition(int id, int id_coordinates, LocalDateTime date, Float elevation, Float azimut) {
 		super();
 		this.id = id;
 		this.id_coordinates = id_coordinates;
@@ -55,19 +55,19 @@ public class SunPosition {
 		this.date = date;
 	}
 
-	public double getElevation() {
+	public Float getElevation() {
 		return elevation;
 	}
 
-	public void setElevation(double elevation) {
+	public void setElevation(Float elevation) {
 		this.elevation = elevation;
 	}
 
-	public double getAzimut() {
+	public Float getAzimut() {
 		return azimut;
 	}
 
-	public void setAzimut(double azimut) {
+	public void setAzimut(Float azimut) {
 		this.azimut = azimut;
 	}
 

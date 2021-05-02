@@ -73,7 +73,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		System.out.println(routingContext.getBodyAsString());
 		final BoardProduction boardProduction = gson.fromJson(routingContext.getBodyAsString(), BoardProduction.class);
 		System.out.println("Aqui llego create");
-		eventBus.request("POST", JsonObject.mapFrom(boardProduction).put("CLASS", "boardProduction"), reply -> {
+		eventBus.request("POST", JsonObject.mapFrom(boardProduction).put("CLASS", "BoardProduction"), reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
