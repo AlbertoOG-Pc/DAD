@@ -7,8 +7,10 @@ import dad.entity.SunPosition;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.Tuple;
 
 public class SunPositionImpl {
 
@@ -54,27 +56,27 @@ public class SunPositionImpl {
 
 	public static void createSunPosition(Message<?> message) {
 		JsonArray result = new JsonArray();
-		message.body().toString();
-		result.add(message.body().toString());
-		/*Database.mySqlClient.query("SELECT * FROM dad.sunposition;", res -> {
-			if (res.succeeded()) {
-				// Get the result set
-				RowSet<Row> resultSet = res.result();
-				// System.out.println(resultSet.size());
-				for (Row elem : resultSet) {
-					System.out.println("Elementos " + elem);
-					result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
-							elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
-							elem.getDouble("elevation"), elem.getDouble("azimut"))));
-				}
-				// resultado = result.toString();
-			} else {
-				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-				// resultado = "Error: " + res.cause().getLocalizedMessage();
-			}
-		});*/
-		message.reply(result.toString());
+		JsonObject data = JsonObject.mapFrom(message.body());
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery(
+				"INSERT INTO dad.sunposition (id_coordinates, date, elevation, azimut) VALUES (?,?,?,?);",
+				Tuple.of(data.getInteger("id_coordinates"), data.getValue("date"), data.getFloat("elevation"),
+						data.getFloat("azimut")),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						data.remove("CLASS");
+						data.put("id", resultSet.property(MySQLClient.LAST_INSERTED_ID));
+						result.add(data);
 
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
 	}
 
 	@Override

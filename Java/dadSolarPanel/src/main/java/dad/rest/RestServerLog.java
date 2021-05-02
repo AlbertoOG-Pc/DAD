@@ -38,9 +38,9 @@ public class RestServerLog implements LogHandler {
 
 	public RestServerLog(Vertx vertx, Router router) {
 		this.router = router;
-
 		eventBus = vertx.eventBus();
-		//Fumadita by stackoverflow
+
+		// Fumadita by stackoverflow
 		gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
 			@Override
 			public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
