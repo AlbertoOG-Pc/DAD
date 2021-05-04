@@ -3,6 +3,7 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
+import dad.entity.Coordinates;
 import dad.entity.Log;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
@@ -51,11 +52,10 @@ public class LogImpl {
 	public static void createLog(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
-		//System.out.println("Fecha : " + data.getString("date"));
-		//result.add(message.body().toString());
-			Database.mySqlClient.preparedQuery("INSERT INTO dad.log (id_board, date, issue) VALUES (?,?,?);",
-				Tuple.of(data.getInteger("id_board"), data.getValue("date"), data.getString("issue")),
-				res -> {
+		// System.out.println("Fecha : " + data.getString("date"));
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery("INSERT INTO dad.log (id_board, date, issue) VALUES (?,?,?);",
+				Tuple.of(data.getInteger("id_board"), data.getValue("date"), data.getString("issue")), res -> {
 					if (res.succeeded()) {
 						// Get the result set
 						RowSet<Row> resultSet = res.result();
@@ -70,6 +70,52 @@ public class LogImpl {
 					}
 					message.reply(result.toString());
 				});
+	}
+
+	public static void updateLog(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery("UPDATE dad.log SET id_board = ?, date = ?, issue = ?, WHERE id = ?", Tuple
+				.of(data.getInteger("id_board"), data.getValue("date"), data.getString("issue"), data.getInteger("id")),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new Log(elem.getInteger("id"), elem.getInteger("id_board"),
+									elem.getLocalDateTime("date"), elem.getString("issue"))));
+						}
+						// result.add(data);
+
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void deleteLog(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery("DELETE FROM dad.log WHERE id = ?", Tuple.of(data.getInteger("id")), res -> {
+			if (res.succeeded()) {
+
+				result.add(data);
+
+			} else {
+				System.out.println("Failure: " + res.cause().getMessage());
+				result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+				// resultado = "Error: " + res.cause().getLocalizedMessage();
+			}
+			message.reply(result.toString());
+		});
 	}
 
 	@Override

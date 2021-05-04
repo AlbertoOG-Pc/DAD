@@ -3,6 +3,7 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
+import dad.entity.Board;
 import dad.entity.Coordinates;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
@@ -64,6 +65,52 @@ public class CoordinatesImpl {
 
 					} else {
 						System.out.println("Failure: " + res.cause());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void updateCoordinates(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery("UPDATE dad.coordinates SET latitude = ?, longitude = ? WHERE id = ?",
+				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude"), data.getInteger("id")), res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"),
+									elem.getFloat("latitude"), elem.getFloat("longitude"))));
+						}
+						// result.add(data);
+
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void deleteCoordinates(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery("DELETE FROM dad.coordinates WHERE id = ?", Tuple.of(data.getInteger("id")),
+				res -> {
+					if (res.succeeded()) {
+
+						result.add(data);
+
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 						// resultado = "Error: " + res.cause().getLocalizedMessage();
 					}

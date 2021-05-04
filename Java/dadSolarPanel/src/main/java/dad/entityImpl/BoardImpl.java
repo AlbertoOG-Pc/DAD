@@ -80,13 +80,12 @@ public class BoardImpl {
 					if (res.succeeded()) {
 						// Get the result set
 						RowSet<Row> resultSet = res.result();
-						// System.out.println(resultSet.size());
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"), elem.getInteger("id_coordinates"),
-									elem.getDouble("maxPower"))));
+							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
+									elem.getInteger("id_coordinates"), elem.getDouble("maxPower"))));
 						}
-						//result.add(data);
+						// result.add(data);
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
@@ -96,18 +95,18 @@ public class BoardImpl {
 					message.reply(result.toString());
 				});
 	}
-	
+
 	public static void deleteBoard(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
 		// result.add(message.body().toString());
-		Database.mySqlClient.preparedQuery("DELETE FROM dad.board WHERE id = ?",
-				Tuple.of(data.getInteger("id")), res -> {
+		Database.mySqlClient.preparedQuery("DELETE FROM dad.board WHERE id = ?", Tuple.of(data.getInteger("id")),
+				res -> {
 					if (res.succeeded()) {
-						
+
 						result.add(data);
-						
+
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));

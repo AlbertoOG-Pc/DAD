@@ -32,7 +32,7 @@ public class App extends AbstractVerticle {
 			System.out.println("APP DELETE");
 			getQueryDelete(message);
 		});
-		
+
 	}
 
 	private void getQuery(Message<?> message) {
@@ -66,7 +66,7 @@ public class App extends AbstractVerticle {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
-			//System.out.println("Aqui llego");
+			// System.out.println("Aqui llego");
 			BoardImpl.createBoard(message);
 			break;
 		case "Log":
@@ -89,26 +89,27 @@ public class App extends AbstractVerticle {
 
 		// return result;
 	}
-	
+
 	private void getQueryPut(Message<?> message) {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
-			//System.out.println("Aqui llego");
+			// System.out.println("Aqui llego");
 			BoardImpl.updateBoard(message);
 			break;
 		case "Log":
 			// System.out.println("Aqui llego");
-			//LogImpl.updateLog(message);
+			LogImpl.updateLog(message);
 			break;
 		case "Coordinates":
-			//CoordinatesImpl.updateCoordinates(message);
+			CoordinatesImpl.updateCoordinates(message);
 			break;
 		case "BoardProduction":
-			//BoardProductionImpl.updateBoardProduction(message);
+			System.out.println("Hola");
+			BoardProductionImpl.updateBoardProduction(message);
 			break;
 		case "SunPosition":
-			//SunPositionImpl.updateSunPosition(message);
+			SunPositionImpl.updateSunPosition(message);
 			break;
 		default:
 			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
@@ -117,26 +118,25 @@ public class App extends AbstractVerticle {
 
 		// return result;
 	}
-	
+
 	private void getQueryDelete(Message<?> message) {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
-			//System.out.println("Aqui llego");
 			BoardImpl.deleteBoard(message);
 			break;
 		case "Log":
-			// System.out.println("Aqui llego");
-			//LogImpl.updateLog(message);
+			LogImpl.deleteLog(message);
 			break;
 		case "Coordinates":
-			//CoordinatesImpl.updateCoordinates(message);
+			CoordinatesImpl.deleteCoordinates(message);
 			break;
 		case "BoardProduction":
-			//BoardProductionImpl.updateBoardProduction(message);
+			System.out.println("Hola");
+			BoardProductionImpl.deleteBoardProduction(message);
 			break;
 		case "SunPosition":
-			//SunPositionImpl.updateSunPosition(message);
+			SunPositionImpl.deleteSunPosition(message);
 			break;
 		default:
 			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
@@ -145,7 +145,7 @@ public class App extends AbstractVerticle {
 
 		// return result;
 	}
-	
+
 	@Override
 	public void stop(Future<Void> stopFuture) throws Exception {
 		super.stop(stopFuture);

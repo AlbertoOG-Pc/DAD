@@ -11,7 +11,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-import dad.entity.Board;
 import dad.entity.SunPosition;
 import dad.interfaces.SunPositionHandler;
 import io.vertx.core.Vertx;
@@ -51,6 +50,8 @@ public class RestServerSunPosition implements SunPositionHandler {
 		}).create();
 		router.get("/api/sunPosition").handler(this::getAll);
 		router.post("/api/sunPosition").handler(this::createSunPosition);
+		router.put("/api/sunPosition").handler(this::updateSunPosition);
+		router.delete("/api/sunPosition/:id").handler(this::deleteSunPosition);
 
 	}
 
@@ -72,6 +73,40 @@ public class RestServerSunPosition implements SunPositionHandler {
 
 		final SunPosition sunPosition = gson.fromJson(routingContext.getBodyAsString(), SunPosition.class);
 		eventBus.request("POST", JsonObject.mapFrom(sunPosition).put("CLASS", "SunPosition"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void updateSunPosition(RoutingContext routingContext) {
+		// System.out.println(routingContext.getBodyAsString());
+
+		final SunPosition sunPosition = gson.fromJson(routingContext.getBodyAsString(), SunPosition.class);
+		eventBus.request("PUT", JsonObject.mapFrom(sunPosition).put("CLASS", "SunPosition"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void deleteSunPosition(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "SunPosition").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+
+		eventBus.request("DELETE", obj, reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();

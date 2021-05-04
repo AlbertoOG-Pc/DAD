@@ -3,6 +3,7 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
+import dad.entity.Board;
 import dad.entity.SunPosition;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
@@ -68,6 +69,57 @@ public class SunPositionImpl {
 						RowSet<Row> resultSet = res.result();
 						data.remove("CLASS");
 						data.put("id", resultSet.property(MySQLClient.LAST_INSERTED_ID));
+						result.add(data);
+
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void updateSunPosition(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		System.out.println(message.body().toString());
+		Database.mySqlClient.preparedQuery(
+				"UPDATE dad.sunposition SET id_coordinates = ?, date = ?, elevation = ?, azimut = ? WHERE id = ?",
+				Tuple.of(data.getInteger("id_coordinates"), data.getValue("date"), data.getFloat("elevation"),
+						data.getFloat("azimut"), data.getInteger("id")),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
+									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
+									elem.getFloat("elevation"), elem.getFloat("azimut"))));
+						}
+						// result.add(data);
+
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void deleteSunPosition(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery("DELETE FROM dad.sunposition WHERE id = ?", Tuple.of(data.getInteger("id")),
+				res -> {
+					if (res.succeeded()) {
+
 						result.add(data);
 
 					} else {

@@ -11,7 +11,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-import dad.entity.Board;
 import dad.entity.BoardProduction;
 import dad.interfaces.BoardProductionHandler;
 import io.vertx.core.Vertx;
@@ -44,6 +43,8 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 
 		router.get("/api/boardProduction").handler(this::getAll);
 		router.post("/api/boardProduction").handler(this::createBoardProduction);
+		router.put("/api/boardProduction").handler(this::updateBoardProduction);
+		router.delete("/api/boardProduction/:id").handler(this::deleteBoardProduction);
 
 	}
 
@@ -74,6 +75,41 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		final BoardProduction boardProduction = gson.fromJson(routingContext.getBodyAsString(), BoardProduction.class);
 		System.out.println("Aqui llego create");
 		eventBus.request("POST", JsonObject.mapFrom(boardProduction).put("CLASS", "BoardProduction"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void updateBoardProduction(RoutingContext routingContext) {
+		System.out.println(routingContext.getBodyAsString());
+		final BoardProduction boardProduction = gson.fromJson(routingContext.getBodyAsString(), BoardProduction.class);
+		System.out.println("Aqui llego create");
+		eventBus.request("PUT", JsonObject.mapFrom(boardProduction).put("CLASS", "BoardProduction"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void deleteBoardProduction(RoutingContext routingContext) {
+		System.out.println("Hola");
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "BoardProduction").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+
+		eventBus.request("DELETE", obj, reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
