@@ -3,6 +3,7 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
+import dad.entity.Board;
 import dad.entity.BoardProduction;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
@@ -64,6 +65,57 @@ public class BoardProductionImpl {
 						RowSet<Row> resultSet = res.result();
 						data.remove("CLASS");
 						data.put("id", resultSet.property(MySQLClient.LAST_INSERTED_ID));
+						result.add(data);
+
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void updateBoardProduction(Message<?> message) {
+		System.out.println("Holi");
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery(
+				"UPDATE dad.board_production SET id_board = ?, positionServo = ?, date = ?, production = ? WHERE id = ?",
+				Tuple.of(data.getInteger("id"), data.getInteger("id_board"), data.getInteger("positionServo"),
+						data.getValue("date"), data.getFloat("production")),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
+									elem.getInteger("id_board"), elem.getInteger("positionServo"),
+									elem.getLocalDateTime("date"), data.getFloat("production"))));
+						}
+
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void deleteBoardProduction(Message<?> message) {
+		System.out.println("Hola");
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		// result.add(message.body().toString());
+		Database.mySqlClient.preparedQuery("DELETE FROM dad.board_production WHERE id = ?",
+				Tuple.of(data.getInteger("id")), res -> {
+					if (res.succeeded()) {
+
 						result.add(data);
 
 					} else {

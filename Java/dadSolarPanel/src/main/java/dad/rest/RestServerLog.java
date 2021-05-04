@@ -53,6 +53,9 @@ public class RestServerLog implements LogHandler {
 
 		router.get("/api/log").handler(this::getAll);
 		router.post("/api/log").handler(this::createLog);
+		router.put("/api/log").handler(this::updateLog);
+		router.delete("/api/log/:id").handler(this::deleteLog);
+
 	}
 
 	public void getAll(RoutingContext routingContext) {
@@ -74,6 +77,40 @@ public class RestServerLog implements LogHandler {
 		final Log log = gson.fromJson(routingContext.getBodyAsString(), Log.class);
 		// System.out.println("Aqui llego create");
 		eventBus.request("POST", JsonObject.mapFrom(log).put("CLASS", "Log"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void updateLog(RoutingContext routingContext) {
+		// System.out.println(routingContext.getBodyAsString());
+
+		final Log log = gson.fromJson(routingContext.getBodyAsString(), Log.class);
+		eventBus.request("PUT", JsonObject.mapFrom(log).put("CLASS", "Log"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void deleteLog(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "Log").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+
+		eventBus.request("DELETE", obj, reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
