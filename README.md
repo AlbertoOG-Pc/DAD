@@ -1,8 +1,6 @@
-
-
 # Panel Solar Inteligente Distribuido
 > Alberto Otero González y Pablo Ruiz Jurado
-## Introducción 
+## Introducción
 ### Introducción del proyecto en la asignatura
 En la asignatura de Desarrollo de Aplicaciones Distribuidas (DAD) se ha propuesto realizar un proyecto software-hardware en el que con la ayuda del SOC ESP8266, conocido comúnmente como NodeMCU, crearemos de 0 un sistema distribuido con el uso de sensores y actuadores todo esto gestionado mediante una API Rest.
 ### Paneles Solares Distribuidos
@@ -30,7 +28,10 @@ La altura y el acimut son coordenadas que dependen de la posición del observado
 Actualmente, se utiliza un sextante para medir la altura de un astro. Las coordenadas horizontales pueden ser calculadas matemáticamente.
 Esta información puede ser usada para calcular la radiación solar recibida por la tierra en un periodo determinado o la proyección de sombras de un elemento que aún no existe, como un edificio, entre otras muchísimas funciones.
 
-```JSON
+Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
+
+
+```
 {
     "id": 2,
     "id_board": 3,
@@ -39,15 +40,3 @@ Esta información puede ser usada para calcular la radiación solar recibida por
     "production": 41
 } 
 ```
-
-
-
-
-
-
-
-
-
-
- 
-
