@@ -47,31 +47,31 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
   - **Petición**: 
 ``/api/boards``
   -  Resultado:
-    ```Java
+    ```javascript
 	[
-	  {
-	    "id": 1,                          //Identificador de la placa
-	    "maxPower": 5.8,                  //Producción máxima
-	    "coordinate":                     //Ubicación
-        {                   
-          "id": 2,                        //Id de la coordenada
-          "longitude": 30.0,              //Longitud
-          "latitude": 30.0                //Latitud
-        } 
-	  },
-	  { 
-      "id": 2,
-      "maxPower": 8.77,
-      "coordinate":
-        {
-          "id": 1,
-          "longitude": 25.0,
-          "latitude": 25.0
-        }
- 	  },
-      .
-      .
-      .
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 2,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		},
+		{ 
+		"id": 2,
+		"maxPower": 8.77,
+		"coordinate":
+			{
+			"id": 1,
+			"longitude": 25.0,
+			"latitude": 25.0
+			}
+		},
+		.
+		.
+		.
 	]
     ```
   - Código de Error:
