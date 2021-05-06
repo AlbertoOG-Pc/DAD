@@ -1,5 +1,5 @@
 
-# Panel Solar Inteligente Distribuido
+# Panel Solar Inteligente Distribuido (WIP)
 > Alberto Otero González y Pablo Ruiz Jurado
 ## Introducción
 ### Introducción del proyecto en la asignatura
@@ -29,7 +29,18 @@ La altura y el acimut son coordenadas que dependen de la posición del observado
 Actualmente, se utiliza un sextante para medir la altura de un astro. Las coordenadas horizontales pueden ser calculadas matemáticamente.
 Esta información puede ser usada para calcular la radiación solar recibida por la tierra en un periodo determinado o la proyección de sombras de un elemento que aún no existe, como un edificio, entre otras muchísimas funciones.
 
-Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
+Con estos dos datos nuestro sistema sabrá como orientar cada placa solar. 
+
+
+(WIP)
+
+# Base de datos
+Nuestra base de datos está diseñada la siguiente forma:
+
+<p align="center">
+<img src = "https://user-images.githubusercontent.com/52832300/117362786-fb1c8600-aebb-11eb-851a-b2d7e28abd1b.png">
+</p>
+
 
 # API
 ## Clases
