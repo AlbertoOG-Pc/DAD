@@ -9,8 +9,18 @@ import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD
+ *         Class RestServer - Entrada principal
+ *
+ */
 public class RestServer extends AbstractVerticle {
 
+	/**
+	 *
+	 */
 	public void start(Promise<Void> startFuture) {
 		getVertx().eventBus();
 

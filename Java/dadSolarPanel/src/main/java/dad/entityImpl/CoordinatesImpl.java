@@ -3,7 +3,6 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
-import dad.entity.Board;
 import dad.entity.Coordinates;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
@@ -13,47 +12,71 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Tuple;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD Class CoordinatesImpl - Entidad que
+ *         implementa el modelo de datos la clase Coordinates. Que se usara para
+ *         realizar las consultas a la base de datos
+ */
 public class CoordinatesImpl {
+	/**
+	 * Lista donde almacenaremos los datos extraidos de la base de datos
+	 */
 	private List<Coordinates> coordinatesList;
 
+	/**
+	 * Constructor vacio
+	 */
 	public CoordinatesImpl() {
 		super();
 	}
 
+	/**
+	 * @return Devuelve el listado de Coordinates
+	 */
 	public List<Coordinates> getBoardList() {
 		return coordinatesList;
 	}
 
+	/**
+	 * @param coordinatesList List<Coordinates> Establece o modifica el listado de
+	 *                        Coordenadas recibido
+	 */
 	public void setBoardList(List<Coordinates> coordinatesList) {
 		this.coordinatesList = coordinatesList;
 	}
 
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
 	public static void getALLCoordinates(Message<?> message) {
 		JsonArray result = new JsonArray();
 		Database.mySqlClient.query("SELECT * FROM dad.coordinates;", res -> {
 			if (res.succeeded()) {
 				// Get the result set
 				RowSet<Row> resultSet = res.result();
-				// System.out.println(resultSet.size());
 				for (Row elem : resultSet) {
 					System.out.println("Elementos " + elem);
 					result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"), elem.getFloat("latitude"),
 							elem.getFloat("longitude"))));
 				}
-				// resultado = result.toString();
 			} else {
 				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-				// resultado = "Error: " + res.cause().getLocalizedMessage();
 			}
 			message.reply(result.toString());
 		});
 	}
 
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
 	public static void createCoordinates(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		System.out.println(data.getDouble("longitude"));
-		// result.add(message.body().toString());
 		Database.mySqlClient.preparedQuery("INSERT INTO dad.coordinates (latitude, longitude) VALUES (?, ?)",
 				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude")), res -> {
 					if (res.succeeded()) {
@@ -66,17 +89,19 @@ public class CoordinatesImpl {
 					} else {
 						System.out.println("Failure: " + res.cause());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
-						// resultado = "Error: " + res.cause().getLocalizedMessage();
 					}
 					message.reply(result.toString());
 				});
 	}
 
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
 	public static void updateCoordinates(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
-		// result.add(message.body().toString());
 		Database.mySqlClient.preparedQuery("UPDATE dad.coordinates SET latitude = ?, longitude = ? WHERE id = ?",
 				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude"), data.getInteger("id")), res -> {
 					if (res.succeeded()) {
@@ -87,22 +112,23 @@ public class CoordinatesImpl {
 							result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"),
 									elem.getFloat("latitude"), elem.getFloat("longitude"))));
 						}
-						// result.add(data);
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
-						// resultado = "Error: " + res.cause().getLocalizedMessage();
 					}
 					message.reply(result.toString());
 				});
 	}
 
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
 	public static void deleteCoordinates(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
-		// result.add(message.body().toString());
 		Database.mySqlClient.preparedQuery("DELETE FROM dad.coordinates WHERE id = ?", Tuple.of(data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
@@ -112,12 +138,14 @@ public class CoordinatesImpl {
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
-						// resultado = "Error: " + res.cause().getLocalizedMessage();
 					}
 					message.reply(result.toString());
 				});
 	}
 
+	/**
+	 * Metodo hashCode() autogenerado
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -126,6 +154,9 @@ public class CoordinatesImpl {
 		return result;
 	}
 
+	/**
+	 * Metodo equals() autogenerado
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -143,6 +174,9 @@ public class CoordinatesImpl {
 		return true;
 	}
 
+	/**
+	 * Metodo toString() autogenerado
+	 */
 	@Override
 	public String toString() {
 		return "BoardImpl [boardList=" + coordinatesList + "]";

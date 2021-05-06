@@ -12,38 +12,84 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD
+ * 
+ *         Class APP - Clase que comunica Verticles. Recibe la comunicacion
+ *         atravez del eventBus de Vertx y ejecutara las funciones que
+ *         correspondan
+ *
+ */
 public class App extends AbstractVerticle {
 
+	/**
+	 * Metodo Start o Main del Verticle punto de entrada de la comunicacion mediante
+	 * el eventBus.
+	 * 
+	 */
 	@Override
 	public void start(Promise<Void> startFuture) {
+		/* Comunicacion con METODOS GET */
 		getVertx().eventBus().consumer("consulta", message -> {
 			System.out.println("APP consulta");
 			getQuery(message);
 		});
+
+		/* Comunicacion con METODOS POST */
 		getVertx().eventBus().consumer("POST", message -> {
 			System.out.println("APP POST");
 			getQueryPost(message);
 		});
+
+		/* Comunicacion con METODOS PUT */
 		getVertx().eventBus().consumer("PUT", message -> {
 			System.out.println("APP PUT");
 			getQueryPut(message);
 		});
+
+		/* Comunicacion con METODOS PATCH */
+		getVertx().eventBus().consumer("PATCH", message -> {
+			System.out.println("APP PATCH");
+			getQueryPatch(message);
+		});
+
+		/* Comunicacion con METODOS DELETE */
 		getVertx().eventBus().consumer("DELETE", message -> {
 			System.out.println("APP DELETE");
 			getQueryDelete(message);
 		});
-
 	}
 
+	/**
+	 * @param message -- Recibe un Message en el cual el cuerpo debe tener un
+	 *                String que contiene la clase accedida en funcion de la
+	 *                consulta pedida
+	 */
 	private void getQuery(Message<?> message) {
 		JsonArray result = new JsonArray();
-
-		switch (message.body().toString()) {
+		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "board_ALL":
 			BoardImpl.getALLBoard(message);
 			break;
+		case "board_ONE":
+			BoardImpl.getOneBoard(message);
+			break;
+		case "board_ALL_coordinate":
+			BoardImpl.getALLforCordinates(message);
+			break;
 		case "log_ALL":
 			LogImpl.getALLLog(message);
+			break;
+		case "log_ONE":
+			LogImpl.getOneLog(message);
+			break;
+		case "log_ONE_board":
+			LogImpl.getALLLogBoard(message);
+			break;
+		case "log_ALL_dateFilter":
+			LogImpl.getALLLogDateFilter(message);
 			break;
 		case "coordinates_ALL":
 			CoordinatesImpl.getALLCoordinates(message);
@@ -55,22 +101,23 @@ public class App extends AbstractVerticle {
 			SunPositionImpl.getALLSunPosition(message);
 			break;
 		default:
-			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
+			result.add("{'Error': 'Method GET Comunicacion fallida entre verticle'}");
 			message.reply(result.toString());
 		}
-
-		// return result;
 	}
 
+	/**
+	 * @param message -- Recibe un objeto message el cual en el cuerpo contiene un
+	 *                Json con los datos que se van han recibido en las peticiones
+	 *                POST ademas debe incluir la clase a la que se accede.
+	 */
 	private void getQueryPost(Message<?> message) {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
-			// System.out.println("Aqui llego");
 			BoardImpl.createBoard(message);
 			break;
 		case "Log":
-			// System.out.println("Aqui llego");
 			LogImpl.createLog(message);
 			break;
 		case "Coordinates":
@@ -83,22 +130,23 @@ public class App extends AbstractVerticle {
 			SunPositionImpl.createSunPosition(message);
 			break;
 		default:
-			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
+			result.add("{'Error': 'Method POST Comunicacion fallida entre verticle'}");
 			message.reply(result.toString());
 		}
-
-		// return result;
 	}
 
+	/**
+	 * @param message -- Recibe un objeto message el cual en el cuerpo contiene un
+	 *                Json con los datos que se van han recibido en las peticiones
+	 *                POST ademas debe incluir la clase a la que se accede.
+	 */
 	private void getQueryPut(Message<?> message) {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "Board":
-			// System.out.println("Aqui llego");
 			BoardImpl.updateBoard(message);
 			break;
 		case "Log":
-			// System.out.println("Aqui llego");
 			LogImpl.updateLog(message);
 			break;
 		case "Coordinates":
@@ -112,13 +160,33 @@ public class App extends AbstractVerticle {
 			SunPositionImpl.updateSunPosition(message);
 			break;
 		default:
-			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
+			result.add("{'Error': 'Method PUT Comunicacion fallida entre verticle'}");
 			message.reply(result.toString());
 		}
-
-		// return result;
 	}
 
+	/**
+	 * @param message -- Recibe un objeto message el cual en el cuerpo contiene un
+	 *                Json con los datos que se van han recibido en las peticiones
+	 *                POST ademas debe incluir la clase a la que se accede.
+	 */
+	private void getQueryPatch(Message<?> message) {
+		JsonArray result = new JsonArray();
+		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
+		case "board_ALL_coordinate":
+			BoardImpl.updateBoardCoordinates(message);
+			break;
+		default:
+			result.add("{'Error': 'Method PATCH Comunicacion fallida entre verticle'}");
+			message.reply(result.toString());
+		}
+	}
+
+	/**
+	 * @param message -- Recibe un objeto message el cual en el cuerpo contiene un
+	 *                Json con los datos que se van han recibido en las peticiones
+	 *                POST ademas debe incluir la clase a la que se accede.
+	 */
 	private void getQueryDelete(Message<?> message) {
 		JsonArray result = new JsonArray();
 		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
@@ -139,13 +207,14 @@ public class App extends AbstractVerticle {
 			SunPositionImpl.deleteSunPosition(message);
 			break;
 		default:
-			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));
+			result.add("{'Error': 'Method DELETE Comunicacion fallida entre verticle'}");
 			message.reply(result.toString());
 		}
-
-		// return result;
 	}
 
+	/**
+	 * Metodo para parar el verticle.
+	 */
 	@Override
 	public void stop(Future<Void> stopFuture) throws Exception {
 		super.stop(stopFuture);
