@@ -42,13 +42,14 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 |SunPosition| Las coordenadas horizontales (Altura y Acimut) del sol en cada momento con un intervalo de 30 minutos entre ellas desde una coordenada concreta|
 
 ### Board
-#### Puntos de acceso
-##### Peticiones GET
-- Para obtener la información respectiva a todas las placas
+#### Peticiones GET
+##### Para obtener la información respectiva a todas las placas
   - **Petición**: 
-``/api/boards``
+  	- URI : ``/api/boards``
+  	- body: ``{}``
   -  **Resultado**:
-    ```javascript
+ 
+```javascript
 	[
 		{
 		"id": 1,					//Identificador de la placa
@@ -74,11 +75,12 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 		.
 		.
 	]
-    ```
+```
+    
   - **Código de Error**:
   ```Java
     //TODO
-    ```
+  ```
 
 - Para obtener la información concreta de una placa
   - **Petición**: 
@@ -104,9 +106,10 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
   ```Java
   //TODO
   ```
-- Para obtener información sobre todas las placas de unas mismas coordenadas
-  - ``/api/board/filtercoordinates/{id_coordinates}``
-
+##### Para obtener información sobre todas las placas de unas mismas coordenadas
+- **Petición:**
+	- URI : ``/api/board/filtercoordinates/{id_coordinates}``
+  	- body: ``{}``
 -  **Resultado**:
     ```javascript
 	[
@@ -140,21 +143,16 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 	    //TODO
 	```
  
-##### Peticiones POST
-- Para registrar una placa en el sistema
+#### Peticiones POST
+##### Para registrar una placa en el sistema
   - **Petición**: 
-``/api/board``
+  	- URI : ``/api/board``
+  	- body: ``{}`
 ```javascript
 	[
 		{
-		"id": 1,					//Identificador de la placa
-		"maxPower": 5.8,				//Producción máxima
-		"coordinate":					//Ubicación
-			{
-			"id": 2,				//Id de la coordenada
-			"longitude": 30.0,			//Longitud
-			"latitude": 30.0			//Latitud
-			} 
+		"id_coordinate"  : 2				//Identificador de la coordenada
+		"maxPower": 5.8,				//Producción máxima	
 		}
 	]
 ```
@@ -180,16 +178,16 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
   //TODO
   ```
 
-##### Peticiones PUT
-Para modificar los datos de una placa
+#### Peticiones PUT
+##### Para modificar los datos de una placa
 - **Petición :**
-	-  URI: ``/api/board/{id}``
-	- Cuerpo: 
+	- URI: ``/api/board/{id}``
+	- body: 
 	Objeto JSON con los datos de la placa Actualizados
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador de la placa
+		"id": 1,					//Identificador de la placa
 		"maxPower": 9,					//Producción máxima
 		"id_coordinate": 1				//Id_Coordinate
 		}
@@ -216,17 +214,18 @@ Objeto JSON con los datos de la placa eliminada
     //TODO
   ```
 
-##### Peticiones PATCH
- Para modificar la localización de una placa, para ello usaremos una modificación del campo id_coordinates de la placa.
+#### Peticiones PATCH
+##### Para modificar la localización de una placa, para ello usaremos una modificación del campo id_coordinates de la placa.
 
 -  **Petición :**
-	- URI: ``/api/board/coordinates/{id} //id board a modificar``
-	- Cuerpo: 
+	- URI: ``/api/board/coordinates/{id} 	//id board a modificar``
+	- body: 
+
 Objeto JSON con los datos a Actualizar en este caso solo id_coordinates
 ```javascript
 	[
 		{
-		"id_coordinate": 1				//Identificador de la nueva coordenada
+		"id_coordinate": 1	//Identificador de la nueva coordenada
 		}
 	]
 ```
@@ -235,13 +234,13 @@ Objeto JSON con los datos de la placa eliminada
 ```javascript
 	[
 		{
-		"id": 1,					//Identificador de la placa
-		"maxPower": 5.8,				//Producción máxima
-		"coordinate":					//Ubicación
+		"id": 1,			//Identificador de la placa
+		"maxPower": 5.8,		//Producción máxima
+		"coordinate":			//Ubicación
 			{
-			"id": 1,				//Id de la coordenada
-			"longitude": 30.0,			//Longitud
-			"latitude": 30.0			//Latitud
+			"id": 1,			//Id de la coordenada
+			"longitude": 30.0,		//Longitud
+			"latitude": 30.0		//Latitud
 			} 
 		}
 	]
@@ -251,23 +250,23 @@ Objeto JSON con los datos de la placa eliminada
     //TODO
   ```
   
-##### Peticiones DELETE
- Para eliminar del sistema el registro de una placa
+#### Peticiones DELETE
+##### Para eliminar del sistema el registro de una placa
 - **Petición :**
 	- URI: ``/api/board/{id}``
-	- Cuerpo: `` {} ``
+	- body: `` {} ``
 - **Resultado:**
 Objeto JSON con los datos de la placa eliminada
 ```javascript
 	[
 		{
-		"id": 1,					//Identificador de la placa
-		"maxPower": 5.8,				//Producción máxima
-		"coordinate":					//Ubicación
+		"id": 1,			//Identificador de la placa
+		"maxPower": 5.8,		//Producción máxima
+		"coordinate":			//Ubicación
 			{
-			"id": 2,				//Id de la coordenada
-			"longitude": 30.0,			//Longitud
-			"latitude": 30.0			//Latitud
+			"id": 2,			//Id de la coordenada
+			"longitude": 30.0,		//Longitud
+			"latitude": 30.0		//Latitud
 			} 
 		}
 	]
@@ -279,21 +278,20 @@ Objeto JSON con los datos de la placa eliminada
   ```
 
 ### BoardProduction
-#### Puntos de acceso
-##### Peticiones GET
-Para obtener la información respectiva a la producción de todas las placas
+#### Peticiones GET
+##### Para obtener la información respectiva a la producción de todas las placas
   - **Petición**: 
-	-  URI: ``/api/boardsProduction``
-	- Cuerpo: ``{}``
+	- URI: ``/api/boardsProduction``
+	- body: ``{}``
   -  **Resultado**:
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"production": 20.27				//Produccion
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
+		"production": 20.27			//Produccion
 		},
 		{
 		"id": 2,					
@@ -312,20 +310,20 @@ Para obtener la información respectiva a la producción de todas las placas
 ```javascript
     //TODO
 ```
-Para obtener la información concreta de un registro de producción
+##### Para obtener la información concreta de un registro de producción
 - **Petición:**
 	- URI: ``/api/boardProduction/{id}``
-	- Cuerpo: ``{}``
+	- body: ``{}``
 
 - **Resultado:** 
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"production": 20.27				//Produccion
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
+		"production": 20.27			//Produccion
 		}
 	]
 ```
@@ -334,27 +332,27 @@ Para obtener la información concreta de un registro de producción
 //TODO
 ```
 
-Para obtener información sobre todas las placas de unas mismas coordenadas
+##### Para obtener información sobre todas las placas de unas mismas coordenadas
 - **Peticion:**
 	- URI:  ``/api/boardProduction/board/{id_board}``
-	- Cuerpo: ``{}``
-	- 
+	- body: ``{}``
+
 - **Resultado**:
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"production": 20.27				//Produccion
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
+		"production": 20.27			//Produccion
 		},
 		{
-		"id": 4,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-16 11:00:00",	//Fecha del regristro
-		"production": 20.27				//Produccion
+		"id": 4,					
+		"id_board": 2,				
+		"positionServo": 442,		
+		"date": "2021-04-16 11:00:00",	
+		"production": 20.27			
 		},
 		.
 		.
@@ -367,28 +365,28 @@ Para obtener información sobre todas las placas de unas mismas coordenadas
 //TODO
 ```
 
-Para obtener información sobre los registros de producción de una placa concreta, por encima de un umbral de producción.
+##### Para obtener información sobre los registros de producción de una placa concreta, por encima de un umbral de producción.
 
 - **Peticion:**
 	- URI:  ``/api/boardProduction/board/{id_board}/{production}``
-	- Cuerpo: ``{}``
+	- body: ``{}``
 	- 
 - **Resultado**:
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"production": 20				//Produccion
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
+		"production": 20			//Produccion
 		},
 		{
-		"id": 5,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-16 11:00:00",	//Fecha del regristro
-		"production": 21				//Produccion
+		"id": 5,						
+		"id_board": 2,				
+		"positionServo": 442,		
+		"date": "2021-04-16 11:00:00",	
+		"production": 21
 		},
 		.
 		.
@@ -401,17 +399,17 @@ Para obtener información sobre los registros de producción de una placa concre
 //TODO
 ```
 
-Para obtener información sobre los registros de producción entre dos fechas.
+##### Para obtener información sobre los registros de producción entre dos fechas.
 
 - **Peticion:**
 	- URI:  ``/api/boardProduction/datesFilter/``
-	- Cuerpo: 
+	- body: 
 Objeto JSON con los datos de la fecha de a  filtrar
 ```javascript
 	[
 		{
 		"fechaIni" : "?",		//Fecha inicial del filtro
-		"fechaFin" : "?"}		//Fecha final del filtro	
+		"fechaFin" : "?"		//Fecha final del filtro	
 		}
 	]
 ```
@@ -420,18 +418,18 @@ Objeto JSON con los datos de la fecha de a  filtrar
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-17 10:00:00",	//Fecha del regristro
-		"production": 20				//Produccion
+		"date": "2021-04-17 10:00:00",		//Fecha del regristro
+		"production": 20			//Produccion
 		},
 		{
-		"id": 7,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
-		"date": "2021-04-18 11:00:00",	//Fecha del regristro
-		"production": 21				//Produccion
+		"id": 7,						
+		"id_board": 2,					
+		"positionServo": 442,			
+		"date": "2021-04-18 11:00:00",	
+		"production": 21	
 		},
 		.
 		.
@@ -444,20 +442,20 @@ Objeto JSON con los datos de la fecha de a  filtrar
 //TODO
 ```
 
-##### Peticiones POST
-Para insertar un registro de producción de una placa
+#### Peticiones POST
+##### Para insertar un registro de producción de una placa
 - **Petición :**
 	-  URI: ``/api/boardProduction``
-	- Cuerpo: 
+	- body: 
 	Objeto JSON con los datos de la placa Actualizados
 ```javascript
 	[
 		{						
-		"id_board": 2,					//Identificador de la placa
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 12,			//Posicion del servo
-		"date": "2021-04-17 09:00:00",	//Fecha del regristro
-		"production": 10				//Produccion
-		},
+		"date": "2021-04-17 09:00:00",		//Fecha del regristro
+		"production": 10			//Produccion
+		}
 	]
 ```
 - **Resultado:**
@@ -465,12 +463,12 @@ Objeto JSON con los datos insertado
 ```javascript
 	[
 		{	
-		"id" : 54						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id" : 54				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 12,			//Posicion del servo
-		"date": "2021-04-17 09:00:00",	//Fecha del regristro
-		"production": 10				//Produccion
-		},
+		"date": "2021-04-17 09:00:00",		//Fecha del regristro
+		"production": 10			//Produccion
+		}
 	]
 ```
   - **Código de Error**:
@@ -478,22 +476,22 @@ Objeto JSON con los datos insertado
     //TODO
   ```
   
-##### Peticiones PUT
+#### Peticiones PUT
 
-Para modificar un registro de producción de una placa
+##### Para modificar un registro de producción de una placa
 - **Petición :**
 	-  URI: ``/api/boardProduction``
-	- Cuerpo: 
+	- body: 
 	Objeto JSON con los datos de produccion actualizados Actualizados
 ```javascript
 	[
 		{	
 		"id" : 54					
-		"id_board": 2,					//Identificador de la placa
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 156,			//Posicion del servo
-		"date": "2021-04-17 09:00:00",	//Fecha del regristro
-		"production": 10				//Produccion
-		},
+		"date": "2021-04-17 09:00:00",		//Fecha del regristro
+		"production": 10			//Produccion
+		}
 	]
 ```
 - **Resultado:**
@@ -501,34 +499,34 @@ Objeto JSON con los datos insertado
 ```javascript
 	[
 		{	
-		"id" : 54						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id" : 54				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 156,			//Posicion del servo
-		"date": "2021-04-17 09:00:00",	//Fecha del regristro
-		"production": 10				//Produccion
-		},
+		"date": "2021-04-17 09:00:00",		//Fecha del regristro
+		"production": 10			//Produccion
+		}
 	]
 ```
   - **Código de Error**:
   ```Java
     //TODO
   ```
-##### Peticiones DELETE
- Para eliminar del sistema un registro de producción
+#### Peticiones DELETE
+##### Para eliminar del sistema un registro de producción
 - **Petición :**
 	- URI: ``/api/boardProduction/{id}``
-	- Cuerpo: `` {} ``
+	- body: `` {} ``
 - **Resultado:**
 Objeto JSON con los datos del registro eliminado
 ```javascript
 	[
 		{	
-		"id" : 54						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa
+		"id" : 54				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa
 		"positionServo": 156,			//Posicion del servo
-		"date": "2021-04-17 09:00:00",	//Fecha del regristro
-		"production": 10				//Produccion
-		},
+		"date": "2021-04-17 09:00:00",		//Fecha del registro
+		"production": 10			//Produccion
+		}
 	]
 ```
 
@@ -539,18 +537,19 @@ Objeto JSON con los datos del registro eliminado
 
 
 ### Coordinates
-#### Puntos de acceso
-##### Peticiones GET
-- Para obtener la información respectiva a todas las coordenadas
+#### Peticiones GET
+##### Para obtener la información respectiva a todas las coordenadas
   - **Petición:**
-``/api/coordinates``
+  	- URI: ``/api/coordinates``
+	- body: `` {} ``
+
   -  **Resultado:**
     ```javascript
 	[
 		{
-		"id": 1,					//Identificador de las coordenadas
-		"longitude": 30.0,				//Longitud
-		"latitude": 30.0				//Latitud
+		"id": 1,				//Identificador de las coordenadas
+		"longitude": 30.0,			//Longitud
+		"latitude": 30.0			//Latitud
 		},
 		{ 
 		"id": 2,
@@ -567,16 +566,16 @@ Objeto JSON con los datos del registro eliminado
     //TODO
    ```
 
-- Para obtener la información concreta de una coordenada
+###### Para obtener la información concreta de una coordenada
   - **Petición:** 
     - URI: ``/api/coordinates/{id}``
     - Body: ``{}``
   - **Resultado:**
     ```javascript
 	{
-		"id": 1,					//Identificador de las coordenadas
-		"longitude": 30.0,				//Longitud
-		"latitude": 30.0				//Latitud
+		"id": 1,			//Identificador de las coordenadas
+		"longitude": 30.0,		//Longitud
+		"latitude": 30.0		//Latitud
 	}
     ```
    
@@ -585,25 +584,25 @@ Objeto JSON con los datos del registro eliminado
   //TODO
   ```
   
-##### Peticiones POST
-- Para registrar una coordenada en el sistema
+#### Peticiones POST
+##### Para registrar una coordenada en el sistema
   - **Petición:** 
     - URI: ``/api/coordinate``
     - Body:
     ```javascript
 	{
-		"id": 1,					//Identificador de las coordenadas
-		"longitude": 30.0,				//Longitud
-		"latitude": 30.0				//Latitud
+		"id": 1,			//Identificador de las coordenadas
+		"longitude": 30.0,		//Longitud
+		"latitude": 30.0		//Latitud
 	}
     ```
 
   - **Resultado:**
     ```javascript
 	{
-		"id": 1,					//Identificador de las coordenadas
-		"longitude": 30.0,				//Longitud
-		"latitude": 30.0				//Latitud
+		"id": 1,			//Identificador de las coordenadas
+		"longitude": 30.0,		//Longitud
+		"latitude": 30.0		//Latitud
 	}
     ```
    
@@ -612,42 +611,42 @@ Objeto JSON con los datos del registro eliminado
     //TODO
     ```
 
-##### Peticiones PUT
-Para modificar los datos de una coordenada
+#### Peticiones PUT
+##### Para modificar los datos de una coordenada
 - **Petición :**
 	-  URI: ``/api/board/{id}``
-	- Cuerpo: 
+	- body: 
 	```javascript
 	{
-		"id": 1,					//Identificador de las coordenadas
-		"longitude": 30.0,				//Longitud
-		"latitude": 30.0				//Latitud
+		"id": 1,			//Identificador de las coordenadas
+		"longitude": 30.0,		//Longitud
+		"latitude": 30.0		//Latitud
 	}
     ```
 	Objeto JSON con los datos de la coordenada actualizados
 	```javascript
 	{
-		"id": 1,					//Identificador de las coordenadas
-		"longitude": 30.0,				//Longitud
-		"latitude": 30.0				//Latitud
+		"id": 1,			//Identificador de las coordenadas
+		"longitude": 30.0,		//Longitud
+		"latitude": 30.0		//Latitud
 	}
     ```
  -  **Código de Error**:
     ```javascript
 	//TODO
     ```
-##### Peticiones DELETE
-- Para eliminar del sistema el registro de una coordenada
+#### Peticiones DELETE
+##### Para eliminar del sistema el registro de una coordenada
   - **Petición :**
   	- URI: ``/api/board/{id}``
-	- Cuerpo: `` {} ``
+	- body: `` {} ``
   - **Resultado:**
 Objeto JSON con los datos de la coordenada eliminada
 	```javascript
 	{
-		"id": 1,					//Identificador de las coordenadas
-		"longitude": 30.0,				//Longitud
-		"latitude": 30.0				//Latitud
+		"id": 1,			//Identificador de las coordenadas
+		"longitude": 30.0,		//Longitud
+		"latitude": 30.0		//Latitud
 	}
     ```
 
@@ -657,26 +656,25 @@ Objeto JSON con los datos de la coordenada eliminada
     ```
 
 ### LOG
-#### Puntos de acceso
-##### Peticiones GET
-Para obtener la información respectiva a la registros Log almacenados
+#### Peticiones GET
+##### Para obtener la información respectiva a la registros Log almacenados
   - **Petición**: 
-	-  URI: ``/api/log``
-	- Cuerpo: ``{}``
+	- URI: ``/api/log``
+	- body: ``{}``
   -  **Resultado**:
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
+		"id": 1,					//Identificador del registro
 		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"issue": "Primer Log"			//Asunto
+		"date": "2021-04-16 10:00:00",			//Fecha del regristro
+		"issue": "Primer Log"				//Asunto
 		},
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 1,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"issue": "Segundo Log"			//Asunto
+		"id": 1,						
+		"id_board": 1,						
+		"date": "2021-04-16 10:00:00",	
+		"issue": "Segundo Log"			
 		},
 		.
 		.
@@ -688,18 +686,18 @@ Para obtener la información respectiva a la registros Log almacenados
 ```javascript
     //TODO
 ```
-Para obtener la información concreta de un registro de log
+##### Para obtener la información concreta de un registro de log
 - **Petición:**
 	- URI: ``/api/log/{id}``
-	- Cuerpo: ``{}``
+	- body: ``{}``
 
 - **Resultado:** 
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"issue": "Primer Log"			//Asunto
 		}
 	]
@@ -709,25 +707,25 @@ Para obtener la información concreta de un registro de log
 //TODO
 ```
 
-Para obtener información sobre todos los registros log de una placa
+##### Para obtener información sobre todos los registros log de una placa
 - **Peticion:**
 	- URI:  ``/api/log/board/{id_board}``
-	- Cuerpo: ``{}``
-	- 
+	- body: ``{}``
+
 - **Resultado**:
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"issue": "Primer Log"			//Asunto
 		},
 		{
-		"id": 6,										//Identificador del registro
-		"id_board": 2,									//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",					//Fecha del regristro
-		"issue": "Servo Manipulado automaticamente"		//Asunto
+		"id": 6,										
+		"id_board": 2,											
+		"date": "2021-04-16 10:00:00",				
+		"issue": "Servo Manipulado automaticamente"	
 		}
 		.
 		.
@@ -740,17 +738,17 @@ Para obtener información sobre todos los registros log de una placa
 //TODO
 ```
 
-Para obtener información sobre los registros de log entre dos fechas.
+##### Para obtener información sobre los registros de log entre dos fechas.
 
 - **Peticion:**
 	- URI:  ``/api/log/datesFilter/``
-	- Cuerpo: 
+	- body: 
 Objeto JSON con los datos de la fecha de a  filtrar
 ```javascript
 	[
 		{
-		"fechaIni" : "?",		//Fecha inicial del filtro
-		"fechaFin" : "?"}		//Fecha final del filtro	
+		"fechaIni" : "?",	//Fecha inicial del filtro
+		"fechaFin" : "?"	//Fecha final del filtro	
 		}
 	]
 ```
@@ -759,16 +757,16 @@ Objeto JSON con los datos de la fecha de a  filtrar
 ```javascript
 	[
 		{
-		"id": 1,						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"id": 1,				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"issue": "Primer Log"			//Asunto
 		},
 		{
-		"id": 5,										//Identificador del registro
-		"id_board": 2,									//Identificador de la placa		
-		"date": "2021-04-16 15:00:00",					//Fecha del regristro
-		"issue": "Servo Manipulado automaticamente"		//Asunto
+		"id": 5,										
+		"id_board": 2,										
+		"date": "2021-04-16 15:00:00",					
+		"issue": "Servo Manipulado automaticamente"	
 		},
 		.
 		.
@@ -781,17 +779,17 @@ Objeto JSON con los datos de la fecha de a  filtrar
 //TODO
 ```
 
-##### Peticiones POST
-Para insertar un registro de log sobre de una placa
+#### Peticiones POST
+##### Para insertar un registro de log sobre de una placa
 - **Petición :**
-	-  URI: ``/api/log``
-	- Cuerpo: 
+	- URI: ``/api/log``
+	- body: 
 	Objeto JSON con los datos a insertar
 ```javascript
 	[
 		{
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"issue": "Primer Log"			//Asunto
 		}
 	]
@@ -801,9 +799,9 @@ Objeto JSON con los datos insertado
 ```javascript
 	[
 		{
-		"id" : 1						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"id" : 1				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"issue": "Primer Log"			//Asunto
 		}
 	]
@@ -813,20 +811,20 @@ Objeto JSON con los datos insertado
     //TODO
   ```
   
-##### Peticiones PUT
+#### Peticiones PUT
 
-Para modificar un registro de producción de una placa
+##### Para modificar un registro de producción de una placa
 - **Petición :**
-	-  URI: ``/api/log``
-	- Cuerpo: 
+	- URI: ``/api/log``
+	- body: 
 	Objeto JSON con los datos de produccion actualizados Actualizados
 ```javascript
 	[
 		{
-		"id" : 1						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"issue": "Primer Log editado"			//Asunto
+		"id" : 1				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
+		"issue": "Primer Log editado"		//Asunto
 		}
 	]
 ```
@@ -835,10 +833,10 @@ Objeto JSON con los datos actualizados
 ```javascript
 	[
 		{
-		"id" : 1						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"issue": "Primer Log editado"			//Asunto
+		"id" : 1				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
+		"issue": "Primer Log editado"		//Asunto
 		}
 	]
 ```
@@ -846,20 +844,20 @@ Objeto JSON con los datos actualizados
   ```Java
     //TODO
   ```
-##### Peticiones DELETE
- Para eliminar del sistema un registro de log
+#### Peticiones DELETE
+##### Para eliminar del sistema un registro de log
 - **Petición :**
 	- URI: ``/api/log/{id}``
-	- Cuerpo: `` {} ``
+	- body: `` {} ``
 - **Resultado:**
 Objeto JSON con los datos del registro eliminado
 ```javascript
 	[
 		{
-		"id" : 1						//Identificador del registro
-		"id_board": 2,					//Identificador de la placa		
-		"date": "2021-04-16 10:00:00",	//Fecha del regristro
-		"issue": "Primer Log editado"			//Asunto
+		"id" : 1				//Identificador del registro
+		"id_board": 2,				//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",		//Fecha del regristro
+		"issue": "Primer Log editado"		//Asunto
 		}
 	]
 ```
@@ -869,20 +867,20 @@ Objeto JSON con los datos del registro eliminado
     //TODO
   ```
 ### SunPosition
-#### Puntos de acceso
-##### Peticiones GET
-- Para obtener la información respectiva a todas las Posiciones Solares
+#### Peticiones GET
+##### Para obtener la información respectiva a todas las Posiciones Solares
   - **Petición:**
-``/api/sunPosition``
+  	- URI: ``/api/sunPosition``
+	- body: `` {} ``
   -  **Resultado:**
-    ```javascript
+ ```javascript
 	[
 		{
-		"id": 1,					//Identificador de la SunPosition
+		"id": 1,				//Identificador de la SunPosition
 		"id_coordinates": 4,			//Identificador de las coordenadas
-		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
-		"elevation": 30.0,				//Elevacion del sol
-		"azimut": 30.0					//Azimut
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
 		},
 		{
 		"id": 2,
@@ -895,25 +893,28 @@ Objeto JSON con los datos del registro eliminado
 		.
 		.
 	]
-    ```
+  ```
+  
   - **Código de Error:**
   ```Java
     //TODO
    ```
 
-- Para obtener la información concreta de una SunPosition
+##### Para obtener la información concreta de una SunPosition
   - **Petición:** 
     - URI: ``/api/sunPosition/{id}``
-    - Body: ``{}``
+    - body: ``{}``
   - **Resultado:**
     ```javascript
-	{
-		"id": 1,					//Identificador de la SunPosition
+	[
+		{
+		"id": 1,				//Identificador de la SunPosition
 		"id_coordinates": 4,			//Identificador de las coordenadas
-		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
-		"elevation": 30.0,				//Elevacion del sol
-		"azimut": 30.0					//Azimut
-	}
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
+		}
+	]
     ```
    
   - **Código de Error:**
@@ -921,15 +922,27 @@ Objeto JSON con los datos del registro eliminado
   //TODO
   ```
  
- - Para obtener todas las SunPosition de un día en concreto
+##### Para obtener todas las SunPosition de un día en concreto
   - **Petición:** 
     - URI: ``/api/sunPosition/dateFilter/``
-    - Body: ``{}``
-  - **Resultado:**
+    - body: ``{}``
+
     ```javascript
 	{
 		"date": "12-12-1212"
 	}
+    ```
+    
+  - **Resultado:**
+    ```javascript
+	[
+		{
+		"id": 1,				//Identificador de la SunPosition
+		"id_coordinates": 4,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
+	]
     ```
    
   - **Código de Error:**
@@ -938,28 +951,28 @@ Objeto JSON con los datos del registro eliminado
   ```
    
 ##### Peticiones POST
-- Para registrar una Posición Solar en el sistema
+##### Para registrar una Posición Solar en el sistema
   - **Petición:** 
     - URI: ``/api/sunPosition``
-    - Body:
+    - body:
     ```javascript
 	{
-		"id": 1,					//Identificador de la SunPosition
+		"id": 1,				//Identificador de la SunPosition
 		"id_coordinates": 4,			//Identificador de las coordenadas
-		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
-		"elevation": 30.0,				//Elevacion del sol
-		"azimut": 30.0					//Azimut
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
 	}
 	```
 
   - **Resultado:**
     ```javascript
 	{
-		"id": 1,					//Identificador de la SunPosition
+		"id": 1,				//Identificador de la SunPosition
 		"id_coordinates": 4,			//Identificador de las coordenadas
-		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
-		"elevation": 30.0,				//Elevacion del sol
-		"azimut": 30.0					//Azimut
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
 	}
 	```
    
@@ -968,48 +981,48 @@ Objeto JSON con los datos del registro eliminado
     //TODO
     ```
 
-##### Peticiones PUT
-Para modificar los datos de una Posición Solar
+#### Peticiones PUT
+##### Para modificar los datos de una Posición Solar
 - **Petición :**
-	-  URI: ``/api/sunPosition``
-	- Cuerpo: 
+	- URI: ``/api/sunPosition``
+	- body: 
     ```javascript
 	{
-		"id": 1,					//Identificador de la SunPosition
+		"id": 1,				//Identificador de la SunPosition
 		"id_coordinates": 3,			//Identificador de las coordenadas
-		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
-		"elevation": 30.0,				//Elevacion del sol
-		"azimut": 30.0					//Azimut
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
 	}
 	```
 	Objeto JSON con los datos de la SunPosition actualizados
     ```javascript
 	{
-		"id": 1,					//Identificador de la SunPosition
+		"id": 1,				//Identificador de la SunPosition
 		"id_coordinates": 3,			//Identificador de las coordenadas
-		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
-		"elevation": 30.0,				//Elevacion del sol
-		"azimut": 30.0					//Azimut
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
 	}
 	```
  -  **Código de Error**:
     ```javascript
 	//TODO
     ```
-##### Peticiones DELETE
-- Para eliminar del sistema el registro de una coordenada
+#### Peticiones DELETE
+##### Para eliminar del sistema el registro de una coordenada
   - **Petición :**
   	- URI: ``/api/sunPosition/{id}``
-	- Cuerpo: `` {} ``
+	- body: `` {} ``
   - **Resultado:**
 Objeto JSON con los datos de la coordenada eliminada
     ```javascript
 	{
-		"id": 1,					//Identificador de la SunPosition
+		"id": 1,				//Identificador de la SunPosition
 		"id_coordinates": 3,			//Identificador de las coordenadas
-		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
-		"elevation": 30.0,				//Elevacion del sol
-		"azimut": 30.0					//Azimut
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
 	}
 	```
 
