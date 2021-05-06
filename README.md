@@ -1,3 +1,4 @@
+
 # Panel Solar Inteligente Distribuido
 > Alberto Otero González y Pablo Ruiz Jurado
 ## Introducción
@@ -46,7 +47,7 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 - Para obtener la información respectiva a todas las placas
   - **Petición**: 
 ``/api/boards``
-  -  Resultado:
+  -  **Resultado**:
     ```javascript
 	[
 		{
@@ -74,33 +75,121 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 		.
 	]
     ```
-  - Código de Error:
+  - **Código de Error**:
   ```Java
     //TODO
     ```
 
-Para obtener la información concreta de una placa
-- Petición: 
+- Para obtener la información concreta de una placa
+  - **Petición**: 
 ``/api/board/{id}``
 
-- Resultado
-
-
-- Código de Error
-```Java
-//TODO
+  - **Resultado**
+```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 2,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		}
+	]
 ```
-Para obtener información sobre todas las placas de unas mismas coordenadas
-- ``/api/board/filtercoordinates/{id_coordinates}``
+   
+  - **Código de Error**
+  ```Java
+  //TODO
+  ```
+- Para obtener información sobre todas las placas de unas mismas coordenadas
+  - ``/api/board/filtercoordinates/{id_coordinates}``
+
+-  **Resultado**:
+    ```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 1,				//Id de la coordenada
+			"longitude": 25.0,			//Longitud
+			"latitude": 25.0			//Latitud
+			} 
+		},
+		{ 
+		"id": 2,
+		"maxPower": 8.77,
+		"coordinate":
+			{
+			"id": 1,
+			"longitude": 25.0,
+			"latitude": 25.0
+			}
+		},
+		.
+		.
+		.
+	]
+    ```
+  - **Código de Error**:
+	  ```Java
+	    //TODO
+	```
+ 
 ##### Peticiones POST
-Para registrar una placa en el sistema
-- ``/api/board``
+- Para registrar una placa en el sistema
+  - **Petición**: 
+``/api/board``
+```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 2,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		}
+	]
+```
+
+  - **Resultado**
+```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 2,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		}
+	]
+```
+   
+  - **Código de Error**
+  ```Java
+  //TODO
+  ```
+
 ##### Peticiones PUT
-Para modificar los datos de una placa
-- ``/api/board``
+- Para modificar los datos de una placa
+  - ``/api/board``
+
+/api/board/coordinates/{id}
 
 ##### Peticiones DELETE
-Para eliminar del sistema el registro de una placa
-- ``/api/board/:id``
+- Para eliminar del sistema el registro de una placa
+  - ``/api/board/{id}``
 
 #### P
+
+
