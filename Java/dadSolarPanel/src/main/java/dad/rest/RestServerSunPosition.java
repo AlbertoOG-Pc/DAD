@@ -19,7 +19,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
-
 /**
  * @author Alberto, Pablo
  * 
@@ -65,7 +64,6 @@ public class RestServerSunPosition implements SunPositionHandler {
 		this.router = router;
 		eventBus = vertx.eventBus();
 
-		// Fumadita by stackoverflow
 		gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
 			@Override
 			public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -75,19 +73,64 @@ public class RestServerSunPosition implements SunPositionHandler {
 			}
 
 		}).create();
+
+		/* GET METHOD */
 		router.get("/api/sunPosition").handler(this::getAll);
+		router.get("/api/sunPosition/:id").handler(this::getSunPositionByID);
+		router.get("/api/sunPosition/dateFilter/").handler(this::getSunPositionByDate);
+
+		/* POST METHOD */
 		router.post("/api/sunPosition").handler(this::createSunPosition);
+
+		/* PUT METHOD */
 		router.put("/api/sunPosition").handler(this::updateSunPosition);
+
+		/* DELETE METHOD */
 		router.delete("/api/sunPosition/:id").handler(this::deleteSunPosition);
 
 	}
-
 
 	/**
 	 * @param routingContext
 	 */
 	private void getAll(RoutingContext routingContext) {
 		eventBus.request("consulta", "sunPosition_ALL", reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	/**
+	 * @param routingContext
+	 */
+	private void getSunPositionByID(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "sunPosition_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	/**
+	 * @param routingContext
+	 */
+	private void getSunPositionByDate(RoutingContext routingContext) {
+		JsonObject obj = routingContext.getBodyAsJson();
+		obj.put("CLASS", "sunPositionByDate");
+		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
 				System.out.println("Respuesta recibida: " + replyMessage);

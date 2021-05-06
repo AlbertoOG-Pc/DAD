@@ -49,9 +49,18 @@ public class RestServerCoordinates implements CoordinatesHandler {
 		this.router = router;
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		eventBus = vertx.eventBus();
+		
+		/* GET METHOD */
 		router.get("/api/coordinates").handler(this::getAll);
+		router.get("/api/coordinates/:id").handler(this::getCoordinatesByID);
+		
+		/* POST METHOD */
 		router.post("/api/coordinates").handler(this::createCoordinate);
+		
+		/* PUT METHOD */
 		router.put("/api/coordinates").handler(this::updateCoordinates);
+		
+		/* DELETE METHOD */
 		router.delete("/api/coordinates/:id").handler(this::deleteCoordinates);
 
 	}
@@ -81,7 +90,25 @@ public class RestServerCoordinates implements CoordinatesHandler {
 		});
 
 	}
-	
+
+	/**
+	 * @param routingContext
+	 */
+	private void getCoordinatesByID(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "coordinates_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
 	/**
 	 * @param routingContext
 	 */

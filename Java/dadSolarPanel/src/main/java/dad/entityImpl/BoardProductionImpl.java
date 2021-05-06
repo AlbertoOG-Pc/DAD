@@ -1,5 +1,7 @@
 package dad.entityImpl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
@@ -76,6 +78,122 @@ public class BoardProductionImpl {
 	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
 	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
+	public static void getBoardProductionByID(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.board_production WHERE id = ?",
+				Tuple.of(data.getInteger("id")), res -> {
+					if (res.succeeded()) {
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
+									elem.getInteger("id_board"), elem.getInteger("positionServo"),
+									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+						}
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+
+	}
+
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
+	public static void getBoardProductionByBoardID(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.board_production WHERE id_board = ?",
+				Tuple.of(data.getInteger("id_board")), res -> {
+					if (res.succeeded()) {
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
+									elem.getInteger("id_board"), elem.getInteger("positionServo"),
+									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+						}
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+
+	}
+
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
+	public static void getBestsBoardProductionsOfBoardID(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.board_production WHERE id_board = ? AND production > ?",
+				Tuple.of(data.getInteger("id_board"), data.getFloat("production")), res -> {
+					if (res.succeeded()) {
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
+									elem.getInteger("id_board"), elem.getInteger("positionServo"),
+									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+						}
+					} else {
+						System.out.println("Failure: " + res.cause().getMessage());
+						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+
+	}
+
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
+	public static void getBoardProductionByDates(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.board_production WHERE date BETWEEN ? AND ?", Tuple.of(
+				LocalDateTime.parse(data.getString("dateIni"), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+						.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+				LocalDateTime.parse(data.getString("dateFin"), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+						.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
+									elem.getInteger("id_board"), elem.getInteger("positionServo"),
+									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+						}
+						// resultado = result.toString();
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
+
 	public static void createBoardProduction(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
@@ -104,7 +222,7 @@ public class BoardProductionImpl {
 	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
 	public static void updateBoardProduction(Message<?> message) {
-		System.out.println("Holi");
+		System.out.println("Hola Update Impl");
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
@@ -136,7 +254,6 @@ public class BoardProductionImpl {
 	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
 	public static void deleteBoardProduction(Message<?> message) {
-		System.out.println("Hola");
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");

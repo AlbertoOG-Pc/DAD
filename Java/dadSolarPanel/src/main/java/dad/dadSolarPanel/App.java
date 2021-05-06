@@ -18,7 +18,7 @@ import io.vertx.core.json.JsonObject;
  *         Proyecto Placas solares - DAD
  * 
  *         Class APP - Clase que comunica Verticles. Recibe la comunicacion
- *         atravez del eventBus de Vertx y ejecutara las funciones que
+ *         a traves del eventBus de Vertx y ejecutara las funciones que
  *         correspondan
  *
  */
@@ -99,6 +99,30 @@ public class App extends AbstractVerticle {
 			break;
 		case "sunPosition_ALL":
 			SunPositionImpl.getALLSunPosition(message);
+			break;
+		// Querys adicionales Board Production
+		case "boardProductionByID":
+			BoardProductionImpl.getBoardProductionByID(message);
+			break;
+		case "boardProductionByBoardID":
+			BoardProductionImpl.getBoardProductionByBoardID(message);
+			break;
+		case "bestsBoardProductionsOfBoardID":
+			BoardProductionImpl.getBestsBoardProductionsOfBoardID(message);
+			break;
+		case "boardProductionByDates":
+			BoardProductionImpl.getBoardProductionByDates(message);
+			break;
+		// Querys adicionales Coordinates
+		case "coordinates_ONE":
+			CoordinatesImpl.getCoordinatesByID(message);
+			break;
+		// Querys adicionales Sun Position
+		case "sunPosition_ONE":
+			SunPositionImpl.getSunPositionByID(message);
+			break;
+		case "sunPositionByDate":
+			SunPositionImpl.getSunPositionByDate(message);
 			break;
 		default:
 			result.add("{'Error': 'Method GET Comunicacion fallida entre verticle'}");

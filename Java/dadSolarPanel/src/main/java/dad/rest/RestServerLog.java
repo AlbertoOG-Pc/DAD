@@ -66,7 +66,6 @@ public class RestServerLog implements LogHandler {
 		this.router = router;
 		eventBus = vertx.eventBus();
 
-		// Fumadita by stackoverflow
 		gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
 			@Override
 			public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -82,7 +81,7 @@ public class RestServerLog implements LogHandler {
 		router.get("/api/log/:id").handler(this::getOne);
 		router.get("/api/log/board/:id_board").handler(this::getAllForBoard);
 		router.get("/api/log/filterDate/").handler(this::getAllDateFilter);
-		
+
 		/* POST METHOD */
 		router.post("/api/log").handler(this::createLog);
 
@@ -110,13 +109,14 @@ public class RestServerLog implements LogHandler {
 			}
 		});
 	}
-	
+
 	/**
 	 * @param routingContext
 	 */
 	public void getAllForBoard(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
-		obj.put("CLASS", "log_ONE_board").put("id_board", Integer.parseInt(routingContext.request().getParam("id_board")));
+		obj.put("CLASS", "log_ONE_board").put("id_board",
+				Integer.parseInt(routingContext.request().getParam("id_board")));
 		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
@@ -128,7 +128,7 @@ public class RestServerLog implements LogHandler {
 			}
 		});
 	}
-	
+
 	/**
 	 * @param routingContext
 	 */
@@ -147,7 +147,7 @@ public class RestServerLog implements LogHandler {
 			}
 		});
 	}
-	
+
 	/**
 	 * @param routingContext
 	 */
@@ -165,7 +165,7 @@ public class RestServerLog implements LogHandler {
 			}
 		});
 	}
-	
+
 	/**
 	 * @param routingContext
 	 */
@@ -212,7 +212,7 @@ public class RestServerLog implements LogHandler {
 	private void deleteLog(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "Log").put("id", Integer.parseInt(routingContext.request().getParam("id")));
-		
+
 		eventBus.request("DELETE", obj, reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {

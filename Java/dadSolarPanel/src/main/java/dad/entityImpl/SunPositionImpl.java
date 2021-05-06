@@ -1,5 +1,7 @@
 package dad.entityImpl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
@@ -15,9 +17,9 @@ import io.vertx.sqlclient.Tuple;
 /**
  * @author Alberto, Pablo
  * 
- *         Proyecto Placas solares - DAD
- *         Class CoordinatesImpl - Entidad que implementa el modelo de datos la clase Coordinates.
- *         Que se usara para realizar las consultas a la base de datos
+ *         Proyecto Placas solares - DAD Class CoordinatesImpl - Entidad que
+ *         implementa el modelo de datos la clase Coordinates. Que se usara para
+ *         realizar las consultas a la base de datos
  *
  */
 public class SunPositionImpl {
@@ -28,15 +30,15 @@ public class SunPositionImpl {
 	private List<SunPosition> sunPositionList;
 
 	/**
-	 *  Constructor vacio
+	 * Constructor vacio
 	 */
 	public SunPositionImpl() {
 		super();
 	}
 
 	/**
-	 * @param sunPositionList List<SunPosition>
-	 * Constructor apartir de una lista de SunPosition
+	 * @param sunPositionList List<SunPosition> Constructor apartir de una lista de
+	 *                        SunPosition
 	 */
 	public SunPositionImpl(List<SunPosition> sunPositionList) {
 		this.sunPositionList = sunPositionList;
@@ -50,16 +52,16 @@ public class SunPositionImpl {
 	}
 
 	/**
-	 * @param sunPositionList List<SunPosition> 
-	 * Establece o modifica el listado de SunPosition recibido
+	 * @param sunPositionList List<SunPosition> Establece o modifica el listado de
+	 *                        SunPosition recibido
 	 */
 	public void setSunPositionList(List<SunPosition> sunPositionList) {
 		this.sunPositionList = sunPositionList;
 	}
 
 	/**
-	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja el APIREST
-	 * E imprime por pantalla el resultado obtenido
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
 	public static void getALLSunPosition(Message<?> message) {
 		JsonArray result = new JsonArray();
@@ -81,8 +83,72 @@ public class SunPositionImpl {
 	}
 
 	/**
-	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja el APIREST
-	 * E imprime por pantalla el resultado obtenido
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
+	public static void getSunPositionByID(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.sunposition WHERE id = ?;",
+				Tuple.of(data.getInteger("id")), res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						// System.out.println(resultSet.size());
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
+									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
+									elem.getFloat("elevation"), elem.getFloat("azimut"))));
+						}
+						// resultado = result.toString();
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
+	 */
+	public static void getSunPositionByDate(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.sunPosition WHERE date BETWEEN ? AND ?",
+				Tuple.of(
+						LocalDateTime
+								.parse(data.getString("date") + " 00:00:00",
+										DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+						LocalDateTime
+								.parse(data.getString("date") + " 23:59:59",
+										DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
+									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
+									elem.getFloat("elevation"), elem.getFloat("azimut"))));
+						}
+						// resultado = result.toString();
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	/**
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
 	public static void createSunPosition(Message<?> message) {
 		JsonArray result = new JsonArray();
@@ -108,8 +174,8 @@ public class SunPositionImpl {
 	}
 
 	/**
-	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja el APIREST
-	 * E imprime por pantalla el resultado obtenido
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
 	public static void updateSunPosition(Message<?> message) {
 		JsonArray result = new JsonArray();
@@ -140,8 +206,8 @@ public class SunPositionImpl {
 	}
 
 	/**
-	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja el APIREST
-	 * E imprime por pantalla el resultado obtenido
+	 * @param message Recibe el cuerpo de la comunicacion con el verticle que maneja
+	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
 	public static void deleteSunPosition(Message<?> message) {
 		JsonArray result = new JsonArray();
@@ -162,7 +228,7 @@ public class SunPositionImpl {
 	}
 
 	/**
-	 *  Metodo hashCode() autogenerado
+	 * Metodo hashCode() autogenerado
 	 */
 	@Override
 	public int hashCode() {
@@ -199,5 +265,4 @@ public class SunPositionImpl {
 	public String toString() {
 		return "SunPositionImpl [sunPositionList=" + sunPositionList + "]";
 	}
-
 }
