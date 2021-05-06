@@ -41,15 +41,30 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 
 		}).create();
 
-		router.get("/api/boardProduction").handler(this::getAll);
+		router.get("/api/boardProduction").handler(this::getALLBoardProduction);
+		router.get("/api/boardProduction/:id").handler(this::getBoardProductionByID);
+		router.get("/api/boardProduction/board/:id_board").handler(this::getBoardProductionByBoardID);
+		router.get("/api/boardProduction/board/:id_board/:production").handler(this::getBestsBoardProductionsOfBoardID);
+		router.get("/api/boardProduction/datesFilter/").handler(this::getBoardProductionByDates);
 		router.post("/api/boardProduction").handler(this::createBoardProduction);
 		router.put("/api/boardProduction").handler(this::updateBoardProduction);
 		router.delete("/api/boardProduction/:id").handler(this::deleteBoardProduction);
 
 	}
 
-	private void getAll(RoutingContext routingContext) {
-		eventBus.request("consulta", "boardProduction_ALL", reply -> {
+	static RestServerBoardProduction create(Vertx vertx, Router router) {
+		return new RestServerBoardProduction(vertx, router);
+	}
+
+	@Override
+	public void handle(RoutingContext event) {
+		router.handleContext(event);
+	}
+
+	private void getALLBoardProduction(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "boardProduction_ALL");
+		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
 				System.out.println("Respuesta recibida: " + replyMessage);
@@ -61,13 +76,67 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
-	static RestServerBoardProduction create(Vertx vertx, Router router) {
-		return new RestServerBoardProduction(vertx, router);
+	private void getBoardProductionByID(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "boardProductionByID").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
 	}
 
-	@Override
-	public void handle(RoutingContext event) {
-		router.handleContext(event);
+	private void getBoardProductionByBoardID(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "boardProductionByBoardID").put("id_board",
+				Integer.parseInt(routingContext.request().getParam("id_board")));
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void getBestsBoardProductionsOfBoardID(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "bestsBoardProductionsOfBoardID")
+				.put("id_board", Integer.parseInt(routingContext.request().getParam("id_board")))
+				.put("production", Float.parseFloat(routingContext.request().getParam("production")));
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void getBoardProductionByDates(RoutingContext routingContext) {
+		JsonObject obj = routingContext.getBodyAsJson();
+		obj.put("CLASS", "boardProductionByDates");
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta" + reply.toString());
+			}
+		});
 	}
 
 	private void createBoardProduction(RoutingContext routingContext) {

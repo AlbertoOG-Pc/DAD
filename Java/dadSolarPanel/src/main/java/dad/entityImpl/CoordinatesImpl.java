@@ -49,10 +49,32 @@ public class CoordinatesImpl {
 		});
 	}
 
+	public static void getCoordinatesByID(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.coordinates WHERE id = ?;",
+				Tuple.of(data.getInteger("id")), res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						// System.out.println(resultSet.size());
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"),
+									elem.getFloat("latitude"), elem.getFloat("longitude"))));
+						}
+						// resultado = result.toString();
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
 	public static void createCoordinates(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
-		System.out.println(data.getDouble("longitude"));
 		// result.add(message.body().toString());
 		Database.mySqlClient.preparedQuery("INSERT INTO dad.coordinates (latitude, longitude) VALUES (?, ?)",
 				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude")), res -> {

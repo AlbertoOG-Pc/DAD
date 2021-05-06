@@ -37,8 +37,7 @@ public class App extends AbstractVerticle {
 
 	private void getQuery(Message<?> message) {
 		JsonArray result = new JsonArray();
-
-		switch (message.body().toString()) {
+		switch (JsonObject.mapFrom(message.body()).getString("CLASS")) {
 		case "board_ALL":
 			BoardImpl.getALLBoard(message);
 			break;
@@ -53,6 +52,30 @@ public class App extends AbstractVerticle {
 			break;
 		case "sunPosition_ALL":
 			SunPositionImpl.getALLSunPosition(message);
+			break;
+		// Querys adicionales Board Production
+		case "boardProductionByID":
+			BoardProductionImpl.getBoardProductionByID(message);
+			break;
+		case "boardProductionByBoardID":
+			BoardProductionImpl.getBoardProductionByBoardID(message);
+			break;
+		case "bestsBoardProductionsOfBoardID":
+			BoardProductionImpl.getBestsBoardProductionsOfBoardID(message);
+			break;
+		case "boardProductionByDates":
+			BoardProductionImpl.getBoardProductionByDates(message);
+			break;
+		// Querys adicionales Coordinates
+		case "coordinates_ONE":
+			CoordinatesImpl.getCoordinatesByID(message);
+			break;
+		// Querys adicionales Sun Position
+		case "sunPosition_ONE":
+			SunPositionImpl.getSunPositionByID(message);
+			break;
+		case "sunPositionByDate":
+			SunPositionImpl.getSunPositionByDate(message);
 			break;
 		default:
 			result.add(JsonObject.mapFrom(new String("Error: Invalid Param")));

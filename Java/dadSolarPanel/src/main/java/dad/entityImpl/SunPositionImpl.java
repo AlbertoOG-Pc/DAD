@@ -1,9 +1,10 @@
 package dad.entityImpl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
-import dad.entity.Board;
 import dad.entity.SunPosition;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
@@ -53,6 +54,62 @@ public class SunPositionImpl {
 			}
 			message.reply(result.toString());
 		});
+	}
+
+	public static void getSunPositionByID(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.sunposition WHERE id = ?;",
+				Tuple.of(data.getInteger("id")), res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						// System.out.println(resultSet.size());
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
+									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
+									elem.getFloat("elevation"), elem.getFloat("azimut"))));
+						}
+						// resultado = result.toString();
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+						// resultado = "Error: " + res.cause().getLocalizedMessage();
+					}
+					message.reply(result.toString());
+				});
+	}
+
+	public static void getSunPositionByDate(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		Database.mySqlClient.preparedQuery("SELECT * FROM dad.sunPosition WHERE date BETWEEN ? AND ?",
+				Tuple.of(
+						LocalDateTime
+								.parse(data.getString("date") + " 00:00:00",
+										DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+						LocalDateTime
+								.parse(data.getString("date") + " 23:59:59",
+										DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+				res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
+									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
+									elem.getFloat("elevation"), elem.getFloat("azimut"))));
+						}
+						// resultado = result.toString();
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+					}
+					message.reply(result.toString());
+				});
 	}
 
 	public static void createSunPosition(Message<?> message) {
@@ -160,5 +217,4 @@ public class SunPositionImpl {
 	public String toString() {
 		return "SunPositionImpl [sunPositionList=" + sunPositionList + "]";
 	}
-
 }

@@ -48,7 +48,10 @@ public class RestServerSunPosition implements SunPositionHandler {
 			}
 
 		}).create();
+
 		router.get("/api/sunPosition").handler(this::getAll);
+		router.get("/api/sunPosition/:id").handler(this::getSunPositionByID);
+		router.get("/api/sunPosition/dateFilter/").handler(this::getSunPositionByDate);
 		router.post("/api/sunPosition").handler(this::createSunPosition);
 		router.put("/api/sunPosition").handler(this::updateSunPosition);
 		router.delete("/api/sunPosition/:id").handler(this::deleteSunPosition);
@@ -57,6 +60,36 @@ public class RestServerSunPosition implements SunPositionHandler {
 
 	private void getAll(RoutingContext routingContext) {
 		eventBus.request("consulta", "sunPosition_ALL", reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void getSunPositionByID(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "sunPosition_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+
+	private void getSunPositionByDate(RoutingContext routingContext) {
+		JsonObject obj = routingContext.getBodyAsJson();
+		obj.put("CLASS", "sunPositionByDate");
+		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
 				System.out.println("Respuesta recibida: " + replyMessage);
