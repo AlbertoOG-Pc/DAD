@@ -2,7 +2,7 @@
 
 # Panel Solar Inteligente Distribuido
 > Alberto Otero González y Pablo Ruiz Jurado
-## Introducción
+## Introducción 
 ### Introducción del proyecto en la asignatura
 En la asignatura de Desarrollo de Aplicaciones Distribuidas (DAD) se ha propuesto realizar un proyecto software-hardware en el que con la ayuda del SOC ESP8266, conocido comúnmente como NodeMCU, crearemos de 0 un sistema distribuido con el uso de sensores y actuadores todo esto gestionado mediante una API Rest.
 ### Paneles Solares Distribuidos
