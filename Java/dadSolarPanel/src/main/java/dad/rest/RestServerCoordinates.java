@@ -11,17 +11,40 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD
+ *
+ */
 public class RestServerCoordinates implements CoordinatesHandler {
 
-	// private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
+	/**
+	 * 
+	 */
 	private EventBus eventBus;
+	/**
+	 * 
+	 */
 	private Router router;
+	/**
+	 * 
+	 */
 	private Gson gson;
 
+	/**
+	 * @param vertx
+	 * @param router
+	 * @return
+	 */
 	static RestServerCoordinates create(Vertx vertx, Router router) {
 		return new RestServerCoordinates(vertx, router);
 	}
 
+	/**
+	 * @param vertx
+	 * @param router
+	 */
 	public RestServerCoordinates(Vertx vertx, Router router) {
 		this.router = router;
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
@@ -33,12 +56,18 @@ public class RestServerCoordinates implements CoordinatesHandler {
 
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void handle(RoutingContext event) {
 		// TODO Auto-generated method stub
 		router.handleContext(event);
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void getAll(RoutingContext routingContext) {
 		eventBus.request("consulta", "coordinates_ALL", reply -> {
 			if (reply.succeeded()) {
@@ -52,7 +81,10 @@ public class RestServerCoordinates implements CoordinatesHandler {
 		});
 
 	}
-
+	
+	/**
+	 * @param routingContext
+	 */
 	private void createCoordinate(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 		final Coordinates coordinates = gson.fromJson(routingContext.getBodyAsString(), Coordinates.class);
@@ -69,6 +101,9 @@ public class RestServerCoordinates implements CoordinatesHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void updateCoordinates(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 
@@ -86,6 +121,9 @@ public class RestServerCoordinates implements CoordinatesHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void deleteCoordinates(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "Coordinates").put("id", Integer.parseInt(routingContext.request().getParam("id")));

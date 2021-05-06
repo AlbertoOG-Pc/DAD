@@ -19,13 +19,31 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD
+ *
+ */
 public class RestServerBoardProduction implements BoardProductionHandler {
 
-	// private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
+	/**
+	 * 
+	 */
 	private EventBus eventBus;
+	/**
+	 * 
+	 */
 	private Router router;
+	/**
+	 * 
+	 */
 	private Gson gson;
 
+	/**
+	 * @param vertx
+	 * @param router
+	 */
 	public RestServerBoardProduction(Vertx vertx, Router router) {
 		this.router = router;
 		eventBus = vertx.eventBus();
@@ -48,6 +66,9 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void getAll(RoutingContext routingContext) {
 		eventBus.request("consulta", "boardProduction_ALL", reply -> {
 			if (reply.succeeded()) {
@@ -61,15 +82,26 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
+	/**
+	 * @param vertx
+	 * @param router
+	 * @return
+	 */
 	static RestServerBoardProduction create(Vertx vertx, Router router) {
 		return new RestServerBoardProduction(vertx, router);
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void handle(RoutingContext event) {
 		router.handleContext(event);
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void createBoardProduction(RoutingContext routingContext) {
 		System.out.println(routingContext.getBodyAsString());
 		final BoardProduction boardProduction = gson.fromJson(routingContext.getBodyAsString(), BoardProduction.class);
@@ -87,6 +119,9 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void updateBoardProduction(RoutingContext routingContext) {
 		System.out.println(routingContext.getBodyAsString());
 		final BoardProduction boardProduction = gson.fromJson(routingContext.getBodyAsString(), BoardProduction.class);
@@ -104,6 +139,9 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void deleteBoardProduction(RoutingContext routingContext) {
 		System.out.println("Hola");
 		JsonObject obj = new JsonObject();
