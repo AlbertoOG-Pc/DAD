@@ -868,6 +868,158 @@ Objeto JSON con los datos del registro eliminado
   ```Java
     //TODO
   ```
+### SunPosition
+#### Puntos de acceso
+##### Peticiones GET
+- Para obtener la información respectiva a todas las Posiciones Solares
+  - **Petición:**
+``/api/sunPosition``
+  -  **Resultado:**
+    ```javascript
+	[
+		{
+		"id": 1,					//Identificador de la SunPosition
+		"id_coordinates": 4,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
+		"elevation": 30.0,				//Elevacion del sol
+		"azimut": 30.0					//Azimut
+		},
+		{
+		"id": 2,
+		"id_coordinates": 4,
+		"date": "12-12-1212 15:30:00"
+		"elevation": 23.0,
+		"azimut": 340.0
+		},
+		.
+		.
+		.
+	]
+    ```
+  - **Código de Error:**
+  ```Java
+    //TODO
+   ```
+
+- Para obtener la información concreta de una SunPosition
+  - **Petición:** 
+    - URI: ``/api/sunPosition/{id}``
+    - Body: ``{}``
+  - **Resultado:**
+    ```javascript
+	{
+		"id": 1,					//Identificador de la SunPosition
+		"id_coordinates": 4,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
+		"elevation": 30.0,				//Elevacion del sol
+		"azimut": 30.0					//Azimut
+	}
+    ```
+   
+  - **Código de Error:**
+  ```Java
+  //TODO
+  ```
+ 
+ - Para obtener todas las SunPosition de un día en concreto
+  - **Petición:** 
+    - URI: ``/api/sunPosition/dateFilter/``
+    - Body: ``{}``
+  - **Resultado:**
+    ```javascript
+	{
+		"date": "12-12-1212"
+	}
+    ```
+   
+  - **Código de Error:**
+  ```Java
+  //TODO
+  ```
+   
+##### Peticiones POST
+- Para registrar una Posición Solar en el sistema
+  - **Petición:** 
+    - URI: ``/api/sunPosition``
+    - Body:
+    ```javascript
+	{
+		"id": 1,					//Identificador de la SunPosition
+		"id_coordinates": 4,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
+		"elevation": 30.0,				//Elevacion del sol
+		"azimut": 30.0					//Azimut
+	}
+	```
+
+  - **Resultado:**
+    ```javascript
+	{
+		"id": 1,					//Identificador de la SunPosition
+		"id_coordinates": 4,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
+		"elevation": 30.0,				//Elevacion del sol
+		"azimut": 30.0					//Azimut
+	}
+	```
+   
+  - **Código de Error:**
+    ```java
+    //TODO
+    ```
+
+##### Peticiones PUT
+Para modificar los datos de una Posición Solar
+- **Petición :**
+	-  URI: ``/api/sunPosition``
+	- Cuerpo: 
+    ```javascript
+	{
+		"id": 1,					//Identificador de la SunPosition
+		"id_coordinates": 3,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
+		"elevation": 30.0,				//Elevacion del sol
+		"azimut": 30.0					//Azimut
+	}
+	```
+	Objeto JSON con los datos de la SunPosition actualizados
+    ```javascript
+	{
+		"id": 1,					//Identificador de la SunPosition
+		"id_coordinates": 3,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
+		"elevation": 30.0,				//Elevacion del sol
+		"azimut": 30.0					//Azimut
+	}
+	```
+ -  **Código de Error**:
+    ```javascript
+	//TODO
+    ```
+##### Peticiones DELETE
+- Para eliminar del sistema el registro de una coordenada
+  - **Petición :**
+  	- URI: ``/api/sunPosition/{id}``
+	- Cuerpo: `` {} ``
+  - **Resultado:**
+Objeto JSON con los datos de la coordenada eliminada
+    ```javascript
+	{
+		"id": 1,					//Identificador de la SunPosition
+		"id_coordinates": 3,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"	//Fecha y hora de esa SunPosition
+		"elevation": 30.0,				//Elevacion del sol
+		"azimut": 30.0					//Azimut
+	}
+	```
+
+ -  **Código de Error**:
+    ```javascript
+	//TODO
+    ```
+
+
+
 
 
 
