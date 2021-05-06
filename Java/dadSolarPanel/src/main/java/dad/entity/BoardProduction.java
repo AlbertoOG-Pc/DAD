@@ -3,19 +3,59 @@ package dad.entity;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD
+ * 
+ *         Class BoardProduction - Entidad que maneja el modelo de datos de la
+ *         produccion de las placas.
+ */
 public class BoardProduction {
+	/**
+	 * Identificador de la tupla de produccion de la placa
+	 */
 	private int id;
+
+	/**
+	 * Identificador de la placa
+	 */
 	private int id_board;
+
+	/**
+	 * Posicion del servo en la tucla identificada
+	 */
 	private int positionServo;
+
+	/**
+	 * Fecha del registro de la tupla
+	 */
 	private LocalDateTime date;
+
+	/**
+	 * Produccion de la placa
+	 */
 	private Float production;
 
+	/**
+	 * Objeto construido para el formateo de la fecha
+	 */
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+	/**
+	 * Contructor vacio de la clase BoardProduction
+	 */
 	public BoardProduction() {
 		super();
 	}
 
+	/**
+	 * @param id            - Integer - Identificador de la tupla
+	 * @param id_board      - Integer - Identificador de la placa
+	 * @param positionServo - Integer - Angulo de posicion del servo
+	 * @param date          - LocalDateTime - Fecha de registro de los datos
+	 * @param production    - Float - Produccion de la placa en la fecha indicada
+	 */
 	public BoardProduction(int id, int id_board, int positionServo, LocalDateTime date, Float production) {
 		super();
 		this.id = id;
@@ -25,26 +65,45 @@ public class BoardProduction {
 		this.production = production;
 	}
 
+	/**
+	 * @return devuelve el Id de la tupla
+	 */
 	public int getId() {
 		return id;
 	}
 
+	/**
+	 * @param id - Integer Establece el ID de la tupla
+	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
+	/**
+	 * @return Devuelve el ID de la placa a la que hace referencia la tupla
+	 */
 	public int getId_board() {
 		return id_board;
 	}
 
+	/**
+	 * @param id_board - Integer Establece el ID de la placa a la que hace
+	 *                 referencia la tupla
+	 */
 	public void setId_board(int id_board) {
 		this.id_board = id_board;
 	}
 
+	/**
+	 * @return Devuelve un int con la posicion del servo
+	 */
 	public int getPositionServo() {
 		return positionServo;
 	}
 
+	/**
+	 * @param positionServo - Int Establece la posicion del servo
+	 */
 	public void setPositionServo(int positionServo) {
 		this.positionServo = positionServo;
 	}
@@ -53,23 +112,38 @@ public class BoardProduction {
 	 * public LocalDateTime getDate() { return date; }
 	 */
 
-	// Get format String
+	/**
+	 * @return devuelve Un String con el formato indicado en el objeto
+	 *         DateTimeFormatter de la fecha
+	 */
 	public String getDate() {
 		return date.format(formatter);
 	}
 
+	/**
+	 * @param date - LocalDateTime Establece la fecha del registro de la tupla
+	 */
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
+	/**
+	 * @return devuelve un float con la produccion registrada
+	 */
 	public Float getProduction() {
 		return production;
 	}
 
+	/**
+	 * @param production - Float Establece la produccion de la tupla
+	 */
 	public void setProduction(Float production) {
 		this.production = production;
 	}
 
+	/**
+	 * Metodo hashCode() autogenerado
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -82,6 +156,9 @@ public class BoardProduction {
 		return result;
 	}
 
+	/**
+	 * Metodo equals() autogenerado
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -110,6 +187,9 @@ public class BoardProduction {
 		return true;
 	}
 
+	/**
+	 * Metodo toString() autogenerado
+	 */
 	@Override
 	public String toString() {
 		return "BoardProduction [id=" + id + ", id_board=" + id_board + ", positionServo=" + positionServo + ", date="

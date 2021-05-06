@@ -3,19 +3,53 @@ package dad.entity;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD Class Log - Entidad que maneja el
+ *         modelo de datos la clase Log. Que se usara para tener un registro de
+ *         lo que ocurre con las placas
+ */
 public class Log {
 
+	/**
+	 * Identificador de la tupla de la clase LOG
+	 */
 	private int id;
+
+	/**
+	 * Identificador de la placa asiaciada a la linea de LOG
+	 */
 	private int id_board;
+
+	/**
+	 * Fecha del log
+	 */
 	private LocalDateTime date;
+
+	/**
+	 * Texto del log
+	 */
 	private String issue;
 
+	/**
+	 * Objeto construido para el formateo de la fecha
+	 */
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+	/**
+	 * Constructor vacio
+	 */
 	public Log() {
 		super();
 	}
 
+	/**
+	 * @param id       - Integer - Identificador de la tupla del registro
+	 * @param id_board - Integer - Identificador de la placa asociada al registro
+	 * @param date     - LocalDateTime - Fecha asociada de la tupla del registro
+	 * @param issue    - String - Informacion del registro
+	 */
 	public Log(int id, int id_board, LocalDateTime date, String issue) {
 		super();
 		this.id = id;
@@ -24,18 +58,30 @@ public class Log {
 		this.issue = issue;
 	}
 
+	/**
+	 * @return Identificador de la tupla LOG
+	 */
 	public int getId() {
 		return id;
 	}
 
+	/**
+	 * @param id Integer Establece identificador de la tupla LOG
+	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
+	/**
+	 * @return Integer - Identificador de la placa asociada a la tupla
+	 */
 	public int getId_board() {
 		return id_board;
 	}
 
+	/**
+	 * @param id_board Integer Establece el identificador de la placa asociada
+	 */
 	public void setId_board(int id_board) {
 		this.id_board = id_board;
 	}
@@ -45,22 +91,38 @@ public class Log {
 //	}
 
 	// Get format String
+	/**
+	 * @return devuelve Un String con el formato indicado en el objeto
+	 *         DateTimeFormatter de la fecha
+	 */
 	public String getDate() {
 		return date.format(formatter);
 	}
 
+	/**
+	 * @param date - LocalDateTime Establece la fecha del registro
+	 */
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
+	/**
+	 * @return devuelve un String con el asunto del Log
+	 */
 	public String getIssue() {
 		return issue;
 	}
 
+	/**
+	 * @param issue - String Establece el asunto del Log
+	 */
 	public void setIssue(String issue) {
 		this.issue = issue;
 	}
 
+	/**
+	 * Metodo hashCode() autogenerado
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -72,6 +134,9 @@ public class Log {
 		return result;
 	}
 
+	/**
+	 * Metodo equals() autogenerado
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -98,6 +163,9 @@ public class Log {
 		return true;
 	}
 
+	/**
+	 * Metodo toString() autogenerado
+	 */
 	@Override
 	public String toString() {
 		return "Log [id=" + id + ", id_board=" + id_board + ", date=" + date + ", issue=" + issue + "]";

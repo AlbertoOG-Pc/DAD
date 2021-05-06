@@ -19,26 +19,51 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
+/**
+ * @author Alberto, Pablo
+ * 
+ *         Proyecto Placas solares - DAD
+ *
+ */
 public class RestServerSunPosition implements SunPositionHandler {
 
-	// private Map<Integer, UserEntity> users = new HashMap<Integer, UserEntity>();
+	/**
+	 * 
+	 */
 	private EventBus eventBus;
+	/**
+	 * 
+	 */
 	private Router router;
+	/**
+	 * 
+	 */
 	private Gson gson;
 
+	/**
+	 * @param vertx
+	 * @param router
+	 * @return
+	 */
 	static RestServerSunPosition create(Vertx vertx, Router router) {
 		return new RestServerSunPosition(vertx, router);
 	}
 
+	/**
+	 *
+	 */
 	public void handle(RoutingContext event) {
 		router.handleContext(event);
 	}
 
+	/**
+	 * @param vertx
+	 * @param router
+	 */
 	public RestServerSunPosition(Vertx vertx, Router router) {
 		this.router = router;
 		eventBus = vertx.eventBus();
 
-		// Fumadita by stackoverflow
 		gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
 			@Override
 			public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -49,15 +74,25 @@ public class RestServerSunPosition implements SunPositionHandler {
 
 		}).create();
 
+		/* GET METHOD */
 		router.get("/api/sunPosition").handler(this::getAll);
 		router.get("/api/sunPosition/:id").handler(this::getSunPositionByID);
 		router.get("/api/sunPosition/dateFilter/").handler(this::getSunPositionByDate);
+
+		/* POST METHOD */
 		router.post("/api/sunPosition").handler(this::createSunPosition);
+
+		/* PUT METHOD */
 		router.put("/api/sunPosition").handler(this::updateSunPosition);
+
+		/* DELETE METHOD */
 		router.delete("/api/sunPosition/:id").handler(this::deleteSunPosition);
 
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void getAll(RoutingContext routingContext) {
 		eventBus.request("consulta", "sunPosition_ALL", reply -> {
 			if (reply.succeeded()) {
@@ -71,6 +106,9 @@ public class RestServerSunPosition implements SunPositionHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void getSunPositionByID(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "sunPosition_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
@@ -86,6 +124,9 @@ public class RestServerSunPosition implements SunPositionHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void getSunPositionByDate(RoutingContext routingContext) {
 		JsonObject obj = routingContext.getBodyAsJson();
 		obj.put("CLASS", "sunPositionByDate");
@@ -101,6 +142,9 @@ public class RestServerSunPosition implements SunPositionHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void createSunPosition(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 
@@ -118,6 +162,9 @@ public class RestServerSunPosition implements SunPositionHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void updateSunPosition(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 
@@ -135,6 +182,9 @@ public class RestServerSunPosition implements SunPositionHandler {
 		});
 	}
 
+	/**
+	 * @param routingContext
+	 */
 	private void deleteSunPosition(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "SunPosition").put("id", Integer.parseInt(routingContext.request().getParam("id")));
