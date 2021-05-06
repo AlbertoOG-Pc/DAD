@@ -637,31 +637,27 @@ Para modificar los datos de una coordenada
 	//TODO
     ```
 ##### Peticiones DELETE
-- Para eliminar del sistema el registro de una placa
+- Para eliminar del sistema el registro de una coordenada
   - **Petición :**
   	- URI: ``/api/board/{id}``
 	- Cuerpo: `` {} ``
   - **Resultado:**
-Objeto JSON con los datos de la placa eliminada
-    ```javascript
-	[
-		{
-		"id": 1,					//Identificador de la placa
-		"maxPower": 5.8,				//Producción máxima
-		"coordinate":					//Ubicación
-			{
-			"id": 2,				//Id de la coordenada
-			"longitude": 30.0,			//Longitud
-			"latitude": 30.0			//Latitud
-			} 
-		}
-	]
+Objeto JSON con los datos de la coordenada eliminada
+	```javascript
+	{
+		"id": 1,					//Identificador de las coordenadas
+		"longitude": 30.0,				//Longitud
+		"latitude": 30.0				//Latitud
+	}
     ```
 
  -  **Código de Error**:
     ```javascript
 	//TODO
     ```
+
+
+
 
 
 
