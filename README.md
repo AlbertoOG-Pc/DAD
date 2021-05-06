@@ -30,13 +30,16 @@ Esta información puede ser usada para calcular la radiación solar recibida por
 
 Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 
+# API
+## Clases
+| **Class**| **Descripción**                                 |
+|----------|--------|
+| Board| Contiene la información de la ubicación de cada placa solar y su producción máxima|
+| BoardProduction| Contiene información de la producción de la placa, en un momento determinado la posición del servo y su producción |
+|Coordinates| Las coordenadas de cada placa|
+|Log| Registro de acciones realizadas sobre las placas con su fecha y hora|
+|SunPosition| Las coordenadas horizontales (Altura y Acimut) del sol en cada momento con un intervalo de 30 minutos entre ellas desde una coordenada concreta|
 
-```
-{
-    "id": 2,
-    "id_board": 3,
-    "positionServo": 2,
-    "date": "2021-04-30 14:30:00",
-    "production": 41
-} 
-```
+### Board
+
+
