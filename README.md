@@ -278,6 +278,266 @@ Objeto JSON con los datos de la placa eliminada
     //TODO
   ```
 
+### BoardProduction
+#### Puntos de acceso
+##### Peticiones GET
+Para obtener la información respectiva a la producción de todas las placas
+  - **Petición**: 
+	-  URI: ``/api/boardsProduction``
+	- Cuerpo: ``{}``
+  -  **Resultado**:
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"production": 20.27				//Produccion
+		},
+		{
+		"id": 2,					
+		"id_board": 2,				
+		"positionServo": 442,					
+		"date": "2021-04-15 10:00:00",
+		"production": 20.27			
+		},
+		.
+		.
+		.
+	]
+```
+	
+  - **Código de Error**:
+```javascript
+    //TODO
+```
+Para obtener la información concreta de un registro de producción
+- **Petición:**
+	- URI: ``/api/boardProduction/{id}``
+	- Cuerpo: ``{}``
+
+- **Resultado:** 
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"production": 20.27				//Produccion
+		}
+	]
+```
+- Código de Error
+```Java
+//TODO
+```
+
+Para obtener información sobre todas las placas de unas mismas coordenadas
+- **Peticion:**
+	- URI:  ``/api/boardProduction/board/{id_board}``
+	- Cuerpo: ``{}``
+	- 
+- **Resultado**:
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"production": 20.27				//Produccion
+		},
+		{
+		"id": 4,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-16 11:00:00",	//Fecha del regristro
+		"production": 20.27				//Produccion
+		},
+		.
+		.
+		.
+	]
+```
+
+- Código de Error
+```Java
+//TODO
+```
+
+Para obtener información sobre los registros de producción de una placa concreta, por encima de un umbral de producción.
+
+- **Peticion:**
+	- URI:  ``/api/boardProduction/board/{id_board}/{production}``
+	- Cuerpo: ``{}``
+	- 
+- **Resultado**:
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"production": 20				//Produccion
+		},
+		{
+		"id": 5,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-16 11:00:00",	//Fecha del regristro
+		"production": 21				//Produccion
+		},
+		.
+		.
+		.
+	]
+```
+
+- Código de Error
+```Java
+//TODO
+```
+
+Para obtener información sobre los registros de producción entre dos fechas.
+
+- **Peticion:**
+	- URI:  ``/api/boardProduction/datesFilter/``
+	- Cuerpo: 
+Objeto JSON con los datos de la fecha de a  filtrar
+```javascript
+	[
+		{
+		"fechaIni" : "?",		//Fecha inicial del filtro
+		"fechaFin" : "?"}		//Fecha final del filtro	
+		}
+	]
+```
+
+- **Resultado**:
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-17 10:00:00",	//Fecha del regristro
+		"production": 20				//Produccion
+		},
+		{
+		"id": 7,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 442,			//Posicion del servo
+		"date": "2021-04-18 11:00:00",	//Fecha del regristro
+		"production": 21				//Produccion
+		},
+		.
+		.
+		.
+	]
+```
+
+- Código de Error
+```Java
+//TODO
+```
+
+##### Peticiones POST
+Para insertar un registro de producción de una placa
+- **Petición :**
+	-  URI: ``/api/boardProduction``
+	- Cuerpo: 
+	Objeto JSON con los datos de la placa Actualizados
+```javascript
+	[
+		{						
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 12,			//Posicion del servo
+		"date": "2021-04-17 09:00:00",	//Fecha del regristro
+		"production": 10				//Produccion
+		},
+	]
+```
+- **Resultado:**
+Objeto JSON con los datos insertado
+```javascript
+	[
+		{	
+		"id" : 54						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 12,			//Posicion del servo
+		"date": "2021-04-17 09:00:00",	//Fecha del regristro
+		"production": 10				//Produccion
+		},
+	]
+```
+  - **Código de Error**:
+  ```Java
+    //TODO
+  ```
+  
+##### Peticiones PUT
+
+Para modificar un registro de producción de una placa
+- **Petición :**
+	-  URI: ``/api/boardProduction``
+	- Cuerpo: 
+	Objeto JSON con los datos de produccion actualizados Actualizados
+```javascript
+	[
+		{	
+		"id" : 54					
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 156,			//Posicion del servo
+		"date": "2021-04-17 09:00:00",	//Fecha del regristro
+		"production": 10				//Produccion
+		},
+	]
+```
+- **Resultado:**
+Objeto JSON con los datos insertado
+```javascript
+	[
+		{	
+		"id" : 54						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 156,			//Posicion del servo
+		"date": "2021-04-17 09:00:00",	//Fecha del regristro
+		"production": 10				//Produccion
+		},
+	]
+```
+  - **Código de Error**:
+  ```Java
+    //TODO
+  ```
+##### Peticiones DELETE
+ Para eliminar del sistema un registro de producción
+- **Petición :**
+	- URI: ``/api/boardProduction/{id}``
+	- Cuerpo: `` {} ``
+- **Resultado:**
+Objeto JSON con los datos del registro eliminado
+```javascript
+	[
+		{	
+		"id" : 54						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa
+		"positionServo": 156,			//Posicion del servo
+		"date": "2021-04-17 09:00:00",	//Fecha del regristro
+		"production": 10				//Produccion
+		},
+	]
+```
+
+ -  **Código de Error**:
+  ```Java
+    //TODO
+  ```
+
+
 ### Coordinates
 #### Puntos de acceso
 ##### Peticiones GET
