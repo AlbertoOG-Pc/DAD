@@ -1,4 +1,5 @@
 
+
 # Panel Solar Inteligente Distribuido
 > Alberto Otero González y Pablo Ruiz Jurado
 ## Introducción
@@ -19,11 +20,16 @@ La herramienta mencionada anteriormente nos ofrece además una imagen de la tray
 
 ![image](https://user-images.githubusercontent.com/52832300/117276164-f970a500-ae5e-11eb-8f41-f45ef7afc751.png)
 Para calcular la posición del sol debemos tener en cuenta estos dos elementos:
-- **Azimut:** El Azimut se refiere a un ángulo de la orientación sobre la superficie de una esfera real o virtual. El significado preciso de este término cambia dependiendo del ámbito en el que lo estemos usando, en este caso 
+- **Acimut:** El Azimut se refiere a un ángulo de la orientación sobre la superficie de una esfera real o virtual. El significado preciso de este término cambia dependiendo del ámbito en el que lo estemos usando, en este caso 
 - **Altura:** La altura de un astro en astronomía es el arco vertical contado desde el horizonte hasta el astro. Su valor absoluto siempre será menor o igual a 90º, siendo además positivo en el caso de que el astro sea visible (Por encima del horizonte) y negativo si no es visible (oculto por el horizonte).
 <p align="center">
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Altura.PNG/300px-Altura.PNG">
 </p>
+La altura y el acimut son coordenadas que dependen de la posición del observador. Es decir, un mismo astro en un mismo momento visto por diferentes observadores en distintas posiciones de la tierra tiene diferentes "coordenadas horizontales" (Altura y Acimut). Esto significa que las coordenadas son locales.
+
+Actualmente, se utiliza un sextante para medir la altura de un astro. Las coordenadas horizontales pueden ser calculadas matemáticamente.
+Esta información puede ser usada para calcular la radiación solar recibida por la tierra en un periodo determinado o la proyección de sombras de un elemento que aún no existe, como un edificio, entre otras muchísimas funciones.
+
 
 
 
