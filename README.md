@@ -181,14 +181,102 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
   ```
 
 ##### Peticiones PUT
-- Para modificar los datos de una placa
-  - ``/api/board``
+Para modificar los datos de una placa
+- **Petición :**
+	-  URI: ``/api/board/{id}``
+	- Cuerpo: 
+	Objeto JSON con los datos de la placa Actualizados
+```javascript
+	[
+		{
+		"id": 1,						//Identificador de la placa
+		"maxPower": 9,					//Producción máxima
+		"id_coordinate": 1				//Id_Coordinate
+		}
+	]
+```
+- **Resultado:**
+Objeto JSON con los datos de la placa eliminada
+```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 2,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		}
+	]
+```
+  - **Código de Error**:
+  ```Java
+    //TODO
+  ```
 
-/api/board/coordinates/{id}
+##### Peticiones PATCH
+ Para modificar la localización de una placa, para ello usaremos una modificación del campo id_coordinates de la placa.
 
+-  **Petición :**
+	- URI: ``/api/board/coordinates/{id} //id board a modificar``
+	- Cuerpo: 
+Objeto JSON con los datos a Actualizar en este caso solo id_coordinates
+```javascript
+	[
+		{
+		"id_coordinate": 1				//Identificador de la nueva coordenada
+		}
+	]
+```
+- **Resultado:**
+Objeto JSON con los datos de la placa eliminada
+```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 1,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		}
+	]
+```
+ - **Código de Error**:
+  ```Java
+    //TODO
+  ```
+  
 ##### Peticiones DELETE
-- Para eliminar del sistema el registro de una placa
-  - ``/api/board/{id}``
+ Para eliminar del sistema el registro de una placa
+- **Petición :**
+	- URI: ``/api/board/{id}``
+	- Cuerpo: `` {} ``
+- **Resultado:**
+Objeto JSON con los datos de la placa eliminada
+```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 2,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		}
+	]
+```
+
+ -  **Código de Error**:
+  ```Java
+    //TODO
+  ```
 
 #### P
 
