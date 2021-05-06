@@ -656,6 +656,218 @@ Objeto JSON con los datos de la coordenada eliminada
 	//TODO
     ```
 
+### LOG
+#### Puntos de acceso
+##### Peticiones GET
+Para obtener la información respectiva a la registros Log almacenados
+  - **Petición**: 
+	-  URI: ``/api/log``
+	- Cuerpo: ``{}``
+  -  **Resultado**:
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log"			//Asunto
+		},
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 1,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Segundo Log"			//Asunto
+		},
+		.
+		.
+		.
+	]
+```
+	
+  - **Código de Error**:
+```javascript
+    //TODO
+```
+Para obtener la información concreta de un registro de log
+- **Petición:**
+	- URI: ``/api/log/{id}``
+	- Cuerpo: ``{}``
+
+- **Resultado:** 
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log"			//Asunto
+		}
+	]
+```
+- Código de Error
+```Java
+//TODO
+```
+
+Para obtener información sobre todos los registros log de una placa
+- **Peticion:**
+	- URI:  ``/api/log/board/{id_board}``
+	- Cuerpo: ``{}``
+	- 
+- **Resultado**:
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log"			//Asunto
+		},
+		{
+		"id": 6,										//Identificador del registro
+		"id_board": 2,									//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",					//Fecha del regristro
+		"issue": "Servo Manipulado automaticamente"		//Asunto
+		}
+		.
+		.
+		.
+	]
+```
+
+- Código de Error
+```Java
+//TODO
+```
+
+Para obtener información sobre los registros de log entre dos fechas.
+
+- **Peticion:**
+	- URI:  ``/api/log/datesFilter/``
+	- Cuerpo: 
+Objeto JSON con los datos de la fecha de a  filtrar
+```javascript
+	[
+		{
+		"fechaIni" : "?",		//Fecha inicial del filtro
+		"fechaFin" : "?"}		//Fecha final del filtro	
+		}
+	]
+```
+
+- **Resultado**:
+```javascript
+	[
+		{
+		"id": 1,						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log"			//Asunto
+		},
+		{
+		"id": 5,										//Identificador del registro
+		"id_board": 2,									//Identificador de la placa		
+		"date": "2021-04-16 15:00:00",					//Fecha del regristro
+		"issue": "Servo Manipulado automaticamente"		//Asunto
+		},
+		.
+		.
+		.
+	]
+```
+
+- Código de Error
+```Java
+//TODO
+```
+
+##### Peticiones POST
+Para insertar un registro de log sobre de una placa
+- **Petición :**
+	-  URI: ``/api/log``
+	- Cuerpo: 
+	Objeto JSON con los datos a insertar
+```javascript
+	[
+		{
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log"			//Asunto
+		}
+	]
+```
+- **Resultado:**
+Objeto JSON con los datos insertado
+```javascript
+	[
+		{
+		"id" : 1						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log"			//Asunto
+		}
+	]
+```
+  - **Código de Error**:
+  ```Java
+    //TODO
+  ```
+  
+##### Peticiones PUT
+
+Para modificar un registro de producción de una placa
+- **Petición :**
+	-  URI: ``/api/log``
+	- Cuerpo: 
+	Objeto JSON con los datos de produccion actualizados Actualizados
+```javascript
+	[
+		{
+		"id" : 1						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log editado"			//Asunto
+		}
+	]
+```
+- **Resultado:**
+Objeto JSON con los datos actualizados
+```javascript
+	[
+		{
+		"id" : 1						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log editado"			//Asunto
+		}
+	]
+```
+  - **Código de Error**:
+  ```Java
+    //TODO
+  ```
+##### Peticiones DELETE
+ Para eliminar del sistema un registro de log
+- **Petición :**
+	- URI: ``/api/log/{id}``
+	- Cuerpo: `` {} ``
+- **Resultado:**
+Objeto JSON con los datos del registro eliminado
+```javascript
+	[
+		{
+		"id" : 1						//Identificador del registro
+		"id_board": 2,					//Identificador de la placa		
+		"date": "2021-04-16 10:00:00",	//Fecha del regristro
+		"issue": "Primer Log editado"			//Asunto
+		}
+	]
+```
+
+ -  **Código de Error**:
+  ```Java
+    //TODO
+  ```
 
 
 
