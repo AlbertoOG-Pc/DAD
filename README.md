@@ -41,5 +41,66 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 |SunPosition| Las coordenadas horizontales (Altura y Acimut) del sol en cada momento con un intervalo de 30 minutos entre ellas desde una coordenada concreta|
 
 ### Board
+#### Puntos de acceso
+##### Peticiones GET
+- Para obtener la información respectiva a todas las placas
+  - **Petición**: 
+``/api/boards``
+  -  Resultado:
+    ```Java
+	[
+	  {
+	    "id": 1,                          //Identificador de la placa
+	    "maxPower": 5.8,                  //Producción máxima
+	    "coordinate":                     //Ubicación
+        {                   
+          "id": 2,                        //Id de la coordenada
+          "longitude": 30.0,              //Longitud
+          "latitude": 30.0                //Latitud
+        } 
+	  },
+	  { 
+      "id": 2,
+      "maxPower": 8.77,
+      "coordinate":
+        {
+          "id": 1,
+          "longitude": 25.0,
+          "latitude": 25.0
+        }
+ 	  },
+      .
+      .
+      .
+	]
+    ```
+  - Código de Error:
+  ```Java
+    //TODO
+    ```
+
+Para obtener la información concreta de una placa
+- Petición: 
+``/api/board/{id}``
+
+- Resultado
 
 
+- Código de Error
+```Java
+//TODO
+```
+Para obtener información sobre todas las placas de unas mismas coordenadas
+- ``/api/board/filtercoordinates/{id_coordinates}``
+##### Peticiones POST
+Para registrar una placa en el sistema
+- ``/api/board``
+##### Peticiones PUT
+Para modificar los datos de una placa
+- ``/api/board``
+
+##### Peticiones DELETE
+Para eliminar del sistema el registro de una placa
+- ``/api/board/:id``
+
+#### P
