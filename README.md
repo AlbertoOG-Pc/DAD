@@ -30,6 +30,15 @@ La altura y el acimut son coordenadas que dependen de la posición del observado
 Actualmente, se utiliza un sextante para medir la altura de un astro. Las coordenadas horizontales pueden ser calculadas matemáticamente.
 Esta información puede ser usada para calcular la radiación solar recibida por la tierra en un periodo determinado o la proyección de sombras de un elemento que aún no existe, como un edificio, entre otras muchísimas funciones.
 
+```JSON
+{
+    "id": 2,
+    "id_board": 3,
+    "positionServo": 2,
+    "date": "2021-04-30 14:30:00",
+    "production": 41
+} 
+```
 
 
 
