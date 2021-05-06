@@ -1,5 +1,5 @@
 
-# Panel Solar Inteligente Distribuido (WIP)
+# Panel Solar Inteligente Distribuido
 > Alberto Otero González y Pablo Ruiz Jurado
 ## Introducción
 ### Introducción del proyecto en la asignatura
