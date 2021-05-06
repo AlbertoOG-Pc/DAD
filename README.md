@@ -278,6 +278,133 @@ Objeto JSON con los datos de la placa eliminada
     //TODO
   ```
 
-#### P
+### Coordinates
+#### Puntos de acceso
+##### Peticiones GET
+- Para obtener la información respectiva a todas las coordenadas
+  - **Petición:**
+``/api/coordinates``
+  -  **Resultado:**
+    ```javascript
+	[
+		{
+		"id": 1,					//Identificador de las coordenadas
+		"longitude": 30.0,				//Longitud
+		"latitude": 30.0				//Latitud
+		},
+		{ 
+		"id": 2,
+		"longitude": 25.0,
+		"latitude": 25.0
+		},
+		.
+		.
+		.
+	]
+    ```
+  - **Código de Error:**
+  ```Java
+    //TODO
+   ```
+
+- Para obtener la información concreta de una coordenada
+  - **Petición:** 
+    - URI: ``/api/coordinates/{id}``
+    - Body: ``{}``
+  - **Resultado:**
+    ```javascript
+	{
+		"id": 1,					//Identificador de las coordenadas
+		"longitude": 30.0,				//Longitud
+		"latitude": 30.0				//Latitud
+	}
+    ```
+   
+  - **Código de Error:**
+  ```Java
+  //TODO
+  ```
+  
+##### Peticiones POST
+- Para registrar una coordenada en el sistema
+  - **Petición:** 
+    - URI: ``/api/coordinate``
+    - Body:
+    ```javascript
+	{
+		"id": 1,					//Identificador de las coordenadas
+		"longitude": 30.0,				//Longitud
+		"latitude": 30.0				//Latitud
+	}
+    ```
+
+  - **Resultado:**
+    ```javascript
+	{
+		"id": 1,					//Identificador de las coordenadas
+		"longitude": 30.0,				//Longitud
+		"latitude": 30.0				//Latitud
+	}
+    ```
+   
+  - **Código de Error:**
+    ```java
+    //TODO
+    ```
+
+##### Peticiones PUT
+Para modificar los datos de una coordenada
+- **Petición :**
+	-  URI: ``/api/board/{id}``
+	- Cuerpo: 
+	```javascript
+	{
+		"id": 1,					//Identificador de las coordenadas
+		"longitude": 30.0,				//Longitud
+		"latitude": 30.0				//Latitud
+	}
+    ```
+	Objeto JSON con los datos de la coordenada actualizados
+	```javascript
+	{
+		"id": 1,					//Identificador de las coordenadas
+		"longitude": 30.0,				//Longitud
+		"latitude": 30.0				//Latitud
+	}
+    ```
+ -  **Código de Error**:
+    ```javascript
+	//TODO
+    ```
+##### Peticiones DELETE
+- Para eliminar del sistema el registro de una placa
+  - **Petición :**
+  	- URI: ``/api/board/{id}``
+	- Cuerpo: `` {} ``
+  - **Resultado:**
+Objeto JSON con los datos de la placa eliminada
+    ```javascript
+	[
+		{
+		"id": 1,					//Identificador de la placa
+		"maxPower": 5.8,				//Producción máxima
+		"coordinate":					//Ubicación
+			{
+			"id": 2,				//Id de la coordenada
+			"longitude": 30.0,			//Longitud
+			"latitude": 30.0			//Latitud
+			} 
+		}
+	]
+    ```
+
+ -  **Código de Error**:
+    ```javascript
+	//TODO
+    ```
+
+
+
+
 
 
