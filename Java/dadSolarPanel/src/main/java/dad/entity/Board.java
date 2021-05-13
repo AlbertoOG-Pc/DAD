@@ -112,7 +112,7 @@ public class Board {
 	/**
 	 * @return Devuelve la ID de las coordenadas de la placa
 	 */
-	public int getId_coordinates() {
+	private int getId_coordinates() {
 		return id_coordinates;
 	}
 

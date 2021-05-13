@@ -56,20 +56,23 @@ public class BoardImpl {
 	 */
 	public static void getALLBoard(Message<?> message) {
 		JsonArray result = new JsonArray();
-		Database.mySqlClient.query("SELECT * FROM dad.board;", res -> {
-			if (res.succeeded()) {
-				// Get the result set
-				RowSet<Row> resultSet = res.result();
-				for (Row elem : resultSet) {
-					System.out.println("Elementos " + elem);
-					result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"), elem.getInteger("id_coordinates"),
-							elem.getDouble("maxPower"))));
-				}
-			} else {
-				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-			}
-			message.reply(result.toString());
-		});
+		Database.mySqlClient.query("SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
+				+ "JOIN coordinates ON board.id_coordinates = coordinates.id", res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new Board(
+									elem.getInteger("id"), new Coordinates(elem.getInteger("id_coordinates"),
+											elem.getFloat("latitude"), elem.getFloat("longitude")),
+									elem.getDouble("maxPower"))));
+						}
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+					}
+					message.reply(result.toString());
+				});
 	}
 
 	/**
