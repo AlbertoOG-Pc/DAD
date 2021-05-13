@@ -60,9 +60,10 @@ public class RestServerBoard implements BoardHandler {
 
 		eventBus = vertx.eventBus();
 		/* GET METHOD */
-		router.get("/api/board").handler(this::getAll);
+		router.get("/api/boards").handler(this::getAll);
 		router.get("/api/board/:id").handler(this::getOne);
 		router.get("/api/board/filtercoordinates/:id_coordinates").handler(this::getALLforCordinates);
+		
 		/* POST METHOD */
 		router.post("/api/board").handler(this::createBoard);
 

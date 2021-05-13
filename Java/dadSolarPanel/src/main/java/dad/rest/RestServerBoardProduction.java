@@ -59,7 +59,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		}).create();
 
 		/* GET METHOD */
-		router.get("/api/boardProduction").handler(this::getALLBoardProduction);
+		router.get("/api/boardsProduction").handler(this::getALLBoardProduction);
 		router.get("/api/boardProduction/:id").handler(this::getBoardProductionByID);
 		router.get("/api/boardProduction/board/:id_board").handler(this::getBoardProductionByBoardID);
 		router.get("/api/boardProduction/board/:id_board/:production").handler(this::getBestsBoardProductionsOfBoardID);

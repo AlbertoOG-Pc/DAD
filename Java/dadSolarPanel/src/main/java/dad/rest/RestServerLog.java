@@ -80,7 +80,7 @@ public class RestServerLog implements LogHandler {
 		router.get("/api/log").handler(this::getAll);
 		router.get("/api/log/:id").handler(this::getOne);
 		router.get("/api/log/board/:id_board").handler(this::getAllForBoard);
-		router.get("/api/log/filterDate/").handler(this::getAllDateFilter);
+		router.get("/api/log/datesFilter/").handler(this::getAllDateFilter);
 
 		/* POST METHOD */
 		router.post("/api/log").handler(this::createLog);
