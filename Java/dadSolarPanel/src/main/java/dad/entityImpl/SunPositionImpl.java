@@ -188,20 +188,20 @@ public class SunPositionImpl {
 						data.getFloat("azimut"), data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
-						// Get the result set
-						RowSet<Row> resultSet = res.result();
+						getSunPositionByID(message);
+						/*RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
 							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
 									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
 									elem.getFloat("elevation"), elem.getFloat("azimut"))));
-						}
+						}*/
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 
@@ -213,17 +213,17 @@ public class SunPositionImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
+		getSunPositionByID(message);
 		Database.mySqlClient.preparedQuery("DELETE FROM dad.sunposition WHERE id = ?", Tuple.of(data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
 
-						result.add(data);
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 

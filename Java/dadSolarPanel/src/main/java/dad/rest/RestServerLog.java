@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 import dad.entity.Log;
+import dad.interfaces.BasicOperation;
 import dad.interfaces.LogHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
@@ -25,7 +26,7 @@ import io.vertx.ext.web.RoutingContext;
  *         Proyecto Placas solares - DAD
  *
  */
-public class RestServerLog implements LogHandler {
+public class RestServerLog implements LogHandler, BasicOperation {
 
 	/**
 	 * 
@@ -83,13 +84,13 @@ public class RestServerLog implements LogHandler {
 		router.get("/api/log/datesFilter/").handler(this::getAllDateFilter);
 
 		/* POST METHOD */
-		router.post("/api/log").handler(this::createLog);
+		router.post("/api/log").handler(this::create);
 
 		/* PUT METHOD */
-		router.put("/api/log").handler(this::updateLog);
+		router.put("/api/log").handler(this::update);
 
 		/* DELETE METHOD */
-		router.delete("/api/log/:id").handler(this::deleteLog);
+		router.delete("/api/log/:id").handler(this::delete);
 	}
 
 	/**
@@ -169,7 +170,7 @@ public class RestServerLog implements LogHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void createLog(RoutingContext routingContext) {
+	public void create(RoutingContext routingContext) {
 		System.out.println(routingContext.getBodyAsString());
 		final Log log = gson.fromJson(routingContext.getBodyAsString(), Log.class);
 		// System.out.println("Aqui llego create");
@@ -189,8 +190,8 @@ public class RestServerLog implements LogHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void updateLog(RoutingContext routingContext) {
-		// System.out.println(routingContext.getBodyAsString());
+	public void update(RoutingContext routingContext) {
+		System.out.println(routingContext.getBodyAsString());
 
 		final Log log = gson.fromJson(routingContext.getBodyAsString(), Log.class);
 		eventBus.request("PUT", JsonObject.mapFrom(log).put("CLASS", "Log"), reply -> {
@@ -209,7 +210,7 @@ public class RestServerLog implements LogHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void deleteLog(RoutingContext routingContext) {
+	public void delete(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "Log").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 

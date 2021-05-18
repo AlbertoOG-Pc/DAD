@@ -70,6 +70,10 @@ public class Board {
 	 * @return devuelve una Coordinate
 	 */
 	public Coordinates getCoordinate() {
+		if(coordinate == null) {
+			coordinate = new Coordinates();
+			coordinate.setId(this.getId_coordinates());
+		}
 		return coordinate;
 	}
 

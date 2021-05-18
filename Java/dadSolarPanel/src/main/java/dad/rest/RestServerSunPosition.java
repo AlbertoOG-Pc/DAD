@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 import dad.entity.SunPosition;
+import dad.interfaces.BasicOperation;
 import dad.interfaces.SunPositionHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
@@ -25,7 +26,7 @@ import io.vertx.ext.web.RoutingContext;
  *         Proyecto Placas solares - DAD
  *
  */
-public class RestServerSunPosition implements SunPositionHandler {
+public class RestServerSunPosition implements SunPositionHandler, BasicOperation {
 
 	/**
 	 * 
@@ -76,25 +77,27 @@ public class RestServerSunPosition implements SunPositionHandler {
 
 		/* GET METHOD */
 		router.get("/api/sunPosition").handler(this::getAll);
-		router.get("/api/sunPosition/:id").handler(this::getSunPositionByID);
+		router.get("/api/sunPosition/:id").handler(this::getOne);
 		router.get("/api/sunPosition/dateFilter/").handler(this::getSunPositionByDate);
 
 		/* POST METHOD */
-		router.post("/api/sunPosition").handler(this::createSunPosition);
+		router.post("/api/sunPosition").handler(this::create);
 
 		/* PUT METHOD */
-		router.put("/api/sunPosition").handler(this::updateSunPosition);
+		router.put("/api/sunPosition").handler(this::update);
 
 		/* DELETE METHOD */
-		router.delete("/api/sunPosition/:id").handler(this::deleteSunPosition);
+		router.delete("/api/sunPosition/:id").handler(this::delete);
 
 	}
 
 	/**
 	 * @param routingContext
 	 */
-	private void getAll(RoutingContext routingContext) {
-		eventBus.request("consulta", "sunPosition_ALL", reply -> {
+	public void getAll(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "sunPosition_ALL");
+		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
 				System.out.println("Respuesta recibida: " + replyMessage);
@@ -109,7 +112,7 @@ public class RestServerSunPosition implements SunPositionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void getSunPositionByID(RoutingContext routingContext) {
+	public void getOne(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "sunPosition_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 		eventBus.request("consulta", obj, reply -> {
@@ -127,7 +130,7 @@ public class RestServerSunPosition implements SunPositionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void getSunPositionByDate(RoutingContext routingContext) {
+	public void getSunPositionByDate(RoutingContext routingContext) {
 		JsonObject obj = routingContext.getBodyAsJson();
 		obj.put("CLASS", "sunPositionByDate");
 		eventBus.request("consulta", obj, reply -> {
@@ -145,7 +148,7 @@ public class RestServerSunPosition implements SunPositionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void createSunPosition(RoutingContext routingContext) {
+	public void create(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 
 		final SunPosition sunPosition = gson.fromJson(routingContext.getBodyAsString(), SunPosition.class);
@@ -165,7 +168,7 @@ public class RestServerSunPosition implements SunPositionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void updateSunPosition(RoutingContext routingContext) {
+	public void update(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 
 		final SunPosition sunPosition = gson.fromJson(routingContext.getBodyAsString(), SunPosition.class);
@@ -185,7 +188,7 @@ public class RestServerSunPosition implements SunPositionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void deleteSunPosition(RoutingContext routingContext) {
+	public void delete(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "SunPosition").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 

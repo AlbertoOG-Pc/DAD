@@ -83,6 +83,7 @@ public class BoardImpl {
 	public static void getOneBoard(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
+		System.out.println(data);
 		Database.mySqlClient.preparedQuery(
 				"SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
 						+ "JOIN coordinates ON board.id_coordinates = coordinates.id WHERE board.id = ?",
@@ -166,7 +167,9 @@ public class BoardImpl {
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
 		Database.mySqlClient.preparedQuery("UPDATE dad.board SET id_coordinates = ?, maxPower = ? WHERE id = ?",
-				Tuple.of(data.getInteger("id_coordinates"), data.getDouble("maxPower"), data.getInteger("id")), res -> {
+				Tuple.of(data.getJsonObject("coordinate").getInteger("id"), data.getDouble("maxPower"),
+						data.getInteger("id")),
+				res -> {
 					if (res.succeeded()) {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
@@ -180,7 +183,8 @@ public class BoardImpl {
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 						// resultado = "Error: " + res.cause().getLocalizedMessage();
 					}
-					message.reply(result.toString());
+					getOneBoard(message);
+					// message.reply(result.toString());
 				});
 	}
 
@@ -193,7 +197,6 @@ public class BoardImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
-		System.out.println(data);
 		Database.mySqlClient.preparedQuery("UPDATE dad.board SET id_coordinates = ? WHERE id = ?",
 				Tuple.of(data.getInteger("id_coordinates"), data.getInteger("id")), res -> {
 					if (res.succeeded()) {
@@ -209,7 +212,8 @@ public class BoardImpl {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					getOneBoard(message);
+					// message.reply(result.toString());
 				});
 	}
 
@@ -222,17 +226,15 @@ public class BoardImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
+		getOneBoard(message);
 		Database.mySqlClient.preparedQuery("DELETE FROM dad.board WHERE id = ?", Tuple.of(data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
-
-						result.add(data);
-
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 

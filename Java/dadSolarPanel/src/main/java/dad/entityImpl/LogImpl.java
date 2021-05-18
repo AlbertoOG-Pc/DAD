@@ -181,23 +181,24 @@ public class LogImpl {
 	public static void updateLog(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
+		System.out.println(data);
 		data.remove("CLASS");
-		Database.mySqlClient.preparedQuery("UPDATE dad.log SET id_board = ?, date = ?, issue = ?, WHERE id = ?", Tuple
+		Database.mySqlClient.preparedQuery("UPDATE dad.log SET id_board = ?, date = ?, issue = ? WHERE id = ?", Tuple
 				.of(data.getInteger("id_board"), data.getValue("date"), data.getString("issue"), data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
-						// Get the result set
-						RowSet<Row> resultSet = res.result();
+						getOneLog(message);
+						/*RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
 							result.add(JsonObject.mapFrom(new Log(elem.getInteger("id"), elem.getInteger("id_board"),
 									elem.getLocalDateTime("date"), elem.getString("issue"))));
-						}
+						}*/
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 
@@ -215,7 +216,7 @@ public class LogImpl {
 				System.out.println("Failure: " + res.cause().getMessage());
 				result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 			}
-			message.reply(result.toString());
+			//message.reply(result.toString());
 		});
 	}
 

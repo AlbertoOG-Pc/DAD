@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 import dad.entity.BoardProduction;
+import dad.interfaces.BasicOperation;
 import dad.interfaces.BoardProductionHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
@@ -25,7 +26,7 @@ import io.vertx.ext.web.RoutingContext;
  *         Proyecto Placas solares - DAD
  *
  */
-public class RestServerBoardProduction implements BoardProductionHandler {
+public class RestServerBoardProduction implements BoardProductionHandler, BasicOperation {
 
 	/**
 	 * 
@@ -59,20 +60,20 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		}).create();
 
 		/* GET METHOD */
-		router.get("/api/boardsProduction").handler(this::getALLBoardProduction);
-		router.get("/api/boardProduction/:id").handler(this::getBoardProductionByID);
+		router.get("/api/boardsProduction").handler(this::getAll);
+		router.get("/api/boardProduction/:id").handler(this::getOne);
 		router.get("/api/boardProduction/board/:id_board").handler(this::getBoardProductionByBoardID);
 		router.get("/api/boardProduction/board/:id_board/:production").handler(this::getBestsBoardProductionsOfBoardID);
 		router.get("/api/boardProduction/datesFilter/").handler(this::getBoardProductionByDates);
 
 		/* POST METHOD */
-		router.post("/api/boardProduction").handler(this::createBoardProduction);
+		router.post("/api/boardProduction").handler(this::create);
 
 		/* PUT METHOD */
-		router.put("/api/boardProduction").handler(this::updateBoardProduction);
+		router.put("/api/boardProduction").handler(this::update);
 
 		/* DELETE METHOD */
-		router.delete("/api/boardProduction/:id").handler(this::deleteBoardProduction);
+		router.delete("/api/boardProduction/:id").handler(this::delete);
 
 	}
 
@@ -96,7 +97,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void getALLBoardProduction(RoutingContext routingContext) {
+	public void getAll(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "boardProduction_ALL");
 		eventBus.request("consulta", obj, reply -> {
@@ -111,7 +112,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
-	private void getBoardProductionByID(RoutingContext routingContext) {
+	public void getOne(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "boardProductionByID").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 		eventBus.request("consulta", obj, reply -> {
@@ -126,7 +127,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
-	private void getBoardProductionByBoardID(RoutingContext routingContext) {
+	public void getBoardProductionByBoardID(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "boardProductionByBoardID").put("id_board",
 				Integer.parseInt(routingContext.request().getParam("id_board")));
@@ -142,7 +143,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
-	private void getBestsBoardProductionsOfBoardID(RoutingContext routingContext) {
+	public void getBestsBoardProductionsOfBoardID(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "bestsBoardProductionsOfBoardID")
 				.put("id_board", Integer.parseInt(routingContext.request().getParam("id_board")))
@@ -159,7 +160,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 		});
 	}
 
-	private void getBoardProductionByDates(RoutingContext routingContext) {
+	public void getBoardProductionByDates(RoutingContext routingContext) {
 		JsonObject obj = routingContext.getBodyAsJson();
 		obj.put("CLASS", "boardProductionByDates");
 		eventBus.request("consulta", obj, reply -> {
@@ -177,7 +178,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void createBoardProduction(RoutingContext routingContext) {
+	public void create(RoutingContext routingContext) {
 		System.out.println(routingContext.getBodyAsString());
 		final BoardProduction boardProduction = gson.fromJson(routingContext.getBodyAsString(), BoardProduction.class);
 		System.out.println("Aqui llego create");
@@ -197,10 +198,8 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void updateBoardProduction(RoutingContext routingContext) {
-		System.out.println(routingContext.getBodyAsString());
+	public void update(RoutingContext routingContext) {
 		final BoardProduction boardProduction = gson.fromJson(routingContext.getBodyAsString(), BoardProduction.class);
-		System.out.println("Aqui llego create");
 		eventBus.request("PUT", JsonObject.mapFrom(boardProduction).put("CLASS", "BoardProduction"), reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
@@ -217,7 +216,7 @@ public class RestServerBoardProduction implements BoardProductionHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void deleteBoardProduction(RoutingContext routingContext) {
+	public void delete(RoutingContext routingContext) {
 		System.out.println("Hola");
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "BoardProduction").put("id", Integer.parseInt(routingContext.request().getParam("id")));
