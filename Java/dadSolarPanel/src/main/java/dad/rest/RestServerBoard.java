@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import dad.entity.Board;
+import dad.interfaces.BasicOperation;
 import dad.interfaces.BoardHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
@@ -17,7 +18,7 @@ import io.vertx.ext.web.RoutingContext;
  *         Proyecto Placas solares - DAD
  *
  */
-public class RestServerBoard implements BoardHandler {
+public class RestServerBoard implements BoardHandler,BasicOperation {
 
 	/**
 	 * 
@@ -65,22 +66,22 @@ public class RestServerBoard implements BoardHandler {
 		router.get("/api/board/filtercoordinates/:id_coordinates").handler(this::getALLforCordinates);
 		
 		/* POST METHOD */
-		router.post("/api/board").handler(this::createBoard);
+		router.post("/api/board").handler(this::create);
 
 		/* PUT METHOD */
-		router.put("/api/board").handler(this::updateBoard);
+		router.put("/api/board").handler(this::update);
 
 		/* PATCH METHOD */
 		router.patch("/api/board/coordinates/:id").handler(this::updateBoardCoordinates);
 
 		/* DELETE METHOD */
-		router.delete("/api/board/:id").handler(this::deleteBoard);
+		router.delete("/api/board/:id").handler(this::delete);
 	}
 
 	/**
 	 * @param routingContext
 	 */
-	private void getAll(RoutingContext routingContext) {
+	public void getAll(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "board_ALL");
 		eventBus.request("consulta", obj, reply -> {
@@ -98,7 +99,7 @@ public class RestServerBoard implements BoardHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void getOne(RoutingContext routingContext) {
+	public void getOne(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 
 		obj.put("CLASS", "board_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
@@ -117,7 +118,7 @@ public class RestServerBoard implements BoardHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void getALLforCordinates(RoutingContext routingContext) {
+	public void getALLforCordinates(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 
 		obj.put("CLASS", "board_ALL_coordinate").put("id_coordinates",
@@ -137,7 +138,7 @@ public class RestServerBoard implements BoardHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void createBoard(RoutingContext routingContext) {
+	public void create(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 
 		final Board board = gson.fromJson(routingContext.getBodyAsString(), Board.class);
@@ -157,9 +158,8 @@ public class RestServerBoard implements BoardHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void updateBoard(RoutingContext routingContext) {
+	public void update(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
-
 		final Board board = gson.fromJson(routingContext.getBodyAsString(), Board.class);
 		eventBus.request("PUT", JsonObject.mapFrom(board).put("CLASS", "Board"), reply -> {
 			// LOS DATOS ESTAN AQUI
@@ -194,7 +194,7 @@ public class RestServerBoard implements BoardHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void deleteBoard(RoutingContext routingContext) {
+	public void delete(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "Board").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import dad.entity.Coordinates;
+import dad.interfaces.BasicOperation;
 import dad.interfaces.CoordinatesHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
@@ -17,7 +18,7 @@ import io.vertx.ext.web.RoutingContext;
  *         Proyecto Placas solares - DAD
  *
  */
-public class RestServerCoordinates implements CoordinatesHandler {
+public class RestServerCoordinates implements CoordinatesHandler, BasicOperation {
 
 	/**
 	 * 
@@ -49,19 +50,19 @@ public class RestServerCoordinates implements CoordinatesHandler {
 		this.router = router;
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		eventBus = vertx.eventBus();
-		
+
 		/* GET METHOD */
 		router.get("/api/coordinates").handler(this::getAll);
-		router.get("/api/coordinates/:id").handler(this::getCoordinatesByID);
-		
+		router.get("/api/coordinates/:id").handler(this::getOne);
+
 		/* POST METHOD */
-		router.post("/api/coordinates").handler(this::createCoordinate);
-		
+		router.post("/api/coordinates").handler(this::create);
+
 		/* PUT METHOD */
-		router.put("/api/coordinates").handler(this::updateCoordinates);
-		
+		router.put("/api/coordinates").handler(this::update);
+
 		/* DELETE METHOD */
-		router.delete("/api/coordinates/:id").handler(this::deleteCoordinates);
+		router.delete("/api/coordinates/:id").handler(this::delete);
 
 	}
 
@@ -77,8 +78,10 @@ public class RestServerCoordinates implements CoordinatesHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void getAll(RoutingContext routingContext) {
-		eventBus.request("consulta", "coordinates_ALL", reply -> {
+	public void getAll(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "coordinates_ALL");
+		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
 				System.out.println("Respuesta recibida: " + replyMessage);
@@ -94,7 +97,7 @@ public class RestServerCoordinates implements CoordinatesHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void getCoordinatesByID(RoutingContext routingContext) {
+	public void getOne(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "coordinates_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 		eventBus.request("consulta", obj, reply -> {
@@ -112,7 +115,7 @@ public class RestServerCoordinates implements CoordinatesHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void createCoordinate(RoutingContext routingContext) {
+	public void create(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 		final Coordinates coordinates = gson.fromJson(routingContext.getBodyAsString(), Coordinates.class);
 		eventBus.request("POST", JsonObject.mapFrom(coordinates).put("CLASS", "Coordinates"), reply -> {
@@ -131,7 +134,7 @@ public class RestServerCoordinates implements CoordinatesHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void updateCoordinates(RoutingContext routingContext) {
+	public void update(RoutingContext routingContext) {
 		// System.out.println(routingContext.getBodyAsString());
 
 		final Coordinates coordinates = gson.fromJson(routingContext.getBodyAsString(), Coordinates.class);
@@ -151,7 +154,7 @@ public class RestServerCoordinates implements CoordinatesHandler {
 	/**
 	 * @param routingContext
 	 */
-	private void deleteCoordinates(RoutingContext routingContext) {
+	public void delete(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 		obj.put("CLASS", "Coordinates").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 

@@ -177,7 +177,6 @@ public class App extends AbstractVerticle {
 			CoordinatesImpl.updateCoordinates(message);
 			break;
 		case "BoardProduction":
-			System.out.println("Hola");
 			BoardProductionImpl.updateBoardProduction(message);
 			break;
 		case "SunPosition":

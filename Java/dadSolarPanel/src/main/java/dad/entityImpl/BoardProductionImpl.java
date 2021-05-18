@@ -222,30 +222,31 @@ public class BoardProductionImpl {
 	 *                el APIREST E imprime por pantalla el resultado obtenido
 	 */
 	public static void updateBoardProduction(Message<?> message) {
-		System.out.println("Hola Update Impl");
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
+		System.out.println(data);
 		data.remove("CLASS");
 		Database.mySqlClient.preparedQuery(
 				"UPDATE dad.board_production SET id_board = ?, positionServo = ?, date = ?, production = ? WHERE id = ?",
-				Tuple.of(data.getInteger("id"), data.getInteger("id_board"), data.getInteger("positionServo"),
-						data.getValue("date"), data.getFloat("production")),
+				Tuple.of(data.getInteger("id_board"), data.getInteger("positionServo"),
+						data.getValue("date"), data.getFloat("production"),data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
+						getBoardProductionByID(message);
 						// Get the result set
-						RowSet<Row> resultSet = res.result();
+						/*RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
 							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
 									elem.getInteger("id_board"), elem.getInteger("positionServo"),
 									elem.getLocalDateTime("date"), data.getFloat("production"))));
-						}
+						}*/
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 
@@ -257,17 +258,18 @@ public class BoardProductionImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
+		getBoardProductionByID(message);
 		Database.mySqlClient.preparedQuery("DELETE FROM dad.board_production WHERE id = ?",
 				Tuple.of(data.getInteger("id")), res -> {
 					if (res.succeeded()) {
 
-						result.add(data);
+						//result.add(data);
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 

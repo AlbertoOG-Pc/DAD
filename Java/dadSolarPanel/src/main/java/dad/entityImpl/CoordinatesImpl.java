@@ -132,18 +132,19 @@ public class CoordinatesImpl {
 				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude"), data.getInteger("id")), res -> {
 					if (res.succeeded()) {
 						// Get the result set
-						RowSet<Row> resultSet = res.result();
+						getCoordinatesByID(message);
+						/*RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
 							result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"),
 									elem.getFloat("latitude"), elem.getFloat("longitude"))));
-						}
+						}*/
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 
@@ -155,17 +156,18 @@ public class CoordinatesImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
+		getCoordinatesByID(message);
 		Database.mySqlClient.preparedQuery("DELETE FROM dad.coordinates WHERE id = ?", Tuple.of(data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
 
-						result.add(data);
+						//result.add(data);
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					message.reply(result.toString());
+					//message.reply(result.toString());
 				});
 	}
 

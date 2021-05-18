@@ -29,5 +29,11 @@
 			<artifactId>vertx-mysql-client</artifactId>
 			<version>3.8.5</version>
 		</dependency>
+		<!-- mvnrepository.com/artifact/io.vertx/vertx-mqtt -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-mqtt</artifactId>
+			<version>3.8.5</version>
+		</dependency>
 	</dependencies>
 </project>
