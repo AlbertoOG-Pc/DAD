@@ -1,6 +1,14 @@
-#include "RestClient.h"
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+
+//Network Time Protocol (NTP) es un protocolo de Internet para sincronizar los relojes de los sistemas informáticos
+//a través del enrutamiento de paquetes en redes con latencia variable. NTP utiliza UDP como su capa de transporte,
+//usando el puerto 123. Está diseñado para resistir los efectos de la latencia variable.
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+#include "ArduinoJson.h"
+#include "RestClient.h"
 #include "config.h"
 
 void setup_wifi();
@@ -8,11 +16,14 @@ void callback(char *, byte *, unsigned int);
 
 WiFiClient espClient;
 PubSubClient Mqttclient(espClient);
-long lastMsg = 0;
-char msg[50];
-
 RestClient Restclient = RestClient(mqtt_server, 8089);
 
+//Time
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org"); //CSV must be UCT (+0) No DST
+
+long lastMsg = 0;
+char msg[50];
 int test_delay = 1000; //so we don't spam the API
 boolean describe_tests = true;
 
@@ -23,11 +34,13 @@ void setup()
   setup_wifi();
   Mqttclient.setServer(mqtt_server, 1883);
   Mqttclient.setCallback(callback);
+
+  //Time
+  timeClient.begin();
 }
 
 void setup_wifi()
 {
-
   delay(10);
   // We start by connecting to a WiFi network
   Serial.println();
@@ -91,7 +104,125 @@ void reconnect()
   }
 }
 
+String getDate()
+{
+  unsigned long epochTime = timeClient.getEpochTime();
+  String formattedTime = timeClient.getFormattedTime();
+
+  struct tm *ptm = gmtime((time_t *)&epochTime); //Get day, month and year from epoch time
+
+  //Get a time structure
+  int day = ptm->tm_mday;
+  int month = ptm->tm_mon + 1;
+  int year = ptm->tm_year + 1900;
+
+  char dayFormat[50];
+  sprintf(dayFormat, "%02d", day); //To keep a leading zero when needed
+
+  char monthFormat[50];
+  sprintf(monthFormat, "%02d", month); //To keep a leading zero when needed
+
+  String fecha = String(dayFormat) + "-" + String(monthFormat) + "-" + String(year) + " " + String(formattedTime);
+  return fecha;
+}
+
 String response;
+
+String serializeLog(int id_board, String date, String issue)
+{
+  StaticJsonDocument<200> doc;
+
+  // StaticJsonObject allocates memory on the stack, it can be
+  // replaced by DynamicJsonDocument which allocates in the heap.
+  //
+  // DynamicJsonDocument  doc(200);
+
+  // Add values in the document
+  //
+  doc["id_board"] = id_board;
+  doc["date"] = date;
+  doc["issue"] = issue;
+
+  // Add an array.
+  //
+  //JsonArray data = doc.createNestedArray("data");
+  /*data.add(lat);
+  data.add(lon);*/
+  // Generate the minified JSON and send it to the Serial port.
+  //
+  String output;
+  serializeJson(doc, output);
+  // The above line prints:
+  // {"sensor":"gps","time":1351824120,"data":[48.756080,2.302038]}
+
+  // Start a new line
+  Serial.println(output);
+
+  // Generate the prettified JSON and send it to the Serial port.
+  //
+  //serializeJsonPretty(doc, output);
+  // The above line prints:
+  // {
+  //   "sensor": "gps",
+  //   "time": 1351824120,
+  //   "data": [
+  //     48.756080,
+  //     2.302038
+  //   ]
+  // }
+  return output;
+}
+
+String serializeBoardProduction(int id_board, int servoPosition, String date, float production)
+{
+  StaticJsonDocument<200> doc;
+  doc["id_board"] = id_board;
+  doc["servoPosition"] = servoPosition;
+  doc["date"] = date;
+  doc["production"] = production;
+  String output;
+  serializeJson(doc, output);
+  Serial.println(output);
+
+  return output;
+}
+
+void deserializeBody(String responseJson)
+{
+  if (responseJson != "")
+  {
+    StaticJsonDocument<200> doc;
+
+    //char json[] =
+    //    "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
+
+    // Deserialize the JSON document
+    DeserializationError error = deserializeJson(doc, responseJson);
+
+    // Test if parsing succeeds.
+    if (error)
+    {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
+
+    // Fetch values.
+    //
+    // Most of the time, you can rely on the implicit casts.
+    // In other case, you can do doc["time"].as<long>();
+    const char *sensor = doc["sensor"];
+    long time = doc["time"];
+    double latitude = doc["data"][0];
+    double longitude = doc["data"][1];
+
+    // Print values.
+    Serial.println(sensor);
+    Serial.println(time);
+    Serial.println(latitude, 6);
+    Serial.println(longitude, 6);
+  }
+}
 
 void test_status(int statusCode)
 {
@@ -131,17 +262,24 @@ void GET_tests()
   describe("Test GET with path and response");
   test_status(Restclient.get("/api/log", &response));
   test_response();
-
-  /*describe("Test GET with path");
-  test_status(Restclient.get("/api/sensors/123", &response));
-  test_response();*/
 }
 
+void POST_tests()
+{
+  String post_bodyLog = serializeLog(1, getDate(), "Test POST Log from ESP8266"); //id_board, date, issue
+  describe("(LOG) Test POST with path and body and response");
+  test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
+  test_response();
 
+  String post_bodyBoardProduction = serializeBoardProduction(1, 4, getDate(), 222222); //id_board, positionServo, date, production
+  describe("(BoardProduction)Test POST with path and body and response");
+  test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
+  test_response();
+}
 
 void loop()
 {
-
+  timeClient.update();
   if (!Mqttclient.connected())
   {
     reconnect();
@@ -156,5 +294,9 @@ void loop()
     Serial.println(msg);
     Mqttclient.publish("casa/despacho/temperatura", msg);
   }
-  GET_tests();
+  //Serial.println(getDate());
+
+  //GET_tests();
+  POST_tests();
+  delay(10000000);
 }
