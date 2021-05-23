@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import dad.dadSolarPanel.App;
 import dad.dadSolarPanel.Database;
+import dad.dadSolarPanel.Mqtt;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
@@ -39,7 +40,8 @@ public class RestServer extends AbstractVerticle {
 		ArrayList<String> verticles = new ArrayList<>();
 		verticles.add(App.class.getName());
 		verticles.add(Database.class.getName());
-
+		verticles.add(Mqtt.class.getName());
+		
 		verticles.stream().forEach(verticle -> {
 			getVertx().deployVerticle(verticle, deployResult -> {
 				if (deployResult.succeeded()) {
