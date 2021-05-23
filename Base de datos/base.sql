@@ -52,13 +52,14 @@ DROP TABLE IF EXISTS `board_production`;
 CREATE TABLE `board_production` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_board` int NOT NULL,
-  `positionServo` int NOT NULL,
+  `positionServoE` int NOT NULL,
+  `positionServoA` varchar(45) COLLATE utf8_spanish_ci NOT NULL,
   `date` datetime NOT NULL,
   `production` float NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_board_production` (`id_board`),
   CONSTRAINT `fk_board_production` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +68,7 @@ CREATE TABLE `board_production` (
 
 LOCK TABLES `board_production` WRITE;
 /*!40000 ALTER TABLE `board_production` DISABLE KEYS */;
-INSERT INTO `board_production` VALUES (1,2,442,'1212-12-12 12:12:12',20.227),(2,2,142,'1212-11-12 12:12:12',20.227);
+INSERT INTO `board_production` VALUES (1,2,442,'','1212-12-12 12:12:12',20.227),(2,2,142,'','1212-11-12 12:12:12',20.227),(7,5,2,'','2021-12-12 12:12:12',41),(8,5,2,'','2021-12-12 12:12:12',41),(9,1,0,'','2021-05-16 15:01:40',222222);
 /*!40000 ALTER TABLE `board_production` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,7 +112,7 @@ CREATE TABLE `log` (
   PRIMARY KEY (`id`),
   KEY `pk_board` (`id_board`),
   CONSTRAINT `pk_board` FOREIGN KEY (`id_board`) REFERENCES `board` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -120,7 +121,7 @@ CREATE TABLE `log` (
 
 LOCK TABLES `log` WRITE;
 /*!40000 ALTER TABLE `log` DISABLE KEYS */;
-INSERT INTO `log` VALUES (1,1,'2021-04-30 18:00:00','Primer log'),(2,2,'2021-04-30 14:30:00','Segundo Log'),(3,1,'2021-04-30 14:30:00','Tercero Log'),(4,1,'2021-04-30 14:30:00','Tercero Log'),(5,1,'2021-04-30 14:30:00','Tercero Log');
+INSERT INTO `log` VALUES (1,1,'2021-04-30 18:00:00','Primer log'),(2,2,'2021-04-30 14:30:00','Segundo Log'),(3,1,'2021-04-30 14:30:00','Tercero Log'),(4,1,'2021-04-30 14:30:00','Tercero Log'),(5,1,'2021-04-30 14:30:00','Tercero Log'),(6,1,'2021-12-22 12:12:12','Test POST Log'),(7,1,'2021-05-16 14:13:26','Test POST Log'),(8,1,'2021-05-16 14:39:07','Test POST Log from ESP8266'),(9,1,'2021-05-16 14:39:09','Test POST Log from ESP8266'),(10,1,'2021-05-16 14:39:11','Test POST Log from ESP8266'),(11,1,'2021-05-16 14:42:14','Test POST Log from ESP8266'),(12,1,'2021-05-16 14:45:40','Test POST Log from ESP8266'),(13,1,'2021-05-16 14:53:04','Test POST Log from ESP8266'),(14,1,'2021-05-16 14:59:52','Test POST Log from ESP8266'),(15,1,'2021-05-16 15:01:39','Test POST Log from ESP8266');
 /*!40000 ALTER TABLE `log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,7 +150,7 @@ CREATE TABLE `sunposition` (
 
 LOCK TABLES `sunposition` WRITE;
 /*!40000 ALTER TABLE `sunposition` DISABLE KEYS */;
-INSERT INTO `sunposition` VALUES (1,2,'2020-04-30 17:00:00',25,30),(2,3,'2020-04-28 17:00:00',10,58),(3,1,'2020-04-20 12:00:00',40,15),(4,2,'1212-12-12 12:12:12',4.8,14),(5,4,'1212-12-12 12:12:12',4.8,14.7),(6,4,'1212-12-12 12:12:12',4.8,14.7),(7,4,'1212-12-12 12:12:12',4.8,14.7),(8,4,'1212-12-12 12:12:12',4.8,14.7),(9,4,'1212-12-12 12:12:12',4.8,14.7),(10,4,'1212-12-12 12:12:12',4222220,14.7);
+INSERT INTO `sunposition` VALUES (1,2,'2020-04-30 17:00:00',25,30),(2,3,'2020-04-28 17:00:00',10,58),(3,1,'2020-04-20 12:00:00',40,15),(4,2,'1212-12-12 12:12:12',4.8,14),(5,4,'1212-12-12 12:12:12',4.8,14.7),(6,4,'1212-12-12 12:12:12',4.8,14.7),(7,4,'1212-12-12 12:12:12',4.8,14.7),(8,4,'1212-12-12 12:12:12',4.8,14.7),(9,4,'1212-12-12 12:12:12',4.8,14.7),(10,4,'1212-12-12 12:12:12',4222220,140.7);
 /*!40000 ALTER TABLE `sunposition` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -162,4 +163,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-06 23:03:45
+-- Dump completed on 2021-05-23 12:01:54
