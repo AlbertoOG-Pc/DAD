@@ -88,11 +88,12 @@ void reconnect()
   while (!Mqttclient.connected())
   {
     Serial.print("Attempting MQTT connection...");
-    if (Mqttclient.connect("ESP1269813124G"))
+    if (Mqttclient.connect(name_device))
     {
       Serial.println("connected");
-      Mqttclient.publish("casa/despacho/temperatura", "Enviando el primer mensaje");
-      Mqttclient.subscribe("casa/despacho/luz");
+      //Mqttclient.publish("casa/despacho/temperatura", "Enviando el primer mensaje");
+      Mqttclient.subscribe("/servo/manual/E");
+      Mqttclient.subscribe("/servo/manual/A");
     }
     else
     {
@@ -173,11 +174,12 @@ String serializeLog(int id_board, String date, String issue)
   return output;
 }
 
-String serializeBoardProduction(int id_board, int servoPosition, String date, float production)
+String serializeBoardProduction(int id_board, int servoPositionE, int servoPositionA, String date, float production)
 {
   StaticJsonDocument<200> doc;
   doc["id_board"] = id_board;
-  doc["servoPosition"] = servoPosition;
+  doc["servoPositionE"] = servoPositionE;
+  doc["servoPositionA"] = servoPositionA;
   doc["date"] = date;
   doc["production"] = production;
   String output;
@@ -192,14 +194,8 @@ void deserializeBody(String responseJson)
   if (responseJson != "")
   {
     StaticJsonDocument<200> doc;
-
-    //char json[] =
-    //    "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
-
-    // Deserialize the JSON document
     DeserializationError error = deserializeJson(doc, responseJson);
 
-    // Test if parsing succeeds.
     if (error)
     {
       Serial.print(F("deserializeJson() failed: "));
@@ -207,16 +203,11 @@ void deserializeBody(String responseJson)
       return;
     }
 
-    // Fetch values.
-    //
-    // Most of the time, you can rely on the implicit casts.
-    // In other case, you can do doc["time"].as<long>();
     const char *sensor = doc["sensor"];
     long time = doc["time"];
     double latitude = doc["data"][0];
     double longitude = doc["data"][1];
 
-    // Print values.
     Serial.println(sensor);
     Serial.println(time);
     Serial.println(latitude, 6);
@@ -266,12 +257,12 @@ void GET_tests()
 
 void POST_tests()
 {
-  String post_bodyLog = serializeLog(1, getDate(), "Test POST Log from ESP8266"); //id_board, date, issue
+  String post_bodyLog = serializeLog(1, "" /*getDate()*/, "Test POST Log from ESP8266"); //id_board, date must be blank, issue
   describe("(LOG) Test POST with path and body and response");
   test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
   test_response();
 
-  String post_bodyBoardProduction = serializeBoardProduction(1, 4, getDate(), 222222); //id_board, positionServo, date, production
+  String post_bodyBoardProduction = serializeBoardProduction(1, 4, 3, "" /*getDate()*/, 222222); //id_board, positionServoE, positionServoA, date must be blank, production
   describe("(BoardProduction)Test POST with path and body and response");
   test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
   test_response();
