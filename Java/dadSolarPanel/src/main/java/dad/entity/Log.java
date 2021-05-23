@@ -103,7 +103,7 @@ public class Log {
 	 * @param date - LocalDateTime Establece la fecha del registro
 	 */
 	public void setDate(LocalDateTime date) {
-		this.date = date;
+			this.date = date;		
 	}
 
 	/**
