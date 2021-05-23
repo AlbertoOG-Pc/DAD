@@ -38,7 +38,7 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 Nuestra base de datos está diseñada la siguiente forma:
 
 <p align="center">
-<img src = "https://user-images.githubusercontent.com/52832300/117362786-fb1c8600-aebb-11eb-851a-b2d7e28abd1b.png">
+<img src = "https://user-images.githubusercontent.com/52832300/119256060-09a6b500-bbbf-11eb-9f7c-142a572ff352.png">
 </p>
 
 
