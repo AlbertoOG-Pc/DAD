@@ -25,7 +25,12 @@ public class BoardProduction {
 	/**
 	 * Posicion del servo en la tucla identificada
 	 */
-	private int positionServo;
+	private int positionServoE;
+	
+	/**
+	 * Posicion del servo en la tucla identificada
+	 */
+	private int positionServoA;
 
 	/**
 	 * Fecha del registro de la tupla
@@ -56,11 +61,12 @@ public class BoardProduction {
 	 * @param date          - LocalDateTime - Fecha de registro de los datos
 	 * @param production    - Float - Produccion de la placa en la fecha indicada
 	 */
-	public BoardProduction(int id, int id_board, int positionServo, LocalDateTime date, Float production) {
+	public BoardProduction(int id, int id_board, int positionServoE, int positionServoA, LocalDateTime date, Float production) {
 		super();
 		this.id = id;
 		this.id_board = id_board;
-		this.positionServo = positionServo;
+		this.positionServoE = positionServoE;
+		this.positionServoA = positionServoA;
 		this.date = date;
 		this.production = production;
 	}
@@ -97,16 +103,31 @@ public class BoardProduction {
 	/**
 	 * @return Devuelve un int con la posicion del servo
 	 */
-	public int getPositionServo() {
-		return positionServo;
+	public int getPositionServoE() {
+		return positionServoE;
 	}
 
 	/**
 	 * @param positionServo - Int Establece la posicion del servo
 	 */
-	public void setPositionServo(int positionServo) {
-		this.positionServo = positionServo;
+	public void setPositionServoE(int positionServo) {
+		this.positionServoE = positionServo;
 	}
+	
+	/**
+	 * @return Devuelve un int con la posicion del servo
+	 */
+	public int getPositionServoA() {
+		return positionServoA;
+	}
+
+	/**
+	 * @param positionServo - Int Establece la posicion del servo
+	 */
+	public void setPositionServoA(int positionServo) {
+		this.positionServoA = positionServo;
+	}
+	
 
 	/*
 	 * public LocalDateTime getDate() { return date; }
@@ -149,13 +170,15 @@ public class BoardProduction {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((formatter == null) ? 0 : formatter.hashCode());
 		result = prime * result + id;
 		result = prime * result + id_board;
-		result = prime * result + positionServo;
+		result = prime * result + positionServoA;
+		result = prime * result + positionServoE;
 		result = prime * result + ((production == null) ? 0 : production.hashCode());
 		return result;
 	}
-
+	
 	/**
 	 * Metodo equals() autogenerado
 	 */
@@ -177,7 +200,9 @@ public class BoardProduction {
 			return false;
 		if (id_board != other.id_board)
 			return false;
-		if (positionServo != other.positionServo)
+		if (positionServoA != other.positionServoA)
+			return false;
+		if (positionServoE != other.positionServoE)
 			return false;
 		if (production == null) {
 			if (other.production != null)
@@ -192,8 +217,11 @@ public class BoardProduction {
 	 */
 	@Override
 	public String toString() {
-		return "BoardProduction [id=" + id + ", id_board=" + id_board + ", positionServo=" + positionServo + ", date="
-				+ date + ", production=" + production + "]";
+		return "BoardProduction [id=" + id + ", id_board=" + id_board + ", positionServoE=" + positionServoE
+				+ ", positionServoA=" + positionServoA + ", date=" + getDate() + ", production=" + production + "]";
 	}
+
+	
+	
 
 }

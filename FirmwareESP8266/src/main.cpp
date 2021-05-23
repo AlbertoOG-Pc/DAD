@@ -6,6 +6,7 @@
 //usando el puerto 123. Está diseñado para resistir los efectos de la latencia variable.
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include <Servo.h>
 
 #include "ArduinoJson.h"
 #include "RestClient.h"
@@ -18,6 +19,11 @@ WiFiClient espClient;
 PubSubClient Mqttclient(espClient);
 RestClient Restclient = RestClient(mqtt_server, 8089);
 
+Servo myservoA;
+Servo myservoE;
+
+void deserializePosition(String);
+
 //Time
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org"); //CSV must be UCT (+0) No DST
@@ -27,14 +33,20 @@ char msg[50];
 int test_delay = 1000; //so we don't spam the API
 boolean describe_tests = true;
 
+const char *code;
+int position;
+
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(D2, OUTPUT);
+  pinMode(D3, OUTPUT);
   Serial.begin(115200);
   setup_wifi();
   Mqttclient.setServer(mqtt_server, 1883);
   Mqttclient.setCallback(callback);
-
+  myservoA.attach(D2);
+  myservoE.attach(D3);
   //Time
   timeClient.begin();
 }
@@ -64,14 +76,36 @@ void setup_wifi()
 
 void callback(char *topic, byte *payload, unsigned int length)
 {
+  String JsonObject;
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
   for (unsigned int i = 0; i < length; i++)
   {
+    JsonObject.concat((char)payload[i]);
     Serial.print((char)payload[i]);
   }
   Serial.println();
+
+  if ((String)topic == "servo/manual/A")
+  {
+    deserializePosition(JsonObject);
+
+    if (strcmp(code, name_device) == 0)
+    {
+      //Mueve servo
+      myservoA.write(position);
+    }
+  }
+  else if ((String)topic == "servo/manual/E")
+  {
+    deserializePosition(JsonObject);
+
+    if (strcmp(code, name_device) == 0)
+    {
+      myservoE.write(position);
+    }
+  }
 
   if ((char)payload[0] == '1')
   {
@@ -92,8 +126,9 @@ void reconnect()
     {
       Serial.println("connected");
       //Mqttclient.publish("casa/despacho/temperatura", "Enviando el primer mensaje");
-      Mqttclient.subscribe("/servo/manual/E");
-      Mqttclient.subscribe("/servo/manual/A");
+      //Mqttclient.subscribe("casa/despacho/luz");
+      Mqttclient.subscribe("servo/manual/E");
+      Mqttclient.subscribe("servo/manual/A");
     }
     else
     {
@@ -215,6 +250,39 @@ void deserializeBody(String responseJson)
   }
 }
 
+void deserializePosition(String responseJson)
+{
+  if (responseJson != "")
+  {
+    StaticJsonDocument<200> doc;
+
+    //char json[] =
+    //    "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
+
+    // Deserialize the JSON document
+    DeserializationError error = deserializeJson(doc, responseJson);
+
+    // Test if parsing succeeds.
+    if (error)
+    {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
+
+    // Fetch values.
+    //
+    // Most of the time, you can rely on the implicit casts.
+    // In other case, you can do doc["time"].as<long>();
+    code = doc["code"];
+    position = doc["position"];
+
+    // Print values.
+    //Serial.println(code);
+    //Serial.println(position);
+  }
+}
+
 void test_status(int statusCode)
 {
   delay(test_delay);
@@ -288,6 +356,6 @@ void loop()
   //Serial.println(getDate());
 
   //GET_tests();
-  POST_tests();
-  delay(10000000);
+  //POST_tests();
+  delay(1000);
 }

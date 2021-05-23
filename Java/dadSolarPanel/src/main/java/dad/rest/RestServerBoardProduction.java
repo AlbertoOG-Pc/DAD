@@ -53,8 +53,12 @@ public class RestServerBoardProduction implements BoardProductionHandler, BasicO
 			@Override
 			public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 					throws JsonParseException {
-
-				return LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+				String fecha = json.getAsString();
+				if(fecha.equals("")) {
+					fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+					
+				}
+				return LocalDateTime.parse(fecha, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
 			}
 
 		}).create();

@@ -38,7 +38,7 @@ Con estos dos datos nuestro sistema sabrá como orientar cada placa solar.
 Nuestra base de datos está diseñada la siguiente forma:
 
 <p align="center">
-<img src = "https://user-images.githubusercontent.com/52832300/117362786-fb1c8600-aebb-11eb-851a-b2d7e28abd1b.png">
+<img src = "https://user-images.githubusercontent.com/52832300/119256060-09a6b500-bbbf-11eb-9f7c-142a572ff352.png">
 </p>
 
 
@@ -300,14 +300,16 @@ Objeto JSON con los datos de la placa eliminada
 		{
 		"id": 1,				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
+		"positionServoE": 442,			//Posicion del servo1
+		"positionServoA": 442,			//Posicion del servo2
 		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"production": 20.27			//Produccion
 		},
 		{
 		"id": 2,					
 		"id_board": 2,				
-		"positionServo": 442,					
+		"positionServoE": 442,
+		"positionServoA": 442,
 		"date": "2021-04-15 10:00:00",
 		"production": 20.27			
 		},
@@ -332,7 +334,8 @@ Objeto JSON con los datos de la placa eliminada
 		{
 		"id": 1,				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
+		"positionServoE": 442,			//Posicion del servo1
+		"positionServoA": 442,			//Posicion del servo2
 		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"production": 20.27			//Produccion
 		}
@@ -354,14 +357,16 @@ Objeto JSON con los datos de la placa eliminada
 		{
 		"id": 1,				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
+		"positionServoE": 442,			//Posicion del servo1
+		"positionServoA": 442,			//Posicion del servo2
 		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"production": 20.27			//Produccion
 		},
 		{
 		"id": 4,					
 		"id_board": 2,				
-		"positionServo": 442,		
+		"positionServoE": 442,
+		"positionServoA": 442,
 		"date": "2021-04-16 11:00:00",	
 		"production": 20.27			
 		},
@@ -388,14 +393,16 @@ Objeto JSON con los datos de la placa eliminada
 		{
 		"id": 1,				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
+		"positionServoE": 442,			//Posicion del servo1
+		"positionServoA": 442,			//Posicion del servo2
 		"date": "2021-04-16 10:00:00",		//Fecha del regristro
 		"production": 20			//Produccion
 		},
 		{
 		"id": 5,						
 		"id_board": 2,				
-		"positionServo": 442,		
+		"positionServoE": 442,
+		"positionServoA": 442,
 		"date": "2021-04-16 11:00:00",	
 		"production": 21
 		},
@@ -431,14 +438,16 @@ Objeto JSON con los datos de la fecha de a  filtrar
 		{
 		"id": 1,				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 442,			//Posicion del servo
+		"positionServoE": 442,			//Posicion del servo1
+		"positionServoA": 442,			//Posicion del servo2
 		"date": "2021-04-17 10:00:00",		//Fecha del regristro
 		"production": 20			//Produccion
 		},
 		{
 		"id": 7,						
 		"id_board": 2,					
-		"positionServo": 442,			
+		"positionServoE": 442,
+		"positionServoA: 442,
 		"date": "2021-04-18 11:00:00",	
 		"production": 21	
 		},
@@ -463,7 +472,8 @@ Objeto JSON con los datos de la fecha de a  filtrar
 	[
 		{						
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 12,			//Posicion del servo
+		"positionServoE: 12,			//Posicion del servo1
+		"positionServoA 12,			//Posicion del servo2
 		"date": "2021-04-17 09:00:00",		//Fecha del regristro
 		"production": 10			//Produccion
 		}
@@ -476,7 +486,8 @@ Objeto JSON con los datos insertado
 		{	
 		"id" : 54				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 12,			//Posicion del servo
+		"positionServoE: 12,			//Posicion del servo1
+		"positionServoA 12,			//Posicion del servo2
 		"date": "2021-04-17 09:00:00",		//Fecha del regristro
 		"production": 10			//Produccion
 		}
@@ -499,7 +510,8 @@ Objeto JSON con los datos insertado
 		{	
 		"id" : 54					
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 156,			//Posicion del servo
+		"positionServoE: 12,			//Posicion del servo1
+		"positionServoA 12,			//Posicion del servo2
 		"date": "2021-04-17 09:00:00",		//Fecha del regristro
 		"production": 10			//Produccion
 		}
@@ -512,7 +524,8 @@ Objeto JSON con los datos insertado
 		{	
 		"id" : 54				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 156,			//Posicion del servo
+		"positionServoE: 12,			//Posicion del servo1
+		"positionServoA 12,			//Posicion del servo2
 		"date": "2021-04-17 09:00:00",		//Fecha del regristro
 		"production": 10			//Produccion
 		}
@@ -534,7 +547,8 @@ Objeto JSON con los datos del registro eliminado
 		{	
 		"id" : 54				//Identificador del registro
 		"id_board": 2,				//Identificador de la placa
-		"positionServo": 156,			//Posicion del servo
+		"positionServoE: 12,			//Posicion del servo1
+		"positionServoA 12,			//Posicion del servo2
 		"date": "2021-04-17 09:00:00",		//Fecha del registro
 		"production": 10			//Produccion
 		}
