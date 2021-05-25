@@ -69,8 +69,9 @@ Como se indica en la imagen, la herramienta online gratuita Tinkercad nos permit
 La estructura que sujeta nuestro sistema está basad en una de la página <a href= "https://www.thingiverse.com/">Thingiverse</a>, la cual tiene multitud de diseños en 3D listos para imprimir.
 
 Encontramos la siguiente estructura: <a href= "https://www.thingiverse.com/thing:2939509">Solar Cell Tracking by Michaelo</a> 
-
-![Thingiverse Structure](https://user-images.githubusercontent.com/52832300/119522579-613e4f80-bd7c-11eb-980a-23e86215d9d1.jpg)
+<p align="center">
+<img src = "https://user-images.githubusercontent.com/52832300/119522579-613e4f80-bd7c-11eb-980a-23e86215d9d1.jpg">
+</p>
 
 Modificando las medidas para adaptarnos a nuestras placas solares tenemos una forma de sujetar y apuntar las placas solares al sol con los dos servos. El servo conectado a D2 (azimut) es el inferior y el servo conectado a D3 (Elevación) el superior con el eje paralelo al suelo.
 
