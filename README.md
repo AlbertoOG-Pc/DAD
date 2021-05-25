@@ -53,8 +53,8 @@ Cada sistema de nuestro proyecto está compuesto de lo siguiente:
 - 1 fuente de 5 voltios: Para alimentar correctamente los dos servomotores a la vez, ya que no es posible con los 3'3V que nos da nuestro ESP8266 (Actualmente el generador es la toma de 5V de un Arduino con nada más conectado
 
 ### Esquema del Circuito
+![Esquema Circuito](https://user-images.githubusercontent.com/52832300/119522511-508dd980-bd7c-11eb-9bda-d2498917c3ba.png)
 
-![Esquema Circuito](C:\Users\morke\Desktop\DADProyecto\Esquema Circuito.png)
 
 Como se indica en la imagen, la herramienta online gratuita Tinkercad nos permite realizar un diagrama del circuito de forma sencilla, pero el problema es que no podemos añadir un ESP8266, por lo que lo hemos sustituido por un Arduino y hemos conectado los componentes a los mismos pines que en el ESP8266:
 
@@ -70,7 +70,7 @@ La estructura que sujeta nuestro sistema está basad en una de la página <a hre
 
 Encontramos la siguiente estructura: <a href= "https://www.thingiverse.com/thing:2939509">Solar Cell Tracking by Michaelo</a> 
 
-![5d8f62ad613d7b162e042e7fa520593c_preview_featured](C:\Users\morke\Desktop\DADProyecto\5d8f62ad613d7b162e042e7fa520593c_preview_featured.jpg)
+![Thingiverse Structure](https://user-images.githubusercontent.com/52832300/119522579-613e4f80-bd7c-11eb-980a-23e86215d9d1.jpg)
 
 Modificando las medidas para adaptarnos a nuestras placas solares tenemos una forma de sujetar y apuntar las placas solares al sol con los dos servos. El servo conectado a D2 (azimut) es el inferior y el servo conectado a D3 (Elevación) el superior con el eje paralelo al suelo.
 
