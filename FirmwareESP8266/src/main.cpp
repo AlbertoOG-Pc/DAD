@@ -11,6 +11,7 @@
 #include "ArduinoJson.h"
 #include "RestClient.h"
 #include "config.h"
+#include "headerclass/headerboard.h"
 
 void setup_wifi();
 void callback(char *, byte *, unsigned int);
@@ -21,8 +22,6 @@ RestClient Restclient = RestClient(mqtt_server, 8089);
 
 Servo myservoA;
 Servo myservoE;
-
-void deserializePosition(String);
 
 //Time
 WiFiUDP ntpUDP;
@@ -35,6 +34,7 @@ boolean describe_tests = true;
 
 const char *code;
 int position;
+String response;
 
 void setup()
 {
@@ -89,7 +89,7 @@ void callback(char *topic, byte *payload, unsigned int length)
 
   if ((String)topic == "servo/manual/A")
   {
-    deserializePosition(JsonObject);
+    deserializePosition(JsonObject, code, position);
 
     if (strcmp(code, name_device) == 0)
     {
@@ -99,7 +99,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
   else if ((String)topic == "servo/manual/E")
   {
-    deserializePosition(JsonObject);
+    deserializePosition(JsonObject, code, position);
 
     if (strcmp(code, name_device) == 0)
     {
@@ -162,127 +162,6 @@ String getDate()
   return fecha;
 }
 
-String response;
-
-String serializeLog(int id_board, String date, String issue)
-{
-  StaticJsonDocument<200> doc;
-
-  // StaticJsonObject allocates memory on the stack, it can be
-  // replaced by DynamicJsonDocument which allocates in the heap.
-  //
-  // DynamicJsonDocument  doc(200);
-
-  // Add values in the document
-  //
-  doc["id_board"] = id_board;
-  doc["date"] = date;
-  doc["issue"] = issue;
-
-  // Add an array.
-  //
-  //JsonArray data = doc.createNestedArray("data");
-  /*data.add(lat);
-  data.add(lon);*/
-  // Generate the minified JSON and send it to the Serial port.
-  //
-  String output;
-  serializeJson(doc, output);
-  // The above line prints:
-  // {"sensor":"gps","time":1351824120,"data":[48.756080,2.302038]}
-
-  // Start a new line
-  Serial.println(output);
-
-  // Generate the prettified JSON and send it to the Serial port.
-  //
-  //serializeJsonPretty(doc, output);
-  // The above line prints:
-  // {
-  //   "sensor": "gps",
-  //   "time": 1351824120,
-  //   "data": [
-  //     48.756080,
-  //     2.302038
-  //   ]
-  // }
-  return output;
-}
-
-String serializeBoardProduction(int id_board, int servoPositionE, int servoPositionA, String date, float production)
-{
-  StaticJsonDocument<200> doc;
-  doc["id_board"] = id_board;
-  doc["servoPositionE"] = servoPositionE;
-  doc["servoPositionA"] = servoPositionA;
-  doc["date"] = date;
-  doc["production"] = production;
-  String output;
-  serializeJson(doc, output);
-  Serial.println(output);
-
-  return output;
-}
-
-void deserializeBody(String responseJson)
-{
-  if (responseJson != "")
-  {
-    StaticJsonDocument<200> doc;
-    DeserializationError error = deserializeJson(doc, responseJson);
-
-    if (error)
-    {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      return;
-    }
-
-    const char *sensor = doc["sensor"];
-    long time = doc["time"];
-    double latitude = doc["data"][0];
-    double longitude = doc["data"][1];
-
-    Serial.println(sensor);
-    Serial.println(time);
-    Serial.println(latitude, 6);
-    Serial.println(longitude, 6);
-  }
-}
-
-void deserializePosition(String responseJson)
-{
-  if (responseJson != "")
-  {
-    StaticJsonDocument<200> doc;
-
-    //char json[] =
-    //    "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
-
-    // Deserialize the JSON document
-    DeserializationError error = deserializeJson(doc, responseJson);
-
-    // Test if parsing succeeds.
-    if (error)
-    {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      return;
-    }
-
-    // Fetch values.
-    //
-    // Most of the time, you can rely on the implicit casts.
-    // In other case, you can do doc["time"].as<long>();
-    code = doc["code"];
-    position = doc["position"];
-
-    // Print values.
-    //Serial.println(code);
-    //Serial.println(position);
-  }
-}
-
 void test_status(int statusCode)
 {
   delay(test_delay);
@@ -319,7 +198,7 @@ void GET_tests()
   test_response();
 
   describe("Test GET with path and response");
-  test_status(Restclient.get("/api/log", &response));
+  test_status(Restclient.get("/api/sunPosition/dateFilterCliente", &response));
   test_response();
 }
 
@@ -338,6 +217,23 @@ void POST_tests()
 
 void loop()
 {
+  //Cada 20 minutos debe hacer un get a sun position y mover los servos de forma correspondiente - Necesitamos fechas.
+
+  //Cada minuto, debe comprobar su pruduccion. En caso de ser maxima moverse hasta que la misma baje.
+
+  //Cada 10 tomas se hace una media y se publica.
+
+  //Si su produccion es maxima debe comunicarse con el resto de placas, para saber si se alcanza el maximo del circuito
+
+  //Si se alcanza el maximo del circuito, todas las placas deben moverse para bajar su produccion.
+
+  //Orden de ejecucion :
+  // 1 - Colocar servos en funcion de hora
+  // 2 - Bucle 10 - minuto a minuto comprobamos produccion.
+  // 3 - Post con media de produccion.
+  // 4 - Bucle de 10 - minuto a minuto comprobamos produccion.
+  // 5 - Post de produccion + Get con nueva hora.
+
   timeClient.update();
   if (!Mqttclient.connected())
   {

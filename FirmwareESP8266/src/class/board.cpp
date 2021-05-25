@@ -1,49 +1,34 @@
 #include "../headerclass/headerboard.h"
 
-
-
-String serializeBoard(int idSensor, String sensor, long time, double lat, double lon)
+void deserializePosition(String responseJson, const char *code, int position) // Llega por MQTT
 {
-  StaticJsonDocument<200> doc;
+  if (responseJson != "")
+  {
+    StaticJsonDocument<200> doc;
 
-  // StaticJsonObject allocates memory on the stack, it can be
-  // replaced by DynamicJsonDocument which allocates in the heap.
-  //
-  // DynamicJsonDocument  doc(200);
+    //char json[] =
+    //    "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
 
-  // Add values in the document
-  //
-  doc["sensor"] = sensor;
-  doc["idSensor"] = idSensor;
-  doc["time"] = time;
+    // Deserialize the JSON document
+    DeserializationError error = deserializeJson(doc, responseJson);
 
-  // Add an array.
-  //
-  JsonArray data = doc.createNestedArray("data");
-  data.add(lat);
-  data.add(lon);
+    // Test if parsing succeeds.
+    if (error)
+    {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
 
-  // Generate the minified JSON and send it to the Serial port.
-  //
-  String output;
-  serializeJson(doc, output);
-  // The above line prints:
-  // {"sensor":"gps","time":1351824120,"data":[48.756080,2.302038]}
+    // Fetch values.
+    //
+    // Most of the time, you can rely on the implicit casts.
+    // In other case, you can do doc["time"].as<long>();
+    code = doc["code"];
+    position = doc["position"];
 
-  // Start a new line
-  Serial.println(output);
-
-  // Generate the prettified JSON and send it to the Serial port.
-  //
-  //serializeJsonPretty(doc, output);
-  // The above line prints:
-  // {
-  //   "sensor": "gps",
-  //   "time": 1351824120,
-  //   "data": [
-  //     48.756080,
-  //     2.302038
-  //   ]
-  // }
-  return output;
+    // Print values.
+    //Serial.println(code);
+    //Serial.println(position);
+  }
 }
