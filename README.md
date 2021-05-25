@@ -1002,6 +1002,36 @@ Objeto JSON con los datos del registro eliminado
 		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
 		"elevation": 30.0,			//Elevacion del sol
 		"azimut": 30.0				//Azimut
+		}
+	]
+    ```
+   
+  - **Código de Error:**
+  ```Java
+  //TODO
+  ```
+  
+  ##### Para obtener la sunPosition correspondiente en función de la hora del día a la que se haga el GET
+  - **Petición:** 
+    - URI: ``/api/sunPosition/dateFilterClient/``
+    - body: ``{}``
+
+    ```javascript
+	{
+		"date": ""
+	}
+    ```
+    
+  - **Resultado:**
+    ```javascript
+	[
+		{
+		"id": 1,				//Identificador de la SunPosition
+		"id_coordinates": 4,			//Identificador de las coordenadas
+		"date": "12-12-1212 12:00:00"		//Fecha y hora de esa SunPosition
+		"elevation": 30.0,			//Elevacion del sol
+		"azimut": 30.0				//Azimut
+		}
 	]
     ```
    
