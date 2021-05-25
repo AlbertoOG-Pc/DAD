@@ -47,10 +47,10 @@ Nuestra base de datos está diseñada la siguiente forma:
 
 Cada sistema de nuestro proyecto está compuesto de lo siguiente:
 
-- 1 ESP8266 (<a href="https://www.amazon.es/SeeKool-Internet-Desarrollo-inal%C3%A1mbrico-Micropython/dp/B07DRF9YTV/ref=sr_1_5?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1I6ECRR64SWZT&dchild=1&keywords=esp8266&qid=1621951147&sprefix=esp8266%2Caps%2C204&sr=8-5">Amazon</a>): El cual se encargará de comunicarse con la base de datos via WiFi y con las demás placas por MQTT
-- 2 Placas Solares Mini con Vmax = 1.5V cada una (<a href="https://www.amazon.es/gp/product/B07VYS266S/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1">Amazon</a>): Estas placas serán las que irán conectadas al pin analógico A0 del ESP8266, para leer el valor del voltaje y en función de este actuar sobre los servos.
-- 2 Servomotores (<a href="https://www.amazon.es/ZHITING-Walking-Helicopter-Airplane-Control/dp/B088NQTBPB/ref=sr_1_6?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=servos+arduino&qid=1621951592&sr=8-6">Amazon</a>): Los cuales se encargarán de mover la base de las placas y el eje de estas, significando cada movimiento una traducción del azimut y de la elevación solar en ese momento.
-- 1 fuente de 5 voltios: Para alimentar correctamente los dos servomotores a la vez, ya que no es posible con los 3'3V que nos da nuestro ESP8266 (Actualmente el generador es la toma de 5V de un Arduino con nada más conectado
+- **1 ESP8266 (<a href="https://www.amazon.es/SeeKool-Internet-Desarrollo-inal%C3%A1mbrico-Micropython/dp/B07DRF9YTV/ref=sr_1_5?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1I6ECRR64SWZT&dchild=1&keywords=esp8266&qid=1621951147&sprefix=esp8266%2Caps%2C204&sr=8-5">Amazon</a>):** El cual se encargará de comunicarse con la base de datos via WiFi y con las demás placas por MQTT
+- **2 Placas Solares Mini con Vmax = 1.5V cada una (<a href="https://www.amazon.es/gp/product/B07VYS266S/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1">Amazon</a>):** Estas placas serán las que irán conectadas al pin analógico A0 del ESP8266, para leer el valor del voltaje y en función de este actuar sobre los servos.
+- **2 Servomotores (<a href="https://www.amazon.es/ZHITING-Walking-Helicopter-Airplane-Control/dp/B088NQTBPB/ref=sr_1_6?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=servos+arduino&qid=1621951592&sr=8-6">Amazon</a>):** Los cuales se encargarán de mover la base de las placas y el eje de estas, significando cada movimiento una traducción del azimut y de la elevación solar en ese momento.
+- **1 fuente de 5 voltios:** Para alimentar correctamente los dos servomotores a la vez, ya que no es posible con los 3'3V que nos da nuestro ESP8266 (Actualmente el generador es la toma de 5V de un Arduino con nada más conectado
 
 ### Esquema del Circuito
 ![Esquema Circuito](https://user-images.githubusercontent.com/52832300/119522511-508dd980-bd7c-11eb-9bda-d2498917c3ba.png)
