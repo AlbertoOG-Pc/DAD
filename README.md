@@ -41,6 +41,40 @@ Nuestra base de datos está diseñada la siguiente forma:
 <img src = "https://user-images.githubusercontent.com/52832300/119256060-09a6b500-bbbf-11eb-9f7c-142a572ff352.png">
 </p>
 
+# Hardware
+
+## Componentes
+
+Cada sistema de nuestro proyecto está compuesto de lo siguiente:
+
+- 1 ESP8266 (<a href="https://www.amazon.es/SeeKool-Internet-Desarrollo-inal%C3%A1mbrico-Micropython/dp/B07DRF9YTV/ref=sr_1_5?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1I6ECRR64SWZT&dchild=1&keywords=esp8266&qid=1621951147&sprefix=esp8266%2Caps%2C204&sr=8-5">Amazon</a>): El cual se encargará de comunicarse con la base de datos via WiFi y con las demás placas por MQTT
+- 2 Placas Solares Mini con Vmax = 1.5V cada una (<a href="https://www.amazon.es/gp/product/B07VYS266S/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1">Amazon</a>): Estas placas serán las que irán conectadas al pin analógico A0 del ESP8266, para leer el valor del voltaje y en función de este actuar sobre los servos.
+- 2 Servomotores (<a href="https://www.amazon.es/ZHITING-Walking-Helicopter-Airplane-Control/dp/B088NQTBPB/ref=sr_1_6?__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=servos+arduino&qid=1621951592&sr=8-6">Amazon</a>): Los cuales se encargarán de mover la base de las placas y el eje de estas, significando cada movimiento una traducción del azimut y de la elevación solar en ese momento.
+- 1 fuente de 5 voltios: Para alimentar correctamente los dos servomotores a la vez, ya que no es posible con los 3'3V que nos da nuestro ESP8266 (Actualmente el generador es la toma de 5V de un Arduino con nada más conectado
+
+### Esquema del Circuito
+
+![Esquema Circuito](C:\Users\morke\Desktop\DADProyecto\Esquema Circuito.png)
+
+Como se indica en la imagen, la herramienta online gratuita Tinkercad nos permite realizar un diagrama del circuito de forma sencilla, pero el problema es que no podemos añadir un ESP8266, por lo que lo hemos sustituido por un Arduino y hemos conectado los componentes a los mismos pines que en el ESP8266:
+
+- Pines D2 y D3 para los servos
+  - D2 para el azimut
+  - D3 para la elevación
+- Pin A0 para el positivo de las placas solares, las cuales están conectadas en serie, funcionando entonces A0 como Polímetro
+- Los 5V de salida del Arduino alimentan ambos servos
+
+### Estructura del sistema (Impresión 3D)
+
+La estructura que sujeta nuestro sistema está basad en una de la página <a href= "https://www.thingiverse.com/">Thingiverse</a>, la cual tiene multitud de diseños en 3D listos para imprimir.
+
+Encontramos la siguiente estructura: <a href= "https://www.thingiverse.com/thing:2939509">Solar Cell Tracking by Michaelo</a> 
+
+![5d8f62ad613d7b162e042e7fa520593c_preview_featured](C:\Users\morke\Desktop\DADProyecto\5d8f62ad613d7b162e042e7fa520593c_preview_featured.jpg)
+
+Modificando las medidas para adaptarnos a nuestras placas solares tenemos una forma de sujetar y apuntar las placas solares al sol con los dos servos. El servo conectado a D2 (azimut) es el inferior y el servo conectado a D3 (Elevación) el superior con el eje paralelo al suelo.
+
+
 
 # API
 ## Clases
