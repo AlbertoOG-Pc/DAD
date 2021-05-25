@@ -26,7 +26,7 @@ public class SunPosition {
 	/**
 	 * Fecha de la posicion
 	 */
-	private LocalDateTime date;
+	public LocalDateTime date;
 
 	/**
 	 * Elevacion del sol en la hora y posicion indicada
@@ -144,6 +144,7 @@ public class SunPosition {
 	public void setAzimut(Float azimut) {
 		this.azimut = azimut;
 	}
+	
 
 	/**
 	 * Metodo hashCode() autogenerado
@@ -196,7 +197,7 @@ public class SunPosition {
 	 */
 	@Override
 	public String toString() {
-		return "SunPosition [id=" + id + ", id_coordinates=" + id_coordinates + ", date=" + date + ", elevation="
+		return "SunPosition [id=" + id + ", id_coordinates=" + id_coordinates + ", date=" + getDate() + ", elevation="
 				+ elevation + ", azimut=" + azimut + "]";
 	}
 

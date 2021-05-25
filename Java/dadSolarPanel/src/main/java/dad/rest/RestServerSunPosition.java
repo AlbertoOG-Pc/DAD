@@ -1,7 +1,9 @@
 package dad.rest;
 
 import java.lang.reflect.Type;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
 import com.google.gson.Gson;
@@ -79,6 +81,7 @@ public class RestServerSunPosition implements SunPositionHandler, BasicOperation
 		router.get("/api/sunPosition").handler(this::getAll);
 		router.get("/api/sunPosition/:id").handler(this::getOne);
 		router.get("/api/sunPosition/dateFilter/").handler(this::getSunPositionByDate);
+		router.get("/api/sunPosition/dateFilterCliente/").handler(this::getSunPositionByDate);
 
 		/* POST METHOD */
 		router.post("/api/sunPosition").handler(this::create);
@@ -88,6 +91,10 @@ public class RestServerSunPosition implements SunPositionHandler, BasicOperation
 
 		/* DELETE METHOD */
 		router.delete("/api/sunPosition/:id").handler(this::delete);
+		/*
+		System.out.println(Duration.between(LocalDateTime.now(), LocalDateTime.now().plusMinutes(2)).toMinutes());
+		System.out.println(Duration.between(LocalDateTime.now(), LocalDateTime.now().minusMinutes(18)).toMinutes());
+		*/
 
 	}
 
@@ -131,7 +138,8 @@ public class RestServerSunPosition implements SunPositionHandler, BasicOperation
 	 * @param routingContext
 	 */
 	public void getSunPositionByDate(RoutingContext routingContext) {
-		JsonObject obj = routingContext.getBodyAsJson();
+		System.out.println(routingContext.getBodyAsJson());
+		JsonObject obj = routingContext.getBodyAsJson() == null ? new JsonObject() :routingContext.getBodyAsJson();
 		obj.put("CLASS", "sunPositionByDate");
 		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
