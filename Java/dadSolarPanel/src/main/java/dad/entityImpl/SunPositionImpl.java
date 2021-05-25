@@ -1,7 +1,9 @@
 package dad.entityImpl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
@@ -27,7 +29,7 @@ public class SunPositionImpl {
 	/**
 	 * Lista donde almacenaremos los datos extraidos de la base de datos
 	 */
-	private List<SunPosition> sunPositionList;
+	private static List<SunPosition> sunPositionList = new ArrayList<SunPosition>();
 
 	/**
 	 * Constructor vacio
@@ -41,7 +43,7 @@ public class SunPositionImpl {
 	 *                        SunPosition
 	 */
 	public SunPositionImpl(List<SunPosition> sunPositionList) {
-		this.sunPositionList = sunPositionList;
+		SunPositionImpl.sunPositionList = sunPositionList;
 	}
 
 	/**
@@ -56,7 +58,7 @@ public class SunPositionImpl {
 	 *                        SunPosition recibido
 	 */
 	public void setSunPositionList(List<SunPosition> sunPositionList) {
-		this.sunPositionList = sunPositionList;
+		SunPositionImpl.sunPositionList = sunPositionList;
 	}
 
 	/**
@@ -118,15 +120,46 @@ public class SunPositionImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
+		if (data.getString("date") != null) {
+			Database.mySqlClient.preparedQuery("SELECT * FROM dad.sunPosition WHERE date BETWEEN ? AND ?",
+					Tuple.of(
+							LocalDateTime
+									.parse(data.getString("date") + " 00:00:00",
+											DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+									.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+							LocalDateTime
+									.parse(data.getString("date") + " 23:59:59",
+											DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+									.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+					res -> {
+						if (res.succeeded()) {
+							// Get the result set
+							RowSet<Row> resultSet = res.result();
+							for (Row elem : resultSet) {
+								System.out.println("Elementos " + elem);
+								result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
+										elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
+										elem.getFloat("elevation"), elem.getFloat("azimut"))));
+							}
+							// resultado = result.toString();
+						} else {
+							result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+						}
+						message.reply(result.toString());
+					});
+		} else {
+			getSunPositionByDateWithOutData(message);
+		}
+
+	}
+
+	public static void getSunPositionByDateWithOutData(Message<?> message) {
+		JsonArray result = new JsonArray();
 		Database.mySqlClient.preparedQuery("SELECT * FROM dad.sunPosition WHERE date BETWEEN ? AND ?",
 				Tuple.of(
-						LocalDateTime
-								.parse(data.getString("date") + " 00:00:00",
-										DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+						LocalDateTime.now().minusMinutes(20)
 								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-						LocalDateTime
-								.parse(data.getString("date") + " 23:59:59",
-										DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+						LocalDateTime.now().plusMinutes(20)
 								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
 				res -> {
 					if (res.succeeded()) {
@@ -134,11 +167,13 @@ public class SunPositionImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
+							sunPositionList.add(new SunPosition(elem.getInteger("id"),
 									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
-									elem.getFloat("elevation"), elem.getFloat("azimut"))));
+									elem.getFloat("elevation"), elem.getFloat("azimut")));		
 						}
-						// resultado = result.toString();
+						
+						result.add(JsonObject.mapFrom(sunPositionList.stream().min((sp1, sp2) -> Math.abs((Duration.between(LocalDateTime.now(), sp1.date).toMinutes())) >
+						Math.abs((Duration.between(LocalDateTime.now(), sp2.date).toMinutes())) ? 1 : -1).get()));
 					} else {
 						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
 					}
@@ -189,19 +224,19 @@ public class SunPositionImpl {
 				res -> {
 					if (res.succeeded()) {
 						getSunPositionByID(message);
-						/*RowSet<Row> resultSet = res.result();
-						for (Row elem : resultSet) {
-							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new SunPosition(elem.getInteger("id"),
-									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
-									elem.getFloat("elevation"), elem.getFloat("azimut"))));
-						}*/
+						/*
+						 * RowSet<Row> resultSet = res.result(); for (Row elem : resultSet) {
+						 * System.out.println("Elementos " + elem); result.add(JsonObject.mapFrom(new
+						 * SunPosition(elem.getInteger("id"), elem.getInteger("id_coordinates"),
+						 * elem.getLocalDateTime("date"), elem.getFloat("elevation"),
+						 * elem.getFloat("azimut")))); }
+						 */
 
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					//message.reply(result.toString());
+					// message.reply(result.toString());
 				});
 	}
 
@@ -218,12 +253,11 @@ public class SunPositionImpl {
 				res -> {
 					if (res.succeeded()) {
 
-
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					//message.reply(result.toString());
+					// message.reply(result.toString());
 				});
 	}
 
@@ -249,11 +283,10 @@ public class SunPositionImpl {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SunPositionImpl other = (SunPositionImpl) obj;
 		if (sunPositionList == null) {
-			if (other.sunPositionList != null)
+			if (SunPositionImpl.sunPositionList != null)
 				return false;
-		} else if (!sunPositionList.equals(other.sunPositionList))
+		} else if (!sunPositionList.equals(SunPositionImpl.sunPositionList))
 			return false;
 		return true;
 	}
