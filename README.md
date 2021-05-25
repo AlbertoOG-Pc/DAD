@@ -1091,6 +1091,37 @@ Objeto JSON con los datos de la coordenada eliminada
 	//TODO
     ```
 
+# MQTT (WIP)
+
+La idea es que desde nuestro cliente web se pueda manejar la posición del servo de forma manual, para ello se han preparado estas dos rutas:
+
+- ``servo/manual/E``: Recibe un JSON con la identificación del cliente al que afecta el movimiento y la posición concreta a la que se moverá en el eje de la elevación
+
+- ``servo/manual/A``: Recibe un JSON con la identificación del cliente al que afecta el movimiento y la posición concreta a la que se moverá en el eje del azimut
+
+  ````javascript
+  {
+    "code": ESP8266CODE;
+    "position": 90
+  }
+  ````
+
+## En proceso
+
+A falta de imprimir las estructuras, con las que debemos "calibrar" los servos para dirigirlos bien, tenemos que terminar de hacer:
+
+- Comunicación entre las placas de forma que entre ellas sepan cuando alcanzan el valor de su producción máxima, pudiendo así regular dicha producción para no alcanzar nunca el máximo establecido del circuito total (Producción de todas las placas juntas)
+- Concretar esquema de ejecución
+
+El esquema de ejecución es el siguiente:
+
+- Al encender la placa colocamos los servos en función de la hora actual.
+- Cada minuto desde su encendido se va comprobando la producción de la placa solar, cada 10 tomas se realiza una media de producción y posiciones de los servos
+- Se realiza un POST en la base de datos con la media calculada anteriormente (Esto es así para no spammear la base de datos cada minuto de las 24H del día)
+- Cómo tenemos intervalos horarios de posición del sol de 20 minutos, cada dos posts se hace un GET para obtener la nueva posición del sol. (Se ha tenido en cuenta que el CSV con los datos sólo es de los minutos 00, 20 y 40, por lo que se hace una aproximación)
+
+
+
 
 
 
