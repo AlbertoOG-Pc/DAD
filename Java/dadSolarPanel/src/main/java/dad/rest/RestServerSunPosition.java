@@ -81,7 +81,7 @@ public class RestServerSunPosition implements SunPositionHandler, BasicOperation
 		router.get("/api/sunPosition").handler(this::getAll);
 		router.get("/api/sunPosition/:id").handler(this::getOne);
 		router.get("/api/sunPosition/dateFilter/").handler(this::getSunPositionByDate);
-		router.get("/api/sunPosition/dateFilterCliente/").handler(this::getSunPositionByDate);
+		router.get("/api/sunPosition/dateFilterClient/").handler(this::getSunPositionByDate);
 
 		/* POST METHOD */
 		router.post("/api/sunPosition").handler(this::create);
