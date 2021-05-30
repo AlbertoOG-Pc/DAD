@@ -19,7 +19,7 @@ public class Mqtt extends AbstractVerticle {
 
 		// .setUsername("admin").setPassword("admin"));
 
-		mqttClient.connect(1883, "192.168.1.81", connection -> {
+		mqttClient.connect(1883, "localhost", connection -> {
 			if (connection.succeeded()) {
 				System.out.println("Client name: " + connection.result().code().name());
 				mqttClient.subscribe("/servo/manual/E", MqttQoS.AT_LEAST_ONCE.value(), handler -> {
