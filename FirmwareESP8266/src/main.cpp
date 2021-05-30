@@ -7,7 +7,6 @@
 ***
  */
 
-
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
@@ -22,7 +21,6 @@
 #include "RestClient.h"
 #include "config.h"
 
-
 /*
 ***
 ***
@@ -33,18 +31,36 @@
  */
 
 //Establecemos connection wifi
-
-
 void setup_wifi();
 
+//Callback de MQTT
 void callback(char *, byte *, unsigned int);
+
+//Para escribir JSON  de BoardProduction
 String serializeBoardProduction(int, int, int, String, float);
+
+//Para escribir JSON de Log
 String serializeLog(int, String, String);
-void deserializePosition(String);
+
+//Para leer JSON de Posiciones de Servos
+void deserializePosition(String, String);
+
+//Para leer JSON de SunPosition
 void deserializeSunPosition(String);
 
+//Para leer JSON Dde Board
+void deserializeBoard(String);
+
+//Para mover los servos
+void moveServos(float, float);
+
+//GET a SunPosition
 void GET_SunPosition();
+
+//POST a Log
 void POST_LOG();
+
+//POST a BoardProduction
 void POST_BoardProduction();
 
 /*
@@ -73,7 +89,6 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org"); //CSV must be UCT (+0) No DST
 long lastMsg = 0;
 char msg[50];
 
-
 int test_delay = 1000; //so we don't spam the API
 boolean describe_tests = true;
 
@@ -84,6 +99,8 @@ int position;
 
 //Para guardar el resultado de los GET
 String response;
+
+float maxProduction;
 
 /*
 ***
@@ -115,6 +132,9 @@ void setup()
   myservoE.attach(D3);
   //Time
   timeClient.begin();
+
+  //setup board
+  //GET_board();
 }
 
 void setup_wifi()
@@ -152,12 +172,12 @@ void setup_wifi()
 void callback(char *topic, byte *payload, unsigned int length)
 {
 
-  String JsonObject = "";  
+  String JsonObject = "";
 
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  
+
   for (unsigned int i = 0; i < length; i++)
   {
     JsonObject.concat((char)payload[i]);
@@ -165,25 +185,13 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
   Serial.println();
 
-  if ((String) topic == "servo/manual/A")
+  if ((String)topic == "servo/manual/A")
   {
-    deserializePosition(JsonObject);
-    Serial.println(code);
-    Serial.println(position);
-    if (strcmp(code, name_device) == 0)
-    {
-      //Mueve servo
-      myservoA.write(position);
-    }
+    deserializePosition(JsonObject, "A");
   }
-  else if ((String) topic == "servo/manual/E")
+  else if ((String)topic == "servo/manual/E")
   {
-    deserializePosition(JsonObject);
-
-    if (strcmp(code, name_device) == 0)
-    {
-      myservoE.write(position);
-    }
+    deserializePosition(JsonObject, "E");
   }
 
   if ((char)payload[0] == '1')
@@ -229,6 +237,7 @@ void reconnect()
 void loop()
 {
   //Cada 20 minutos debe hacer un get a sun position y mover los servos de forma correspondiente - Necesitamos fechas.
+  //GET_SunPosition();
 
   //Cada minuto, debe comprobar su pruduccion. En caso de ser maxima moverse hasta que la misma baje.
 
@@ -267,7 +276,6 @@ void loop()
   delay(1000);
 }
 
-
 /*
 ***
 ***
@@ -277,7 +285,7 @@ void loop()
 ***
  */
 
-void deserializePosition(String responseJson) // Llega por MQTT
+void deserializePosition(String responseJson, String servo) // Llega por MQTT
 {
   if (responseJson != "")
   {
@@ -302,7 +310,28 @@ void deserializePosition(String responseJson) // Llega por MQTT
     // Most of the time, you can rely on the implicit casts.
     // In other case, you can do doc["time"].as<long>();
     char const *code = doc["code"];
-    int position = doc["position"];
+    float position = doc["position"];
+
+    if (strcmp(code, name_device) == 0)
+    {
+      if (servo == "A")
+      {
+        moveServos(position, 0.0);
+      }
+      else if (servo == "E")
+      {
+        moveServos(0.0, position);
+      }
+      else
+      {
+        Serial.println("Error en String servo, bad argument");
+      }
+    }
+
+    //Caso manual A
+    //moveServos(position,0);
+    //Caso manual E
+    //moveServos(0,position);
 
     // Print values.
     Serial.println(code);
@@ -312,78 +341,105 @@ void deserializePosition(String responseJson) // Llega por MQTT
 
 String serializeBoardProduction(int id_board, int servoPositionE, int servoPositionA, String date, float production)
 {
-    StaticJsonDocument<200> doc;
-    doc["id_board"] = id_board;
-    doc["servoPositionE"] = servoPositionE;
-    doc["servoPositionA"] = servoPositionA;
-    doc["date"] = date;
-    doc["production"] = production;
-    String output;
-    serializeJson(doc, output);
-    Serial.println(output);
+  StaticJsonDocument<200> doc;
+  doc["id_board"] = id_board;
+  doc["servoPositionE"] = servoPositionE;
+  doc["servoPositionA"] = servoPositionA;
+  doc["date"] = date;
+  doc["production"] = production;
+  String output;
+  serializeJson(doc, output);
+  Serial.println(output);
 
-    return output;
+  return output;
 }
 
 String serializeLog(int id_board, String date, String issue)
 {
-    StaticJsonDocument<200> doc;
+  StaticJsonDocument<200> doc;
 
-    // StaticJsonObject allocates memory on the stack, it can be
-    // replaced by DynamicJsonDocument which allocates in the heap.
-    //
-    // DynamicJsonDocument  doc(200);
+  // StaticJsonObject allocates memory on the stack, it can be
+  // replaced by DynamicJsonDocument which allocates in the heap.
+  //
+  // DynamicJsonDocument  doc(200);
 
-    // Add values in the document
-    //
-    doc["id_board"] = id_board;
-    doc["date"] = date;
-    doc["issue"] = issue;
+  // Add values in the document
+  //
+  doc["id_board"] = id_board;
+  doc["date"] = date;
+  doc["issue"] = issue;
 
-    // Add an array.
-    //
-    //JsonArray data = doc.createNestedArray("data");
-    /*data.add(lat);
+  // Add an array.
+  //
+  //JsonArray data = doc.createNestedArray("data");
+  /*data.add(lat);
   data.add(lon);*/
-    // Generate the minified JSON and send it to the Serial port.
-    //
-    String output;
-    serializeJson(doc, output);
-    // The above line prints:
-    // {"sensor":"gps","time":1351824120,"data":[48.756080,2.302038]}
+  // Generate the minified JSON and send it to the Serial port.
+  //
+  String output;
+  serializeJson(doc, output);
+  // The above line prints:
+  // {"sensor":"gps","time":1351824120,"data":[48.756080,2.302038]}
 
-    // Start a new line
-    Serial.println(output);
+  // Start a new line
+  Serial.println(output);
 
-    // Generate the prettified JSON and send it to the Serial port.
-    //
-    //serializeJsonPretty(doc, output);
-    // The above line prints:
-    // {
-    //   "sensor": "gps",
-    //   "time": 1351824120,
-    //   "data": [
-    //     48.756080,
-    //     2.302038
-    //   ]
-    // }
-    return output;
+  // Generate the prettified JSON and send it to the Serial port.
+  //
+  //serializeJsonPretty(doc, output);
+  // The above line prints:
+  // {
+  //   "sensor": "gps",
+  //   "time": 1351824120,
+  //   "data": [
+  //     48.756080,
+  //     2.302038
+  //   ]
+  // }
+  return output;
 }
 
-
-String serializeBoardProduction(int id_board, int servoPositionE, int servoPositionA, String date, float production)
+void deserializeSunPosition(String responseJson)
 {
+  if (responseJson != "")
+  {
     StaticJsonDocument<200> doc;
-    doc["id_board"] = id_board;
-    doc["servoPositionE"] = servoPositionE;
-    doc["servoPositionA"] = servoPositionA;
-    doc["date"] = date;
-    doc["production"] = production;
-    String output;
-    serializeJson(doc, output);
-    Serial.println(output);
+    DeserializationError error = deserializeJson(doc, responseJson);
+    if (error)
+    {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
 
-    return output;
+    /*int id = doc["id"];
+        int id_coordinates = doc["id_coordinates"];
+        String date = doc["date"];*/
+    float elevation = doc["elevation"];
+    float azimut = doc["azimut"];
+
+    moveServos(azimut, elevation);
+  }
+}
+
+void deserializeBoard(String responseJson)
+{
+  if (responseJson != "")
+  {
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, responseJson);
+    if (error)
+    {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
+
+    /*int id = doc["id"];
+        int id_coordinates = doc["id_coordinates"];
+        String date = doc["date"];*/
+    maxProduction = doc["maxPower"];
+  }
 }
 
 /*
@@ -415,6 +471,28 @@ String getDate()
 
   String fecha = String(dayFormat) + "-" + String(monthFormat) + "-" + String(year) + " " + String(formattedTime);
   return fecha;
+}
+
+void moveServos(float azimut, float elevation)
+{
+  boolean inverso = false;
+  if (azimut != 0)
+  {
+    if (azimut > 180.0)
+    {
+      azimut = 360.0 - azimut;
+      inverso = true;
+    }
+    myservoA.write(ceilf(azimut));
+  }
+  if (elevation != 0)
+  {
+    if (inverso)
+    {
+      elevation = 180.0 - elevation;
+    }
+    myservoE.write(ceilf(elevation));
+  }
 }
 
 /*
@@ -491,12 +569,25 @@ void POST_tests()
 void GET_SunPosition()
 {
   //describe("Test GET with path");
-  test_status(Restclient.get("/api/boards", &response));
+  test_status(Restclient.get("api/sunPosition/dateFilterClient/", &response));
+  deserializeSunPosition(response);
   test_response();
 
   //describe("Test GET with path and response");
-  test_status(Restclient.get("/api/sunPosition/dateFilterCliente", &response));
+  //test_status(Restclient.get("/api/sunPosition/dateFilterCliente", &response));
+  //test_response();
+}
+
+void GET_Board()
+{
+  //describe("Test GET with path");
+  test_status(Restclient.get(strcat("/api/board/", id_device), &response));
+  deserializeBoard(response);
   test_response();
+
+  //describe("Test GET with path and response");
+  //test_status(Restclient.get("/api/sunPosition/dateFilterCliente", &response));
+  //test_response();
 }
 
 void POST_LOG()
