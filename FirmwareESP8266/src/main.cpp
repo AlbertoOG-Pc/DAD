@@ -401,7 +401,6 @@ String getDate()
 
 void moveServos(float azimut, float elevation)
 {
-  Serial.println("MOVESERVO");
   boolean inverso = false;
   if (azimut >= 0)
   {
@@ -417,6 +416,7 @@ void moveServos(float azimut, float elevation)
     if (inverso)
     {
       elevation = 180.0 - elevation;
+      myservoE.write(ceilf(elevation));
     }
     myservoE.write(ceilf(elevation));
   }
