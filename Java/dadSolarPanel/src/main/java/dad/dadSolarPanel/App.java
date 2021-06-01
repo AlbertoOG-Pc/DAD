@@ -141,6 +141,10 @@ public class App extends AbstractVerticle {
 		case "Board":
 			BoardImpl.createBoard(message);
 			break;
+		case "board_move":
+			System.out.println("Al switch llego");
+			BoardImpl.moveServo(message);
+			break;
 		case "Log":
 			LogImpl.createLog(message);
 			break;

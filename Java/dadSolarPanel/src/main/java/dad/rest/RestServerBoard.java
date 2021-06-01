@@ -67,6 +67,7 @@ public class RestServerBoard implements BoardHandler,BasicOperation {
 		
 		/* POST METHOD */
 		router.post("/api/board").handler(this::create);
+		router.post("/api/board/manualPosition/").handler(this::moveServo);
 
 		/* PUT METHOD */
 		router.put("/api/board").handler(this::update);
@@ -143,6 +144,25 @@ public class RestServerBoard implements BoardHandler,BasicOperation {
 
 		final Board board = gson.fromJson(routingContext.getBodyAsString(), Board.class);
 		eventBus.request("POST", JsonObject.mapFrom(board).put("CLASS", "Board"), reply -> {
+			// LOS DATOS ESTAN AQUI
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+	
+	/**
+	 * @param routingContext
+	 */
+	public void moveServo(RoutingContext routingContext) {
+		JsonObject obj = routingContext.getBodyAsJson();
+		obj.put("CLASS", "board_move");
+		eventBus.request("POST", obj, reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
