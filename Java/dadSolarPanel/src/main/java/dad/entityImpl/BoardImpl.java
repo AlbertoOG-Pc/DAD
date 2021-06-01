@@ -3,8 +3,11 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
+import dad.dadSolarPanel.Mqtt;
 import dad.entity.Board;
 import dad.entity.Coordinates;
+import io.netty.handler.codec.mqtt.MqttQoS;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -156,7 +159,21 @@ public class BoardImpl {
 					message.reply(result.toString());
 				});
 	}
-
+	
+	/**
+	 * @param message Message<?> Recibe el cuerpo de la comunicacion con el verticle
+	 *                que maneja el APIREST E imprime por pantalla el resultado
+	 *                obtenido
+	 */
+	public static void moveServo(Message<?> message) {
+		JsonArray result = new JsonArray();
+		JsonObject data = JsonObject.mapFrom(message.body());
+		data.remove("CLASS");
+		Mqtt.mqttClient.publish("/servo/manualPosition", Buffer.buffer(data.toString()), MqttQoS.AT_LEAST_ONCE, false, false);
+		
+		message.reply(result.toString());
+	}
+	
 	/**
 	 * @param message @param Message<?> Recibe el cuerpo de la comunicacion con el
 	 *                verticle que maneja el APIREST E imprime por pantalla el
