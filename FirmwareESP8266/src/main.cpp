@@ -43,7 +43,7 @@ String serializeBoardProduction(int, int, int, String, float);
 String serializeLog(int, String, String);
 
 //Para leer JSON de Posiciones de Servos
-void deserializePosition(String, String);
+void deserializePosition(String);
 
 //Para leer JSON de SunPosition
 void deserializeSunPosition(String);
@@ -171,9 +171,7 @@ void setup_wifi()
 
 void callback(char *topic, byte *payload, unsigned int length)
 {
-
   String JsonObject = "";
-
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
@@ -185,22 +183,9 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
   Serial.println();
 
-  if ((String)topic == "servo/manual/A")
+  if ((String)topic == "servo/manualPosition")
   {
-    deserializePosition(JsonObject, "A");
-  }
-  else if ((String)topic == "servo/manual/E")
-  {
-    deserializePosition(JsonObject, "E");
-  }
-
-  if ((char)payload[0] == '1')
-  {
-    digitalWrite(LED_BUILTIN, LOW);
-  }
-  else
-  {
-    digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
+    deserializePosition(JsonObject);
   }
 }
 
@@ -212,8 +197,7 @@ void reconnect()
     if (Mqttclient.connect(name_device))
     {
       Serial.println("connected");
-      Mqttclient.subscribe("servo/manual/E");
-      Mqttclient.subscribe("servo/manual/A");
+      Mqttclient.subscribe("servo/manualPosition");
     }
     else
     {
@@ -264,10 +248,10 @@ void loop()
   long now = millis();
   if (now - lastMsg > 2000)
   {
-    lastMsg = now;
-    Serial.print("Publish message: ");
-    Serial.println(msg);
-    Mqttclient.publish("casa/despacho/temperatura", msg);
+    //lastMsg = now;
+    //Serial.print("Publish message: ");
+    //Serial.println(msg);
+    //Mqttclient.publish("casa/despacho/temperatura", msg);
   }
   //Serial.println(getDate());
 
@@ -285,55 +269,25 @@ void loop()
 ***
  */
 
-void deserializePosition(String responseJson, String servo) // Llega por MQTT
+void deserializePosition(String responseJson) // Llega por MQTT
 {
   if (responseJson != "")
   {
     StaticJsonDocument<200> doc;
-
-    //char json[] =
-    //    "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
-
-    // Deserialize the JSON document
     DeserializationError error = deserializeJson(doc, responseJson);
-
-    // Test if parsing succeeds.
     if (error)
     {
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(error.f_str());
       return;
     }
-
-    // Fetch values.
-    //
-    // Most of the time, you can rely on the implicit casts.
-    // In other case, you can do doc["time"].as<long>();
     char const *code = doc["code"];
-    float position = doc["position"];
-
+    float elevation = doc["elevation"];
+    float azimut = doc["azimut"];
     if (strcmp(code, name_device) == 0)
     {
-      if (servo == "A")
-      {
-        moveServos(position, 0.0);
-      }
-      else if (servo == "E")
-      {
-        moveServos(0.0, position);
-      }
-      else
-      {
-        Serial.println("Error en String servo, bad argument");
-      }
+      moveServos(azimut, elevation);
     }
-
-    //Caso manual A
-    //moveServos(position,0);
-    //Caso manual E
-    //moveServos(0,position);
-
-    // Print values.
     Serial.println(code);
     Serial.println(position);
   }
@@ -357,45 +311,12 @@ String serializeBoardProduction(int id_board, int servoPositionE, int servoPosit
 String serializeLog(int id_board, String date, String issue)
 {
   StaticJsonDocument<200> doc;
-
-  // StaticJsonObject allocates memory on the stack, it can be
-  // replaced by DynamicJsonDocument which allocates in the heap.
-  //
-  // DynamicJsonDocument  doc(200);
-
-  // Add values in the document
-  //
   doc["id_board"] = id_board;
   doc["date"] = date;
   doc["issue"] = issue;
-
-  // Add an array.
-  //
-  //JsonArray data = doc.createNestedArray("data");
-  /*data.add(lat);
-  data.add(lon);*/
-  // Generate the minified JSON and send it to the Serial port.
-  //
   String output;
   serializeJson(doc, output);
-  // The above line prints:
-  // {"sensor":"gps","time":1351824120,"data":[48.756080,2.302038]}
-
-  // Start a new line
   Serial.println(output);
-
-  // Generate the prettified JSON and send it to the Serial port.
-  //
-  //serializeJsonPretty(doc, output);
-  // The above line prints:
-  // {
-  //   "sensor": "gps",
-  //   "time": 1351824120,
-  //   "data": [
-  //     48.756080,
-  //     2.302038
-  //   ]
-  // }
   return output;
 }
 
@@ -476,7 +397,7 @@ String getDate()
 void moveServos(float azimut, float elevation)
 {
   boolean inverso = false;
-  if (azimut != 0)
+  if (azimut < 0)
   {
     if (azimut > 180.0)
     {
@@ -485,7 +406,7 @@ void moveServos(float azimut, float elevation)
     }
     myservoA.write(ceilf(azimut));
   }
-  if (elevation != 0)
+  if (elevation < 0)
   {
     if (inverso)
     {
