@@ -183,8 +183,9 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
   Serial.println();
 
-  if ((String)topic == "servo/manualPosition")
+  if ((String)topic == "/servo/manualPosition")
   {
+    Serial.println("TOPIC");
     deserializePosition(JsonObject);
   }
 }
@@ -197,7 +198,7 @@ void reconnect()
     if (Mqttclient.connect(name_device))
     {
       Serial.println("connected");
-      Mqttclient.subscribe("servo/manualPosition");
+      Mqttclient.subscribe("/servo/manualPosition");
     }
     else
     {
@@ -286,10 +287,14 @@ void deserializePosition(String responseJson) // Llega por MQTT
     float azimut = doc["azimut"];
     if (strcmp(code, name_device) == 0)
     {
+      Serial.println("STRCMP");
       moveServos(azimut, elevation);
     }
     Serial.println(code);
-    Serial.println(position);
+    Serial.print("Elevation: ");
+    Serial.println(elevation);
+    Serial.print("Azimut: ");
+    Serial.println(azimut);
   }
 }
 
@@ -396,8 +401,9 @@ String getDate()
 
 void moveServos(float azimut, float elevation)
 {
+  Serial.println("MOVESERVO");
   boolean inverso = false;
-  if (azimut < 0)
+  if (azimut >= 0)
   {
     if (azimut > 180.0)
     {
@@ -406,7 +412,7 @@ void moveServos(float azimut, float elevation)
     }
     myservoA.write(ceilf(azimut));
   }
-  if (elevation < 0)
+  if (elevation >= 0)
   {
     if (inverso)
     {
