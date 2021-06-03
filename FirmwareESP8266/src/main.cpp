@@ -21,6 +21,12 @@
 #include "RestClient.h"
 #include "config.h"
 
+#define LENGTH_AVERAGE_PRODUCTION 2
+#define MAX_POWER_WHOLE_SYSTEM 100
+
+#define MOVE_MANUAL 0
+#define MOVE_AUTO 1
+
 /*
 ***
 ***
@@ -48,20 +54,29 @@ void deserializePosition(String);
 //Para leer JSON de SunPosition
 void deserializeSunPosition(String);
 
-//Para leer JSON Dde Board
+//Para leer JSON de Board
 void deserializeBoard(String);
 
 //Para mover los servos
 void moveServos(float, float);
 
+//Para leer la producción
+float getProduction();
+
 //GET a SunPosition
 void GET_SunPosition();
+//GET a Board
+void GET_Board();
 
 //POST a Log
-void POST_LOG();
+void POST_LOG(int);
 
 //POST a BoardProduction
 void POST_BoardProduction();
+
+//Tests response
+void test_response();
+void test_status(int);
 
 /*
 ***
@@ -85,8 +100,22 @@ Servo myservoE;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org"); //CSV must be UCT (+0) No DST
 
-//NOSE SI LO VAMOS A USAR PENDIENTE DE BORRAR
+//ids
+int id_board;
+int id_coordinates;
+
+//Productions
+float MAXPOWER_board = 0.0;
+float MAXPOWER_all = 0.0;
+
+//Array de floats para medias de producciones
+float currentProductionArray[LENGTH_AVERAGE_PRODUCTION];
+int indexProductionArray;
+int indexPOSTSunPosition = 0;
+
+//Para los timers
 long lastMsg = 0;
+//NOSE SI LO VAMOS A USAR PENDIENTE DE BORRAR
 char msg[50];
 
 int test_delay = 1000; //so we don't spam the API
@@ -100,8 +129,6 @@ int position;
 //Para guardar el resultado de los GET
 String response;
 
-float maxProduction;
-
 /*
 ***
 ***
@@ -112,11 +139,12 @@ float maxProduction;
  */
 void setup()
 {
-  //Nose si nos sirve
-  pinMode(LED_BUILTIN, OUTPUT);
   //Pines de salida para los servos
   pinMode(D2, OUTPUT);
   pinMode(D3, OUTPUT);
+
+  //Pin entrada placas solares
+  pinMode(A0, INPUT); //Pin analógico para que funcione como Polímetro
 
   Serial.begin(115200);
 
@@ -134,7 +162,9 @@ void setup()
   timeClient.begin();
 
   //setup board
-  //GET_board();
+  GET_SunPosition();
+  indexProductionArray = 0;
+  GET_Board();
 }
 
 void setup_wifi()
@@ -185,8 +215,8 @@ void callback(char *topic, byte *payload, unsigned int length)
 
   if ((String)topic == "/servo/manualPosition")
   {
-    Serial.println("TOPIC");
     deserializePosition(JsonObject);
+    POST_LOG(MOVE_MANUAL); //Post manual
   }
 }
 
@@ -221,10 +251,47 @@ void reconnect()
 
 void loop()
 {
-  //Cada 20 minutos debe hacer un get a sun position y mover los servos de forma correspondiente - Necesitamos fechas.
-  //GET_SunPosition();
 
-  //Cada minuto, debe comprobar su pruduccion. En caso de ser maxima moverse hasta que la misma baje.
+  //timeClient.update();
+  if (!Mqttclient.connected())
+  {
+    reconnect();
+  }
+  Mqttclient.loop();
+
+  long now = millis();
+  if (now - lastMsg > 5000)
+  {
+    lastMsg = now;
+
+    currentProductionArray[indexProductionArray] = getProduction();
+    //COMPROBAR PRODUCCION NO EXCEDE MAXIMA Y MOVER EN FUNCION DE ESTO
+
+    indexProductionArray++;
+    if (indexProductionArray >= LENGTH_AVERAGE_PRODUCTION)
+    {
+      float mediaProduction = 0.0;
+      for (int i = 0; i < LENGTH_AVERAGE_PRODUCTION; i++)
+      {
+        mediaProduction += currentProductionArray[i];
+      }
+      mediaProduction = mediaProduction / (LENGTH_AVERAGE_PRODUCTION * 1.0);
+      //POST
+      indexProductionArray = 0;
+      indexPOSTSunPosition++;
+      if (indexPOSTSunPosition >= 2)
+      {
+        GET_SunPosition();
+        indexPOSTSunPosition = 0;
+        POST_LOG(MOVE_AUTO);
+      }
+    }
+  }
+
+  //Cada 20 minutos debe hacer un get a sun position y mover los servos de forma correspondiente - Necesitamos fechas.
+  //GET_SunPosition(); Se hace en el SETUP
+
+  //Cada minuto, debe comprobar su produccion. En caso de ser maxima moverse hasta que la misma baje.
 
   //Cada 10 tomas se hace una media y se publica.
 
@@ -233,32 +300,17 @@ void loop()
   //Si se alcanza el maximo del circuito, todas las placas deben moverse para bajar su produccion.
 
   //Orden de ejecucion :
-  // 1 - Colocar servos en funcion de hora
-  // 2 - Bucle 10 - minuto a minuto comprobamos produccion.
-  // 3 - Post con media de produccion.
-  // 4 - Bucle de 10 - minuto a minuto comprobamos produccion.
-  // 5 - Post de produccion + Get con nueva hora.
-
-  timeClient.update();
-  if (!Mqttclient.connected())
-  {
-    reconnect();
-  }
-  Mqttclient.loop();
-
-  long now = millis();
-  if (now - lastMsg > 2000)
-  {
-    //lastMsg = now;
-    //Serial.print("Publish message: ");
-    //Serial.println(msg);
-    //Mqttclient.publish("casa/despacho/temperatura", msg);
-  }
-  //Serial.println(getDate());
+  // 1 - Colocar servos en funcion de hora (Esto se hace en el Setup)
+  // 2 - Bucle 10 - minuto a minuto comprobamos produccion. (Esto se hace en el loop)
+  // 3 - Post con media de produccion. (Esto se hace en el loop)
+  // 4 - Bucle de 10 - minuto a minuto comprobamos produccion. (Esto se hace en el loop)
+  // 5 - Post de produccion + Get con nueva hora. (Esto se hace en el loop)
 
   //GET_tests();
   //POST_tests();
+
   delay(1000);
+  //}
 }
 
 /*
@@ -287,7 +339,6 @@ void deserializePosition(String responseJson) // Llega por MQTT
     float azimut = doc["azimut"];
     if (strcmp(code, name_device) == 0)
     {
-      Serial.println("STRCMP");
       moveServos(azimut, elevation);
     }
     Serial.println(code);
@@ -339,11 +390,15 @@ void deserializeSunPosition(String responseJson)
     }
 
     /*int id = doc["id"];
-        int id_coordinates = doc["id_coordinates"];
-        String date = doc["date"];*/
-    float elevation = doc["elevation"];
-    float azimut = doc["azimut"];
+    int id_coordinates = doc["id_coordinates"];
+    String date = doc["date"];*/
+    float elevation = doc[0]["elevation"];
+    float azimut = doc[0]["azimut"];
 
+    Serial.print("Azimut DESERIALIZE: ");
+    Serial.println(azimut);
+    Serial.print("Elevation DESERIALIZE: ");
+    Serial.println(elevation);
     moveServos(azimut, elevation);
   }
 }
@@ -361,17 +416,17 @@ void deserializeBoard(String responseJson)
       return;
     }
 
-    /*int id = doc["id"];
-        int id_coordinates = doc["id_coordinates"];
-        String date = doc["date"];*/
-    maxProduction = doc["maxPower"];
+    id_board = doc[0]["id"];
+    id_coordinates = doc[0]["coordinate"]["id"];
+    //String date = doc["date"];
+    MAXPOWER_board = doc[0]["maxPower"];
   }
 }
 
 /*
 ***
 ***
-***   AUXULIARES
+***   AUXILIARES
 ***
 ***
 ***
@@ -410,6 +465,8 @@ void moveServos(float azimut, float elevation)
       inverso = true;
     }
     myservoA.write(ceilf(azimut));
+    Serial.print("Azimut: ");
+    Serial.println(azimut);
   }
   if (elevation >= 0)
   {
@@ -419,7 +476,25 @@ void moveServos(float azimut, float elevation)
       myservoE.write(ceilf(elevation));
     }
     myservoE.write(ceilf(elevation));
+    Serial.print("Elevation: ");
+    Serial.println(elevation);
   }
+}
+
+float getProduction()
+{
+  float analog = 0.0;
+  float analog3v3 = 0.0;
+  float v33 = 3.3;
+  float mil23 = 1023.0;
+
+  analog = analogRead(A0);
+  analog3v3 = analog / mil23;
+  analog3v3 = analog3v3 * v33;
+  Serial.print("getProduction: ");
+  Serial.println(analog3v3);
+
+  return analog3v3;
 }
 
 /*
@@ -473,11 +548,11 @@ void GET_tests()
 
 void POST_tests()
 {
-  /*String post_bodyLog = serializeLog(1, "", "Test POST Log from ESP8266"); //id_board, date must be blank, issue
+  String post_bodyLog = serializeLog(1, "", "Test POST Log from ESP8266"); //id_board, date must be blank, issue
   describe("(LOG) Test POST with path and body and response");
   test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
   test_response();
-
+  /*
   String post_bodyBoardProduction = serializeBoardProduction(1, 4, 3, "", 222222); //id_board, positionServoE, positionServoA, date must be blank, production
   describe("(BoardProduction)Test POST with path and body and response");
   test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
@@ -496,7 +571,9 @@ void POST_tests()
 void GET_SunPosition()
 {
   //describe("Test GET with path");
-  test_status(Restclient.get("api/sunPosition/dateFilterClient/", &response));
+  String path = "/api/sunPosition/dateFilterClient/";
+  path += id_coordinates;
+  test_status(Restclient.get(path.c_str(), &response));
   deserializeSunPosition(response);
   test_response();
 
@@ -507,36 +584,32 @@ void GET_SunPosition()
 
 void GET_Board()
 {
-  //describe("Test GET with path");
-  test_status(Restclient.get(strcat("/api/board/", id_device), &response));
+  String path = "/api/board/";
+  path += id_device;
+  test_status(Restclient.get(path.c_str(), &response));
   deserializeBoard(response);
   test_response();
-
-  //describe("Test GET with path and response");
-  //test_status(Restclient.get("/api/sunPosition/dateFilterCliente", &response));
-  //test_response();
 }
 
-void POST_LOG()
+void POST_LOG(int move)
 {
-  /*String post_bodyLog = serializeLog(1, "", "Test POST Log from ESP8266"); //id_board, date must be blank, issue
-  describe("(LOG) Test POST with path and body and response");
-  test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
-  test_response();
-
-  String post_bodyBoardProduction = serializeBoardProduction(1, 4, 3, "", 222222); //id_board, positionServoE, positionServoA, date must be blank, production
-  describe("(BoardProduction)Test POST with path and body and response");
-  test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
-  test_response();*/
+  if (move == 0)
+  {
+    String post_bodyLog = serializeLog(id_board, "", "Movimiento manual de la placa."); //id_board, date must be blank, issue
+    test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
+    test_response();
+  }
+  if (move == 1)
+  {
+    String post_bodyLog = serializeLog(id_board, "", "Movimiento automático de la placa."); //id_board, date must be blank, issue
+    test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
+    test_response();
+  }
 }
 
 void POST_BoardProduction()
 {
-  /*String post_bodyLog = serializeLog(1, "", "Test POST Log from ESP8266"); //id_board, date must be blank, issue
-  describe("(LOG) Test POST with path and body and response");
-  test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
-  test_response();
-
+  /*
   String post_bodyBoardProduction = serializeBoardProduction(1, 4, 3, "", 222222); //id_board, positionServoE, positionServoA, date must be blank, production
   describe("(BoardProduction)Test POST with path and body and response");
   test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
