@@ -155,12 +155,15 @@ public class SunPositionImpl {
 
 	public static void getSunPositionByDateWithOutData(Message<?> message) {
 		JsonArray result = new JsonArray();
-		Database.mySqlClient.preparedQuery("SELECT * FROM dad.sunPosition WHERE date BETWEEN ? AND ?",
-				Tuple.of(
-						LocalDateTime.now().minusMinutes(20)
-								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-						LocalDateTime.now().plusMinutes(20)
-								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+		JsonObject data = JsonObject.mapFrom(message.body());
+		System.out.println("DATA ID_COORDINATES : " + data.getInteger("id_coordinates"));
+		Database.mySqlClient.preparedQuery(
+				"SELECT * FROM dad.sunPosition WHERE id_coordinates = ? AND date BETWEEN ? AND ?",
+				Tuple.of(data.getInteger("id_coordinates"),
+						// LocalDateTime.now().minusMinutes(20)
+						LocalDateTime.now().minusSeconds(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+						// LocalDateTime.now().plusMinutes(20)
+						LocalDateTime.now().plusSeconds(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
 				res -> {
 					if (res.succeeded()) {
 						// Get the result set
@@ -169,14 +172,17 @@ public class SunPositionImpl {
 							System.out.println("Elementos " + elem);
 							sunPositionList.add(new SunPosition(elem.getInteger("id"),
 									elem.getInteger("id_coordinates"), elem.getLocalDateTime("date"),
-									elem.getFloat("elevation"), elem.getFloat("azimut")));		
+									elem.getFloat("elevation"), elem.getFloat("azimut")));
 						}
-						
-						result.add(JsonObject.mapFrom(sunPositionList.stream().min((sp1, sp2) -> Math.abs((Duration.between(LocalDateTime.now(), sp1.date).toMinutes())) >
-						Math.abs((Duration.between(LocalDateTime.now(), sp2.date).toMinutes())) ? 1 : -1).get()));
+
+						result.add(JsonObject.mapFrom(sunPositionList.stream().min((sp1,
+								sp2) -> Math.abs((Duration.between(LocalDateTime.now(), sp1.date).toMinutes())) > Math
+										.abs((Duration.between(LocalDateTime.now(), sp2.date).toMinutes())) ? 1 : -1)
+								.get()));
 					} else {
 						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
 					}
+					sunPositionList.clear();
 					message.reply(result.toString());
 				});
 	}

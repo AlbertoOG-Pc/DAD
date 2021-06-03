@@ -81,7 +81,7 @@ public class RestServerSunPosition implements SunPositionHandler, BasicOperation
 		router.get("/api/sunPosition").handler(this::getAll);
 		router.get("/api/sunPosition/:id").handler(this::getOne);
 		router.get("/api/sunPosition/dateFilter/").handler(this::getSunPositionByDate);
-		router.get("/api/sunPosition/dateFilterClient/").handler(this::getSunPositionByDate);
+		router.get("/api/sunPosition/dateFilterClient/:id_coordinates").handler(this::getSunPositionByDate);
 
 		/* POST METHOD */
 		router.post("/api/sunPosition").handler(this::create);
@@ -91,10 +91,6 @@ public class RestServerSunPosition implements SunPositionHandler, BasicOperation
 
 		/* DELETE METHOD */
 		router.delete("/api/sunPosition/:id").handler(this::delete);
-		/*
-		System.out.println(Duration.between(LocalDateTime.now(), LocalDateTime.now().plusMinutes(2)).toMinutes());
-		System.out.println(Duration.between(LocalDateTime.now(), LocalDateTime.now().minusMinutes(18)).toMinutes());
-		*/
 
 	}
 
@@ -139,8 +135,10 @@ public class RestServerSunPosition implements SunPositionHandler, BasicOperation
 	 */
 	public void getSunPositionByDate(RoutingContext routingContext) {
 		System.out.println(routingContext.getBodyAsJson());
-		JsonObject obj = routingContext.getBodyAsJson() == null ? new JsonObject() :routingContext.getBodyAsJson();
-		obj.put("CLASS", "sunPositionByDate");
+		JsonObject obj = routingContext.getBodyAsJson() == null ? new JsonObject() : routingContext.getBodyAsJson();
+		obj.put("CLASS", "sunPositionByDate").put("id_coordinates",
+				Integer.parseInt(routingContext.request().getParam("id_coordinates") == null ? "0"
+						: routingContext.request().getParam("id_coordinates")));
 		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
