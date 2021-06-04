@@ -22,10 +22,11 @@
 #include "config.h"
 
 #define LENGTH_AVERAGE_PRODUCTION 2
-#define MAX_POWER_WHOLE_SYSTEM 100
+//#define MAX_POWER_WHOLE_SYSTEM 100
 
 #define MOVE_MANUAL 0
 #define MOVE_AUTO 1
+#define ANGLE_MOD 5
 
 /*
 ***
@@ -72,7 +73,7 @@ void GET_Board();
 void POST_LOG(int);
 
 //POST a BoardProduction
-void POST_BoardProduction();
+void POST_BoardProduction(float);
 
 //Tests response
 void test_response();
@@ -101,7 +102,7 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org"); //CSV must be UCT (+0) No DST
 
 //ids
-int id_board;
+int id_board = 1;
 int id_coordinates;
 
 //Productions
@@ -162,9 +163,9 @@ void setup()
   timeClient.begin();
 
   //setup board
-  GET_SunPosition();
-  indexProductionArray = 0;
   GET_Board();
+  //GET_SunPosition();
+  indexProductionArray = 0;
 }
 
 void setup_wifi()
@@ -218,6 +219,11 @@ void callback(char *topic, byte *payload, unsigned int length)
     deserializePosition(JsonObject);
     POST_LOG(MOVE_MANUAL); //Post manual
   }
+
+  else if ((String)topic == "/board/production")
+  {
+    Serial.println(JsonObject);
+  }
 }
 
 void reconnect()
@@ -229,6 +235,7 @@ void reconnect()
     {
       Serial.println("connected");
       Mqttclient.subscribe("/servo/manualPosition");
+      Mqttclient.subscribe("/board/production");
     }
     else
     {
@@ -252,7 +259,7 @@ void reconnect()
 void loop()
 {
 
-  //timeClient.update();
+  timeClient.update();
   if (!Mqttclient.connected())
   {
     reconnect();
@@ -266,6 +273,11 @@ void loop()
 
     currentProductionArray[indexProductionArray] = getProduction();
     //COMPROBAR PRODUCCION NO EXCEDE MAXIMA Y MOVER EN FUNCION DE ESTO
+    if (currentProductionArray[indexProductionArray] > MAXPOWER_board)
+    {
+      myservoA.write(myservoA.read() - ANGLE_MOD);
+      myservoE.write(myservoE.read() - ANGLE_MOD);
+    }
 
     indexProductionArray++;
     if (indexProductionArray >= LENGTH_AVERAGE_PRODUCTION)
@@ -276,7 +288,17 @@ void loop()
         mediaProduction += currentProductionArray[i];
       }
       mediaProduction = mediaProduction / (LENGTH_AVERAGE_PRODUCTION * 1.0);
-      //POST
+
+      StaticJsonDocument<200> doc;
+      doc["media"] = mediaProduction;
+      String output;
+      serializeJson(doc, output);
+      Serial.println(output);
+      Serial.print("Publish message: ");
+      Serial.println(output);
+      Mqttclient.publish("/board/production", output.c_str());
+
+      POST_BoardProduction(mediaProduction);
       indexProductionArray = 0;
       indexPOSTSunPosition++;
       if (indexPOSTSunPosition >= 2)
@@ -341,11 +363,13 @@ void deserializePosition(String responseJson) // Llega por MQTT
     {
       moveServos(azimut, elevation);
     }
+    /*
     Serial.println(code);
     Serial.print("Elevation: ");
     Serial.println(elevation);
     Serial.print("Azimut: ");
     Serial.println(azimut);
+    */
   }
 }
 
@@ -353,8 +377,8 @@ String serializeBoardProduction(int id_board, int servoPositionE, int servoPosit
 {
   StaticJsonDocument<200> doc;
   doc["id_board"] = id_board;
-  doc["servoPositionE"] = servoPositionE;
-  doc["servoPositionA"] = servoPositionA;
+  doc["positionServoE"] = servoPositionE;
+  doc["positionServoA"] = servoPositionA;
   doc["date"] = date;
   doc["production"] = production;
   String output;
@@ -395,10 +419,13 @@ void deserializeSunPosition(String responseJson)
     float elevation = doc[0]["elevation"];
     float azimut = doc[0]["azimut"];
 
+    /*
     Serial.print("Azimut DESERIALIZE: ");
     Serial.println(azimut);
     Serial.print("Elevation DESERIALIZE: ");
     Serial.println(elevation);
+    */
+
     moveServos(azimut, elevation);
   }
 }
@@ -465,8 +492,8 @@ void moveServos(float azimut, float elevation)
       inverso = true;
     }
     myservoA.write(ceilf(azimut));
-    Serial.print("Azimut: ");
-    Serial.println(azimut);
+    //Serial.print("Azimut: ");
+    //Serial.println(azimut);
   }
   if (elevation >= 0)
   {
@@ -476,8 +503,8 @@ void moveServos(float azimut, float elevation)
       myservoE.write(ceilf(elevation));
     }
     myservoE.write(ceilf(elevation));
-    Serial.print("Elevation: ");
-    Serial.println(elevation);
+    //Serial.print("Elevation: ");
+    //Serial.println(elevation);
   }
 }
 
@@ -491,8 +518,8 @@ float getProduction()
   analog = analogRead(A0);
   analog3v3 = analog / mil23;
   analog3v3 = analog3v3 * v33;
-  Serial.print("getProduction: ");
-  Serial.println(analog3v3);
+  //Serial.print("getProduction: ");
+  //Serial.println(analog3v3);
 
   return analog3v3;
 }
@@ -549,7 +576,7 @@ void GET_tests()
 void POST_tests()
 {
   String post_bodyLog = serializeLog(1, "", "Test POST Log from ESP8266"); //id_board, date must be blank, issue
-  describe("(LOG) Test POST with path and body and response");
+  //describe("(LOG) Test POST with path and body and response");
   test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
   test_response();
   /*
@@ -585,7 +612,7 @@ void GET_SunPosition()
 void GET_Board()
 {
   String path = "/api/board/";
-  path += id_device;
+  path += name_device;
   test_status(Restclient.get(path.c_str(), &response));
   deserializeBoard(response);
   test_response();
@@ -607,11 +634,9 @@ void POST_LOG(int move)
   }
 }
 
-void POST_BoardProduction()
+void POST_BoardProduction(float media)
 {
-  /*
-  String post_bodyBoardProduction = serializeBoardProduction(1, 4, 3, "", 222222); //id_board, positionServoE, positionServoA, date must be blank, production
-  describe("(BoardProduction)Test POST with path and body and response");
+  String post_bodyBoardProduction = serializeBoardProduction(id_board, myservoE.read(), myservoA.read(), getDate(), media); //id_board, positionServoE, positionServoA, date must be blank, production
   test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
-  test_response();*/
+  test_response();
 }
