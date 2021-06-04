@@ -89,9 +89,10 @@ public class BoardProductionImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
-									elem.getInteger("id_board"), elem.getInteger("positionServoE"),elem.getInteger("positionServoA"),
-									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+							result.add(JsonObject
+									.mapFrom(new BoardProduction(elem.getInteger("id"), elem.getInteger("id_board"),
+											elem.getInteger("positionServoE"), elem.getInteger("positionServoA"),
+											elem.getLocalDateTime("date"), elem.getFloat("production"))));
 						}
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
@@ -117,9 +118,10 @@ public class BoardProductionImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
-									elem.getInteger("id_board"), elem.getInteger("positionServoE"),elem.getInteger("positionServoA"),
-									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+							result.add(JsonObject
+									.mapFrom(new BoardProduction(elem.getInteger("id"), elem.getInteger("id_board"),
+											elem.getInteger("positionServoE"), elem.getInteger("positionServoA"),
+											elem.getLocalDateTime("date"), elem.getFloat("production"))));
 						}
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
@@ -145,9 +147,10 @@ public class BoardProductionImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
-									elem.getInteger("id_board"), elem.getInteger("positionServoE"),elem.getInteger("positionServoA"),
-									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+							result.add(JsonObject
+									.mapFrom(new BoardProduction(elem.getInteger("id"), elem.getInteger("id_board"),
+											elem.getInteger("positionServoE"), elem.getInteger("positionServoA"),
+											elem.getLocalDateTime("date"), elem.getFloat("production"))));
 						}
 					} else {
 						System.out.println("Failure: " + res.cause().getMessage());
@@ -178,9 +181,10 @@ public class BoardProductionImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"),
-									elem.getInteger("id_board"), elem.getInteger("positionServoE"), elem.getInteger("positionServoA"),
-									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+							result.add(JsonObject
+									.mapFrom(new BoardProduction(elem.getInteger("id"), elem.getInteger("id_board"),
+											elem.getInteger("positionServoE"), elem.getInteger("positionServoA"),
+											elem.getLocalDateTime("date"), elem.getFloat("production"))));
 						}
 						// resultado = result.toString();
 					} else {
@@ -199,9 +203,9 @@ public class BoardProductionImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		Database.mySqlClient.preparedQuery(
-				"INSERT INTO dad.board_production (id_board, positionServo, date, production) VALUES (?,?,?,?);",
-				Tuple.of(data.getInteger("id_board"), data.getInteger("positionServo"), data.getValue("date"),
-						data.getFloat("production")),
+				"INSERT INTO dad.board_production (id_board, positionServoE, positionServoA, date, production) VALUES (?,?,?,?,?);",
+				Tuple.of(data.getInteger("id_board"), data.getInteger("positionServoE"),
+						data.getInteger("positionServoA"), data.getValue("date"), data.getFloat("production")),
 				res -> {
 					if (res.succeeded()) {
 						// Get the result set
