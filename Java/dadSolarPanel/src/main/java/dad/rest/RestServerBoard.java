@@ -18,7 +18,7 @@ import io.vertx.ext.web.RoutingContext;
  *         Proyecto Placas solares - DAD
  *
  */
-public class RestServerBoard implements BoardHandler,BasicOperation {
+public class RestServerBoard implements BoardHandler, BasicOperation {
 
 	/**
 	 * 
@@ -64,7 +64,7 @@ public class RestServerBoard implements BoardHandler,BasicOperation {
 		router.get("/api/boards").handler(this::getAll);
 		router.get("/api/board/:id").handler(this::getOne);
 		router.get("/api/board/filtercoordinates/:id_coordinates").handler(this::getALLforCordinates);
-		
+
 		/* POST METHOD */
 		router.post("/api/board").handler(this::create);
 		router.post("/api/board/manualPosition/").handler(this::moveServo);
@@ -103,7 +103,12 @@ public class RestServerBoard implements BoardHandler,BasicOperation {
 	public void getOne(RoutingContext routingContext) {
 		JsonObject obj = new JsonObject();
 
-		obj.put("CLASS", "board_ONE").put("id", Integer.parseInt(routingContext.request().getParam("id")));
+		obj.put("CLASS", "board_ONE");
+		try {
+			obj.put("id", Integer.parseInt(routingContext.request().getParam("id")));
+		} catch (NumberFormatException e) {
+			obj.put("code", routingContext.request().getParam("id"));
+		}
 		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
@@ -155,7 +160,7 @@ public class RestServerBoard implements BoardHandler,BasicOperation {
 			}
 		});
 	}
-	
+
 	/**
 	 * @param routingContext
 	 */
@@ -196,8 +201,7 @@ public class RestServerBoard implements BoardHandler,BasicOperation {
 
 	private void updateBoardCoordinates(RoutingContext routingContext) {
 		JsonObject obj = routingContext.getBodyAsJson();
-		obj.put("CLASS", "board_ALL_coordinate").put("id",
-				Integer.parseInt(routingContext.request().getParam("id")));
+		obj.put("CLASS", "board_ALL_coordinate").put("id", Integer.parseInt(routingContext.request().getParam("id")));
 		eventBus.request("PATCH", obj, reply -> {
 			// LOS DATOS ESTAN AQUI
 			if (reply.succeeded()) {

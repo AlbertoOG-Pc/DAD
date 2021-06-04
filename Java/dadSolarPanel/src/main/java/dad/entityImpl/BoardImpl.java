@@ -87,26 +87,32 @@ public class BoardImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		System.out.println(data);
-		Database.mySqlClient.preparedQuery(
-				"SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
-						+ "JOIN coordinates ON board.id_coordinates = coordinates.id WHERE board.id = ?",
-				Tuple.of(data.getInteger("id")), res -> {
-					if (res.succeeded()) {
-						// Get the result set
-						RowSet<Row> resultSet = res.result();
-						for (Row elem : resultSet) {
-							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new Board(
-									elem.getInteger("id"), new Coordinates(elem.getInteger("id_coordinates"),
-											elem.getFloat("latitude"), elem.getFloat("longitude")),
-									elem.getDouble("maxPower"))));
-						}
-					} else {
-						System.out.println("Error: " + res.cause().getLocalizedMessage());
-						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-					}
-					message.reply(result.toString());
-				});
+		String query = "";
+
+		if (data.containsKey("id")) {
+			query = "SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
+					+ "JOIN coordinates ON board.id_coordinates = coordinates.id WHERE board.id = ?";
+		} else if (data.containsKey("code")) {
+			query = "SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
+					+ "JOIN coordinates ON board.id_coordinates = coordinates.id WHERE board.board_code = ?";
+		}
+		Database.mySqlClient.preparedQuery(query, Tuple.of(data.containsKey("id") ? data.getInteger("id") : data.getString("code")), res -> {
+			if (res.succeeded()) {
+				// Get the result set
+				RowSet<Row> resultSet = res.result();
+				for (Row elem : resultSet) {
+					System.out.println("Elementos " + elem);
+					result.add(JsonObject.mapFrom(new Board(
+							elem.getInteger("id"), new Coordinates(elem.getInteger("id_coordinates"),
+									elem.getFloat("latitude"), elem.getFloat("longitude")),
+							elem.getDouble("maxPower"))));
+				}
+			} else {
+				System.out.println("Error: " + res.cause().getLocalizedMessage());
+				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+			}
+			message.reply(result.toString());
+		});
 	}
 
 	/**
@@ -159,7 +165,7 @@ public class BoardImpl {
 					message.reply(result.toString());
 				});
 	}
-	
+
 	/**
 	 * @param message Message<?> Recibe el cuerpo de la comunicacion con el verticle
 	 *                que maneja el APIREST E imprime por pantalla el resultado
@@ -169,11 +175,12 @@ public class BoardImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
-		Mqtt.mqttClient.publish("/servo/manualPosition", Buffer.buffer(data.toString()), MqttQoS.AT_LEAST_ONCE, false, false);
-		
+		Mqtt.mqttClient.publish("/servo/manualPosition", Buffer.buffer(data.toString()), MqttQoS.AT_LEAST_ONCE, false,
+				false);
+
 		message.reply(result.toString());
 	}
-	
+
 	/**
 	 * @param message @param Message<?> Recibe el cuerpo de la comunicacion con el
 	 *                verticle que maneja el APIREST E imprime por pantalla el
@@ -251,7 +258,7 @@ public class BoardImpl {
 						System.out.println("Failure: " + res.cause().getMessage());
 						result.add(JsonObject.mapFrom("Error: " + res.cause().getLocalizedMessage()));
 					}
-					//message.reply(result.toString());
+					// message.reply(result.toString());
 				});
 	}
 
