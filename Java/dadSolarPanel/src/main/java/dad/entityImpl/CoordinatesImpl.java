@@ -60,7 +60,7 @@ public class CoordinatesImpl {
 				for (Row elem : resultSet) {
 					System.out.println("Elementos " + elem);
 					result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"), elem.getFloat("latitude"),
-							elem.getFloat("longitude"))));
+							elem.getFloat("longitude"),elem.getString("description"))));
 				}
 			} else {
 				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
@@ -85,7 +85,7 @@ public class CoordinatesImpl {
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
 							result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"),
-									elem.getFloat("latitude"), elem.getFloat("longitude"))));
+									elem.getFloat("latitude"), elem.getFloat("longitude"),elem.getString("description"))));
 						}
 						// resultado = result.toString();
 					} else {
@@ -103,8 +103,8 @@ public class CoordinatesImpl {
 	public static void createCoordinates(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
-		Database.mySqlClient.preparedQuery("INSERT INTO dad.coordinates (latitude, longitude) VALUES (?, ?)",
-				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude")), res -> {
+		Database.mySqlClient.preparedQuery("INSERT INTO dad.coordinates (latitude, longitude, description) VALUES (?, ?, ?)",
+				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude"), data.getString("description")), res -> {
 					if (res.succeeded()) {
 						// Get the result set
 						RowSet<Row> resultSet = res.result();
@@ -128,8 +128,8 @@ public class CoordinatesImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
-		Database.mySqlClient.preparedQuery("UPDATE dad.coordinates SET latitude = ?, longitude = ? WHERE id = ?",
-				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude"), data.getInteger("id")), res -> {
+		Database.mySqlClient.preparedQuery("UPDATE dad.coordinates SET latitude = ?, longitude = ?, description = ? WHERE id = ?",
+				Tuple.of(data.getFloat("latitude"), data.getFloat("longitude"), data.getString("description"), data.getInteger("id")), res -> {
 					if (res.succeeded()) {
 						// Get the result set
 						getCoordinatesByID(message);
