@@ -455,11 +455,11 @@ void deserializeBoard(String responseJson)
 {
   if (responseJson != "")
   {
-    StaticJsonDocument<200> doc;
+    StaticJsonDocument<500> doc;
     DeserializationError error = deserializeJson(doc, responseJson);
     if (error)
     {
-      Serial.print(F("deserializeJson() failed: "));
+      Serial.print(F("deserializeBoard deserializeJson() failed: "));
       Serial.println(error.f_str());
       return;
     }
