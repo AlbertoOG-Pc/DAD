@@ -164,7 +164,7 @@ void setup()
 
   //setup board
   GET_Board();
-  //GET_SunPosition();
+  GET_SunPosition();
   indexProductionArray = 0;
 }
 
@@ -603,16 +603,13 @@ void GET_SunPosition()
   test_status(Restclient.get(path.c_str(), &response));
   deserializeSunPosition(response);
   test_response();
-
-  //describe("Test GET with path and response");
-  //test_status(Restclient.get("/api/sunPosition/dateFilterCliente", &response));
-  //test_response();
 }
 
 void GET_Board()
 {
   String path = "/api/board/";
   path += name_device;
+  Serial.println(path.c_str());
   test_status(Restclient.get(path.c_str(), &response));
   deserializeBoard(response);
   test_response();
