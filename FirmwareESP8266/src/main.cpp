@@ -22,11 +22,12 @@
 #include "config.h"
 
 #define LENGTH_AVERAGE_PRODUCTION 2
-//#define MAX_POWER_WHOLE_SYSTEM 100
+#define TIME_BETWEEN_READS 5000
 
 #define MOVE_MANUAL 0
 #define MOVE_AUTO 1
-#define ANGLE_MOD 5
+#define MOVE_AUTO_OVERLOAD 2
+#define ANGLE_MOD 5 // Ángulo a restar al movimiento del servo si Sobrecarga
 
 /*
 ***
@@ -51,6 +52,12 @@ String serializeLog(int, String, String);
 
 //Para leer JSON de Posiciones de Servos
 void deserializePosition(String);
+
+void deserializeProduction(String);
+
+void GET_MaxPowerNumberBoards(void);
+
+void MQTT_Production(float media);
 
 //Para leer JSON de SunPosition
 void deserializeSunPosition(String);
@@ -106,8 +113,10 @@ int id_board = 1;
 int id_coordinates;
 
 //Productions
-float MAXPOWER_board = 0.0;
-float MAXPOWER_all = 0.0;
+float MAXPOWER_board = 10; //0.0;
+float MAXPOWER_all = 10; //0.0;
+float MAX_POWER_WHOLE_SYSTEM = 100;
+int overload = 0;
 
 //Array de floats para medias de producciones
 float currentProductionArray[LENGTH_AVERAGE_PRODUCTION];
@@ -126,6 +135,8 @@ boolean describe_tests = true;
 char const *code;
 //Para almacenar la posicion de la placa
 int position;
+//Numero de placas, modificar cuando tengamos GET correspondiente
+int numBoards = 2;
 
 //Para guardar el resultado de los GET
 String response;
@@ -140,30 +151,24 @@ String response;
  */
 void setup()
 {
-  //Pines de salida para los servos
-  pinMode(D2, OUTPUT);
-  pinMode(D3, OUTPUT);
-
-  //Pin entrada placas solares
-  pinMode(A0, INPUT); //Pin analógico para que funcione como Polímetro
-
   Serial.begin(115200);
 
-  //Llamamos la funcion para establecer el wifi
-  setup_wifi();
+  pinMode(D2, OUTPUT); //Pin servo Azimut
+  pinMode(D3, OUTPUT); //Pin servo Elevation
+  pinMode(A0, INPUT);  //Pin entrada Placas solares (Analógico para que funcione como Polímetro)
 
-  //Mqtt client con el puerto y la funcion callback
-  Mqttclient.setServer(mqtt_server, 1883);
+  setup_wifi(); //Llamamos la funcion para establecer el wifi
+
+  Mqttclient.setServer(mqtt_server, 1883); //Mqtt client con el puerto y la funcion callback
   Mqttclient.setCallback(callback);
 
-  //Establecemos los pines D2 y D3 para la señal de los servos.
-  myservoA.attach(D2);
-  myservoE.attach(D3);
-  //Time
-  timeClient.begin();
+  myservoA.attach(D2); //Attach servo Azimut al pin D2
+  myservoE.attach(D3); //Attach servo Elevation al pin D3
 
-  //setup board
+  timeClient.begin(); //Time
+
   GET_Board();
+  GET_MaxPowerNumberBoards();
   GET_SunPosition();
   indexProductionArray = 0;
 }
@@ -171,7 +176,6 @@ void setup()
 void setup_wifi()
 {
   delay(10);
-  // We start by connecting to a WiFi network
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -222,7 +226,8 @@ void callback(char *topic, byte *payload, unsigned int length)
 
   else if ((String)topic == "/board/production")
   {
-    Serial.println(JsonObject);
+    deserializeProduction(JsonObject);
+    //POST_LOG(MOVE_AUTO_OVERLOAD); //Post Auto por Overload
   }
 }
 
@@ -267,20 +272,30 @@ void loop()
   Mqttclient.loop();
 
   long now = millis();
-  if (now - lastMsg > 5000)
+  if (now - lastMsg > TIME_BETWEEN_READS)
   {
     lastMsg = now;
 
-    currentProductionArray[indexProductionArray] = getProduction();
-    //COMPROBAR PRODUCCION NO EXCEDE MAXIMA Y MOVER EN FUNCION DE ESTO
-    if (currentProductionArray[indexProductionArray] > MAXPOWER_board)
+    currentProductionArray[indexProductionArray] = getProduction();                //Comprobación de la Produccion
+    if (currentProductionArray[indexProductionArray] > MAXPOWER_board / numBoards) // Activa overload y publica en el topic
     {
+      overload = 1;
+      MQTT_Production(currentProductionArray[indexProductionArray]);
+    }
+    while (overload) //Si overload se mueven ambos servos
+    {
+      Serial.println("OVERLOAD");
       myservoA.write(myservoA.read() - ANGLE_MOD);
       myservoE.write(myservoE.read() - ANGLE_MOD);
+      if (getProduction() < MAXPOWER_board / numBoards) //Mientras se mueven los servos se busca quitar el overload, cuando lo consigue lo pone a 0 y publica en el topic
+      {
+        overload = 0;
+        MQTT_Production(currentProductionArray[indexProductionArray]);
+        POST_LOG(MOVE_AUTO_OVERLOAD); //Post Auto por Overload
+      }
     }
-
-    indexProductionArray++;
-    if (indexProductionArray >= LENGTH_AVERAGE_PRODUCTION)
+    indexProductionArray++;                                //Aumenta iterador del Array de medias
+    if (indexProductionArray >= LENGTH_AVERAGE_PRODUCTION) //Se calcula la media si iterador mayor que LENGTH_AVERAGE_PRODUCTION
     {
       float mediaProduction = 0.0;
       for (int i = 0; i < LENGTH_AVERAGE_PRODUCTION; i++)
@@ -288,16 +303,6 @@ void loop()
         mediaProduction += currentProductionArray[i];
       }
       mediaProduction = mediaProduction / (LENGTH_AVERAGE_PRODUCTION * 1.0);
-
-      StaticJsonDocument<200> doc;
-      doc["media"] = mediaProduction;
-      String output;
-      serializeJson(doc, output);
-      Serial.println(output);
-      Serial.print("Publish message: ");
-      Serial.println(output);
-      Mqttclient.publish("/board/production", output.c_str());
-
       POST_BoardProduction(mediaProduction);
       indexProductionArray = 0;
       indexPOSTSunPosition++;
@@ -327,9 +332,6 @@ void loop()
   // 3 - Post con media de produccion. (Esto se hace en el loop)
   // 4 - Bucle de 10 - minuto a minuto comprobamos produccion. (Esto se hace en el loop)
   // 5 - Post de produccion + Get con nueva hora. (Esto se hace en el loop)
-
-  //GET_tests();
-  //POST_tests();
 
   delay(1000);
   //}
@@ -373,6 +375,24 @@ void deserializePosition(String responseJson) // Llega por MQTT
   }
 }
 
+void deserializeProduction(String responseJson) // Llega por MQTT
+{
+  if (responseJson != "")
+  {
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, responseJson);
+    if (error)
+    {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
+    //char const *code = doc["code"];
+    //float production = doc["production"];
+    overload = doc["overload"];
+  }
+}
+
 String serializeBoardProduction(int id_board, int servoPositionE, int servoPositionA, String date, float production)
 {
   StaticJsonDocument<200> doc;
@@ -400,6 +420,18 @@ String serializeLog(int id_board, String date, String issue)
   return output;
 }
 
+String serializeProduction(float production)
+{
+  StaticJsonDocument<200> doc;
+  doc["code"] = name_device;
+  doc["production"] = production;
+  doc["overload"] = overload;
+  String output;
+  serializeJson(doc, output);
+  Serial.println(output);
+  return output;
+}
+
 void deserializeSunPosition(String responseJson)
 {
   if (responseJson != "")
@@ -412,19 +444,8 @@ void deserializeSunPosition(String responseJson)
       Serial.println(error.f_str());
       return;
     }
-
-    /*int id = doc["id"];
-    int id_coordinates = doc["id_coordinates"];
-    String date = doc["date"];*/
     float elevation = doc[0]["elevation"];
     float azimut = doc[0]["azimut"];
-
-    /*
-    Serial.print("Azimut DESERIALIZE: ");
-    Serial.println(azimut);
-    Serial.print("Elevation DESERIALIZE: ");
-    Serial.println(elevation);
-    */
 
     moveServos(azimut, elevation);
   }
@@ -518,9 +539,6 @@ float getProduction()
   analog = analogRead(A0);
   analog3v3 = analog / mil23;
   analog3v3 = analog3v3 * v33;
-  //Serial.print("getProduction: ");
-  //Serial.println(analog3v3);
-
   return analog3v3;
 }
 
@@ -562,30 +580,6 @@ void describe(char *description)
     Serial.println(description);
 }
 
-void GET_tests()
-{
-  //describe("Test GET with path");
-  test_status(Restclient.get("/api/boards", &response));
-  test_response();
-
-  //describe("Test GET with path and response");
-  test_status(Restclient.get("/api/sunPosition/dateFilterCliente", &response));
-  test_response();
-}
-
-void POST_tests()
-{
-  String post_bodyLog = serializeLog(1, "", "Test POST Log from ESP8266"); //id_board, date must be blank, issue
-  //describe("(LOG) Test POST with path and body and response");
-  test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
-  test_response();
-  /*
-  String post_bodyBoardProduction = serializeBoardProduction(1, 4, 3, "", 222222); //id_board, positionServoE, positionServoA, date must be blank, production
-  describe("(BoardProduction)Test POST with path and body and response");
-  test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
-  test_response();*/
-}
-
 /*
 ***
 ***
@@ -597,7 +591,6 @@ void POST_tests()
 
 void GET_SunPosition()
 {
-  //describe("Test GET with path");
   String path = "/api/sunPosition/dateFilterClient/";
   path += id_coordinates;
   test_status(Restclient.get(path.c_str(), &response));
@@ -615,6 +608,14 @@ void GET_Board()
   test_response();
 }
 
+void GET_MaxPowerNumberBoards()
+{
+  String path = "/api/board/info/";
+  test_status(Restclient.get(path.c_str(), &response));
+  //deserializeMaxPower(response);
+  test_response();
+}
+
 void POST_LOG(int move)
 {
   if (move == 0)
@@ -629,6 +630,12 @@ void POST_LOG(int move)
     test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
     test_response();
   }
+  if (move == 2)
+  {
+    String post_bodyLog = serializeLog(id_board, "", "Movimiento automático de la placa por Sobrecarga."); //id_board, date must be blank, issue
+    test_status(Restclient.post("/api/log", post_bodyLog.c_str(), &response));
+    test_response();
+  }
 }
 
 void POST_BoardProduction(float media)
@@ -636,4 +643,12 @@ void POST_BoardProduction(float media)
   String post_bodyBoardProduction = serializeBoardProduction(id_board, myservoE.read(), myservoA.read(), getDate(), media); //id_board, positionServoE, positionServoA, date must be blank, production
   test_status(Restclient.post("/api/boardProduction", post_bodyBoardProduction.c_str(), &response));
   test_response();
+}
+
+void MQTT_Production(float media)
+{
+  String output = serializeProduction(media);
+  Serial.print("Publish message: ");
+  Serial.println(output);
+  Mqttclient.publish("/board/production", output.c_str());
 }
