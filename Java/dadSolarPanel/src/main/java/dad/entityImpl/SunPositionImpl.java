@@ -160,10 +160,10 @@ public class SunPositionImpl {
 		Database.mySqlClient.preparedQuery(
 				"SELECT * FROM dad.sunPosition WHERE id_coordinates = ? AND date BETWEEN ? AND ?",
 				Tuple.of(data.getInteger("id_coordinates"),
-						// LocalDateTime.now().minusMinutes(20)
-						LocalDateTime.now().minusSeconds(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-						// LocalDateTime.now().plusMinutes(20)
-						LocalDateTime.now().plusSeconds(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+						LocalDateTime.now().minusMinutes(20),
+						//LocalDateTime.now().minusSeconds(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+						LocalDateTime.now().plusMinutes(20)),
+						//LocalDateTime.now().plusSeconds(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
 				res -> {
 					if (res.succeeded()) {
 						// Get the result set
