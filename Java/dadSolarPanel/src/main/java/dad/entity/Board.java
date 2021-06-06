@@ -27,10 +27,16 @@ public class Board {
 	 * Atributo que guarda las coordendas de la placa
 	 */
 	private Coordinates coordinate;
-
+	
+	/**
+	 * Atributo que guarda un codigo identificador de la placa
+	 */
+	private String board_code;
+	
 	/**
 	 * Contrucctor vacio de la clase board
 	 */
+	
 	public Board() {
 		super();
 	}
@@ -44,12 +50,13 @@ public class Board {
 	 * @param maxPower       Tipo Doble con la produccion maxima que es capaz de
 	 *                       generar la placa
 	 */
-	public Board(int id, int id_coordinates, double maxPower) {
+	public Board(int id, int id_coordinates, double maxPower, String board_code) {
 		super();
 		this.id = id;
 		this.id_coordinates = id_coordinates;
 		this.coordinate = null;
 		this.maxPower = maxPower;
+		this.board_code = board_code;
 	}
 
 	/**
@@ -58,12 +65,13 @@ public class Board {
 	 * @param maxPower   Tipo Doble con la produccion maxima que es capaz de generar
 	 *                   la placa
 	 */
-	public Board(int id, Coordinates coordinate, double maxPower) {
+	public Board(int id, Coordinates coordinate, double maxPower, String board_code) {
 		super();
 		this.id = id;
 		this.coordinate = coordinate;
 		this.id_coordinates = coordinate.getId();
 		this.maxPower = maxPower;
+		this.board_code = board_code;
 	}
 
 	/**
@@ -126,25 +134,44 @@ public class Board {
 	public void setId_coordinates(int id_coordinates) {
 		this.id_coordinates = id_coordinates;
 	}
+	
+	/**
+	 * @return Devuelve el codigo identificador de la placa
+	 */
+	public String getBoard_code() {
+		return board_code;
+	}
+	
+	/**
+	 * @param board_code - String Establece el codigo identificativo de la placa
+	 */
+	public void setBoard_code(String board_code) {
+		this.board_code = board_code;
+	}
 
+	
 	/**
 	 * Metodo hashCode() autogenerado
 	 */
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((board_code == null) ? 0 : board_code.hashCode());
+		result = prime * result + ((coordinate == null) ? 0 : coordinate.hashCode());
+		result = prime * result + id;
+		result = prime * result + id_coordinates;
 		long temp;
 		temp = Double.doubleToLongBits(maxPower);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + id;
-		result = prime * result + id_coordinates;
 		return result;
 	}
 
 	/**
 	 * Metedo equals() autogenerado
 	 */
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -154,21 +181,34 @@ public class Board {
 		if (getClass() != obj.getClass())
 			return false;
 		Board other = (Board) obj;
-		if (Double.doubleToLongBits(maxPower) != Double.doubleToLongBits(other.maxPower))
+		if (board_code == null) {
+			if (other.board_code != null)
+				return false;
+		} else if (!board_code.equals(other.board_code))
+			return false;
+		if (coordinate == null) {
+			if (other.coordinate != null)
+				return false;
+		} else if (!coordinate.equals(other.coordinate))
 			return false;
 		if (id != other.id)
 			return false;
 		if (id_coordinates != other.id_coordinates)
 			return false;
+		if (Double.doubleToLongBits(maxPower) != Double.doubleToLongBits(other.maxPower))
+			return false;
 		return true;
 	}
 
+	
 	/**
 	 * Metodo toString() autogenerado
 	 */
 	@Override
 	public String toString() {
-		return "Board [id=" + id + ", id_coordinates=" + id_coordinates + ", energy=" + maxPower + "]";
+		return "Board [id=" + id + ", id_coordinates=" + id_coordinates + ", maxPower=" + maxPower + ", coordinate="
+				+ coordinate + ", board_code=" + board_code + "]";
 	}
 
+	
 }

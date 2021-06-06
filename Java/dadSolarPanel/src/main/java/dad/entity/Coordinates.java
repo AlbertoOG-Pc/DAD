@@ -21,6 +21,11 @@ public class Coordinates {
 	 * Latitud de las coordenadas
 	 */
 	private Float latitude;
+	
+	/**
+	 * Latitud de las coordenadas
+	 */
+	private String description;
 
 	/**
 	 * Contructor vacio de la clase coordinates
@@ -36,11 +41,12 @@ public class Coordinates {
 	 * 
 	 *                  Constructor parametrizado con todos los datos de la entidad
 	 */
-	public Coordinates(int id, Float longitude, Float latitude) {
+	public Coordinates(int id, Float longitude, Float latitude, String description) {
 		super();
 		this.id = id;
 		this.longitude = longitude;
 		this.latitude = latitude;
+		this.description = description;
 	}
 
 	/**
@@ -86,12 +92,27 @@ public class Coordinates {
 	}
 
 	/**
-	 * Metodo hashCode() autogenerado
+	 * @return String con la descripcion la coordenada
 	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description - String Establece la descripcion de la coordenada
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	/**
+	 * Metodo hashCode() autogenerado
+	 */	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + id;
 		result = prime * result + ((latitude == null) ? 0 : latitude.hashCode());
 		result = prime * result + ((longitude == null) ? 0 : longitude.hashCode());
@@ -110,6 +131,11 @@ public class Coordinates {
 		if (getClass() != obj.getClass())
 			return false;
 		Coordinates other = (Coordinates) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
 		if (id != other.id)
 			return false;
 		if (latitude == null) {
@@ -130,7 +156,8 @@ public class Coordinates {
 	 */
 	@Override
 	public String toString() {
-		return "Coordenadas [id=" + id + ", longitud=" + longitude + ", latitud=" + latitude + "]";
+		return "Coordinates [id=" + id + ", longitude=" + longitude + ", latitude=" + latitude + ", description="
+				+ description + "]";
 	}
 
 }

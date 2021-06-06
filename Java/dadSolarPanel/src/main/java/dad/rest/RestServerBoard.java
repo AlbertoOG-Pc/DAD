@@ -64,6 +64,7 @@ public class RestServerBoard implements BoardHandler, BasicOperation {
 		router.get("/api/boards").handler(this::getAll);
 		router.get("/api/board/:id").handler(this::getOne);
 		router.get("/api/board/filtercoordinates/:id_coordinates").handler(this::getALLforCordinates);
+		router.get("/api/board/info/").handler(this::getInformation);
 
 		/* POST METHOD */
 		router.post("/api/board").handler(this::create);
@@ -109,6 +110,25 @@ public class RestServerBoard implements BoardHandler, BasicOperation {
 		} catch (NumberFormatException e) {
 			obj.put("code", routingContext.request().getParam("id"));
 		}
+		eventBus.request("consulta", obj, reply -> {
+			if (reply.succeeded()) {
+				String replyMessage = (String) reply.result().body();
+				System.out.println("Respuesta recibida: " + replyMessage);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(replyMessage);
+			} else {
+				System.out.println("No ha habido respuesta");
+			}
+		});
+	}
+	
+	/**
+	 * @param routingContext
+	 */
+	public void getInformation(RoutingContext routingContext) {
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "board_ALL_INFO");
+		
 		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
