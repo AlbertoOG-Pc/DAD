@@ -602,6 +602,7 @@ void GET_Board()
 {
   String path = "/api/board/";
   path += name_device;
+  Serial.println(path.c_str());
   test_status(Restclient.get(path.c_str(), &response));
   deserializeBoard(response);
   test_response();

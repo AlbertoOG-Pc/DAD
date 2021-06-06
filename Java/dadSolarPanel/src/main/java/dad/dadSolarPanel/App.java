@@ -73,6 +73,9 @@ public class App extends AbstractVerticle {
 		case "board_ALL":
 			BoardImpl.getALLBoard(message);
 			break;
+		case "board_ALL_INFO":
+			BoardImpl.getInformation(message);
+			break;
 		case "board_ONE":
 			BoardImpl.getOneBoard(message);
 			break;

@@ -5,6 +5,7 @@ import java.util.List;
 import dad.dadSolarPanel.Database;
 import dad.dadSolarPanel.Mqtt;
 import dad.entity.Board;
+import dad.entity.CompleteSystem;
 import dad.entity.Coordinates;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.buffer.Buffer;
@@ -66,10 +67,10 @@ public class BoardImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new Board(
-									elem.getInteger("id"), new Coordinates(elem.getInteger("id_coordinates"),
-											elem.getFloat("latitude"), elem.getFloat("longitude")),
-									elem.getDouble("maxPower"))));
+							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
+									new Coordinates(elem.getInteger("id_coordinates"), elem.getFloat("latitude"),
+											elem.getFloat("longitude"), elem.getString("description")),
+									elem.getDouble("maxPower"), elem.getString("board_code"))));
 						}
 					} else {
 						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
@@ -77,6 +78,29 @@ public class BoardImpl {
 					message.reply(result.toString());
 				});
 	}
+	
+	/**
+	 * @param Message<?> Recibe el cuerpo de la comunicacion con el verticle que
+	 *                   maneja el APIREST E imprime por pantalla el resultado
+	 *                   obtenido
+	 */
+	public static void getInformation(Message<?> message) {
+		JsonArray result = new JsonArray();
+		Database.mySqlClient.query("SELECT count(board.id) as num_placas, sum(board.maxPower) as systemPower FROM board;", res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new CompleteSystem(elem.getInteger("num_placas"),elem.getFloat("systemPower"))));
+						}
+					} else {
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+					}
+					message.reply(result.toString());
+				});
+	}
+	
 
 	/**
 	 * @param Message<?> Recibe el cuerpo de la comunicacion con el verticle que
@@ -96,23 +120,24 @@ public class BoardImpl {
 			query = "SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
 					+ "JOIN coordinates ON board.id_coordinates = coordinates.id WHERE board.board_code = ?";
 		}
-		Database.mySqlClient.preparedQuery(query, Tuple.of(data.containsKey("id") ? data.getInteger("id") : data.getString("code")), res -> {
-			if (res.succeeded()) {
-				// Get the result set
-				RowSet<Row> resultSet = res.result();
-				for (Row elem : resultSet) {
-					System.out.println("Elementos " + elem);
-					result.add(JsonObject.mapFrom(new Board(
-							elem.getInteger("id"), new Coordinates(elem.getInteger("id_coordinates"),
-									elem.getFloat("latitude"), elem.getFloat("longitude")),
-							elem.getDouble("maxPower"))));
-				}
-			} else {
-				System.out.println("Error: " + res.cause().getLocalizedMessage());
-				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
-			}
-			message.reply(result.toString());
-		});
+		Database.mySqlClient.preparedQuery(query,
+				Tuple.of(data.containsKey("id") ? data.getInteger("id") : data.getString("code")), res -> {
+					if (res.succeeded()) {
+						// Get the result set
+						RowSet<Row> resultSet = res.result();
+						for (Row elem : resultSet) {
+							System.out.println("Elementos " + elem);
+							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
+									new Coordinates(elem.getInteger("id_coordinates"), elem.getFloat("latitude"),
+											elem.getFloat("longitude"),elem.getString("description")),
+									elem.getDouble("maxPower"), elem.getString("board_code"))));
+						}
+					} else {
+						System.out.println("Error: " + res.cause().getLocalizedMessage());
+						result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
+					}
+					message.reply(result.toString());
+				});
 	}
 
 	/**
@@ -130,8 +155,9 @@ public class BoardImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
-									elem.getInteger("id_coordinates"), elem.getDouble("maxPower"))));
+							result.add(JsonObject
+									.mapFrom(new Board(elem.getInteger("id"), elem.getInteger("id_coordinates"),
+											elem.getDouble("maxPower"), elem.getString("board_code"))));
 						}
 					} else {
 						System.out.println("Error: " + res.cause().getLocalizedMessage());
@@ -149,8 +175,10 @@ public class BoardImpl {
 	public static void createBoard(Message<?> message) {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
-		Database.mySqlClient.preparedQuery("INSERT INTO dad.board (id_coordinates, maxPower) VALUES (?, ?)",
-				Tuple.of(data.getInteger("id_coordinates"), data.getDouble("maxPower")), res -> {
+		Database.mySqlClient.preparedQuery(
+				"INSERT INTO dad.board (id_coordinates, maxPower, board_code) VALUES (?, ?, ?)",
+				Tuple.of(data.getJsonObject("coordinate").getInteger("id"), data.getDouble("maxPower"), data.getString("board_code")),
+				res -> {
 					if (res.succeeded()) {
 						// Get the result set
 						RowSet<Row> resultSet = res.result();
@@ -165,6 +193,8 @@ public class BoardImpl {
 					message.reply(result.toString());
 				});
 	}
+	
+	
 
 	/**
 	 * @param message Message<?> Recibe el cuerpo de la comunicacion con el verticle
@@ -190,16 +220,18 @@ public class BoardImpl {
 		JsonArray result = new JsonArray();
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
-		Database.mySqlClient.preparedQuery("UPDATE dad.board SET id_coordinates = ?, maxPower = ? WHERE id = ?",
+		Database.mySqlClient.preparedQuery(
+				"UPDATE dad.board SET id_coordinates = ?, maxPower = ?, board_code = ? WHERE id = ?",
 				Tuple.of(data.getJsonObject("coordinate").getInteger("id"), data.getDouble("maxPower"),
-						data.getInteger("id")),
+						data.getString("board_code"), data.getInteger("id")),
 				res -> {
 					if (res.succeeded()) {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
-									elem.getInteger("id_coordinates"), elem.getDouble("maxPower"))));
+							result.add(JsonObject
+									.mapFrom(new Board(elem.getInteger("id"), elem.getInteger("id_coordinates"),
+											elem.getDouble("maxPower"), elem.getString("board_code"))));
 						}
 
 					} else {
@@ -228,8 +260,9 @@ public class BoardImpl {
 						RowSet<Row> resultSet = res.result();
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
-							result.add(JsonObject.mapFrom(new Board(elem.getInteger("id"),
-									elem.getInteger("id_coordinates"), elem.getDouble("maxPower"))));
+							result.add(JsonObject
+									.mapFrom(new Board(elem.getInteger("id"), elem.getInteger("id_coordinates"),
+											elem.getDouble("maxPower"), elem.getString("board_code"))));
 						}
 
 					} else {
