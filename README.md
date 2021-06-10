@@ -198,6 +198,24 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 	  ```Java
 	    //TODO
 	```
+	
+##### Para obtener información sobre el sistema completo es decir numero de placas y produccion del sistema
+- **Petición:**
+	- URI : ``/api/board/board/info/``
+  	- body: ``{}``
+-  **Resultado**:
+    ```javascript
+	[
+		{
+        	"num_placas": 2,
+        	"systemPower": 12.0
+		}
+	]
+    ```
+  - **Código de Error**:
+	  ```Java
+	    //TODO
+	```
  
 #### Peticiones POST
 ##### Para registrar una placa en el sistema
@@ -230,6 +248,31 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 			} 
 		}
 	]
+```
+   
+  - **Código de Error**
+  ```Java
+  //TODO
+  ```
+  
+  
+ ##### Para mover una placa a unas posiciones de forma manual
+  - **Petición**: 
+  	- URI : ``/api/board/manualPosition/``
+  	- body: ``{}`
+```javascript
+	[
+		{
+		"code" : "ESP1269813124A",  	//Codigo de la placa
+		"elevation": 0,			// Posicion de elevacion
+   		"azimut": 0			//Posicion de azimut
+		}
+	]
+```
+
+  - **Resultado**
+```javascript
+	[]
 ```
    
   - **Código de Error**
