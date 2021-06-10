@@ -31,14 +31,11 @@ Esta información puede ser usada para calcular la radiación solar recibida por
 
 Con estos dos datos nuestro sistema sabrá como orientar cada placa solar. 
 
-
-(WIP)
-
 # Base de datos
 Nuestra base de datos está diseñada la siguiente forma:
 
 <p align="center">
-<img src = "https://user-images.githubusercontent.com/52832300/119256060-09a6b500-bbbf-11eb-9f7c-142a572ff352.png">
+<img src = "https://user-images.githubusercontent.com/52832300/121588894-bd6cc900-ca36-11eb-90c2-5f7b3100a39f.png">
 </p>
 
 # Hardware
