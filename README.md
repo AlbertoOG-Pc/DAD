@@ -1,6 +1,7 @@
 
 # Panel Solar Inteligente Distribuido
 > Alberto Otero González y Pablo Ruiz Jurado
+
 > Youtube: https://www.youtube.com/watch?v=UuV_Qot6Mto
 ## Introducción
 ### Introducción del proyecto en la asignatura
