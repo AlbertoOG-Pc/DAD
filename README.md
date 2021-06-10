@@ -100,21 +100,25 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 		{
 		"id": 1,					//Identificador de la placa
 		"maxPower": 5.8,				//Producción máxima
+		"board_code": "ESP9192092"			//Codigo identificativo de la board
 		"coordinate":					//Ubicación
 			{
 			"id": 2,				//Id de la coordenada
 			"longitude": 30.0,			//Longitud
 			"latitude": 30.0			//Latitud
+			"description": 	"Casa alberto"		//Descripcion del lugar de la coordenada
 			} 
 		},
 		{ 
 		"id": 2,
 		"maxPower": 8.77,
-		"coordinate":
+		"board_code": "ESP9192092"
+		"coordinate":		
 			{
 			"id": 1,
 			"longitude": 25.0,
 			"latitude": 25.0
+			"description": 	"Casa Pablo"		
 			}
 		},
 		.
@@ -138,11 +142,13 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 		{
 		"id": 1,					//Identificador de la placa
 		"maxPower": 5.8,				//Producción máxima
+		"board_code": "ESP9192092"			//Codigo identificativo de la board
 		"coordinate":					//Ubicación
 			{
 			"id": 2,				//Id de la coordenada
 			"longitude": 30.0,			//Longitud
 			"latitude": 30.0			//Latitud
+			"description": 	"Casa alberto"		//Descripcion del lugar de la coordenada
 			} 
 		}
 	]
@@ -162,21 +168,25 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 		{
 		"id": 1,					//Identificador de la placa
 		"maxPower": 5.8,				//Producción máxima
+		"board_code": "ESP9192092"			//Codigo identificativo de la board
 		"coordinate":					//Ubicación
 			{
 			"id": 1,				//Id de la coordenada
 			"longitude": 25.0,			//Longitud
 			"latitude": 25.0			//Latitud
+			"description": 	"Casa alberto"		//Descripcion del lugar de la coordenada
 			} 
 		},
 		{ 
 		"id": 2,
 		"maxPower": 8.77,
+		"board_code": "ESP9192092"
 		"coordinate":
 			{
 			"id": 1,
 			"longitude": 25.0,
 			"latitude": 25.0
+			"description": 	"Casa alberto"		
 			}
 		},
 		.
@@ -198,7 +208,8 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 	[
 		{
 		"id_coordinate"  : 2				//Identificador de la coordenada
-		"maxPower": 5.8,				//Producción máxima	
+		"maxPower": 5.8,				//Producción máxima
+		"board_code": "ESP9192092"			//Codigo identificativo de la board
 		}
 	]
 ```
@@ -209,11 +220,13 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 		{
 		"id": 1,					//Identificador de la placa
 		"maxPower": 5.8,				//Producción máxima
+		"board_code": "ESP9192092"			//Codigo identificativo de la board
 		"coordinate":					//Ubicación
 			{
 			"id": 2,				//Id de la coordenada
 			"longitude": 30.0,			//Longitud
 			"latitude": 30.0			//Latitud
+			"description": 	"Casa alberto"		//Descripcion del lugar de la coordenada
 			} 
 		}
 	]
@@ -236,6 +249,7 @@ Modificando las medidas para adaptarnos a nuestras placas solares tenemos una fo
 		"id": 1,					//Identificador de la placa
 		"maxPower": 9,					//Producción máxima
 		"id_coordinate": 1				//Id_Coordinate
+		"board_code": "ESP9192092"			//Codigo identificativo de la board
 		}
 	]
 ```
@@ -246,11 +260,13 @@ Objeto JSON con los datos de la placa eliminada
 		{
 		"id": 1,					//Identificador de la placa
 		"maxPower": 5.8,				//Producción máxima
+		"board_code": "ESP9192092"			//Codigo identificativo de la board
 		"coordinate":					//Ubicación
 			{
 			"id": 2,				//Id de la coordenada
 			"longitude": 30.0,			//Longitud
 			"latitude": 30.0			//Latitud
+			"description": 	"Casa alberto"		//Descripcion del lugar de la coordenada
 			} 
 		}
 	]
@@ -282,11 +298,13 @@ Objeto JSON con los datos de la placa eliminada
 		{
 		"id": 1,			//Identificador de la placa
 		"maxPower": 5.8,		//Producción máxima
+		"board_code": "ESP9192092"	//Codigo identificativo de la board
 		"coordinate":			//Ubicación
 			{
 			"id": 1,			//Id de la coordenada
 			"longitude": 30.0,		//Longitud
 			"latitude": 30.0		//Latitud
+			"description": 	"Casa alberto"  //Descripcion del lugar de la coordenada
 			} 
 		}
 	]
@@ -308,11 +326,13 @@ Objeto JSON con los datos de la placa eliminada
 		{
 		"id": 1,			//Identificador de la placa
 		"maxPower": 5.8,		//Producción máxima
+		"board_code": "ESP9192092"	//Codigo identificativo de la board
 		"coordinate":			//Ubicación
 			{
 			"id": 2,			//Id de la coordenada
 			"longitude": 30.0,		//Longitud
 			"latitude": 30.0		//Latitud
+			"description": 	"Casa alberto"	//Descripcion del lugar de la coordenada
 			} 
 		}
 	]
@@ -610,11 +630,13 @@ Objeto JSON con los datos del registro eliminado
 		"id": 1,				//Identificador de las coordenadas
 		"longitude": 30.0,			//Longitud
 		"latitude": 30.0			//Latitud
+		"description": 	"Casa alberto"		//Descripcion del lugar de la coordenada
 		},
 		{ 
 		"id": 2,
 		"longitude": 25.0,
 		"latitude": 25.0
+		"description": 	"Casa pablo"	
 		},
 		.
 		.
@@ -636,6 +658,7 @@ Objeto JSON con los datos del registro eliminado
 		"id": 1,			//Identificador de las coordenadas
 		"longitude": 30.0,		//Longitud
 		"latitude": 30.0		//Latitud
+		"description": 	"Casa alberto"	//Descripcion del lugar de la coordenada
 	}
     ```
    
@@ -654,6 +677,7 @@ Objeto JSON con los datos del registro eliminado
 		"id": 1,			//Identificador de las coordenadas
 		"longitude": 30.0,		//Longitud
 		"latitude": 30.0		//Latitud
+		"description": 	"Casa alberto"	//Descripcion del lugar de la coordenada
 	}
     ```
 
@@ -663,6 +687,7 @@ Objeto JSON con los datos del registro eliminado
 		"id": 1,			//Identificador de las coordenadas
 		"longitude": 30.0,		//Longitud
 		"latitude": 30.0		//Latitud
+		"description": 	"Casa alberto"	//Descripcion del lugar de la coordenada
 	}
     ```
    
@@ -681,6 +706,7 @@ Objeto JSON con los datos del registro eliminado
 		"id": 1,			//Identificador de las coordenadas
 		"longitude": 30.0,		//Longitud
 		"latitude": 30.0		//Latitud
+		"description": 	"Casa alberto"	//Descripcion del lugar de la coordenada
 	}
     ```
 	Objeto JSON con los datos de la coordenada actualizados
@@ -689,6 +715,7 @@ Objeto JSON con los datos del registro eliminado
 		"id": 1,			//Identificador de las coordenadas
 		"longitude": 30.0,		//Longitud
 		"latitude": 30.0		//Latitud
+		"description": 	"Casa alberto"	//Descripcion del lugar de la coordenada
 	}
     ```
  -  **Código de Error**:
@@ -707,6 +734,7 @@ Objeto JSON con los datos de la coordenada eliminada
 		"id": 1,			//Identificador de las coordenadas
 		"longitude": 30.0,		//Longitud
 		"latitude": 30.0		//Latitud
+		"description": 	"Casa alberto"	//Descripcion del lugar de la coordenada
 	}
     ```
 
