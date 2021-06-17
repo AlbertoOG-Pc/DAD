@@ -9,20 +9,20 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <Servo.h>
 
 //Network Time Protocol (NTP) es un protocolo de Internet para sincronizar los relojes de los sistemas informáticos
 //a través del enrutamiento de paquetes en redes con latencia variable. NTP utiliza UDP como su capa de transporte,
 //usando el puerto 123. Está diseñado para resistir los efectos de la latencia variable.
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <Servo.h>
 
 #include "ArduinoJson.h"
 #include "RestClient.h"
 #include "config.h"
 
-#define LENGTH_AVERAGE_PRODUCTION 2
-#define TIME_BETWEEN_READS 5000
+#define LENGTH_AVERAGE_PRODUCTION 3
+#define TIME_BETWEEN_READS 10000
 
 #define MOVE_MANUAL 0
 #define MOVE_AUTO 1
@@ -114,7 +114,7 @@ int id_coordinates;
 
 //Productions
 float MAXPOWER_board = 10; //0.0;
-float MAXPOWER_all = 10; //0.0;
+float MAXPOWER_all = 10;   //0.0;
 float MAX_POWER_WHOLE_SYSTEM = 100;
 int overload = 0;
 
@@ -446,7 +446,10 @@ void deserializeSunPosition(String responseJson)
     }
     float elevation = doc[0]["elevation"];
     float azimut = doc[0]["azimut"];
-
+    Serial.print("Elevation desSunPosition: ");
+    Serial.println(elevation);
+    Serial.print("Azimut desSunPosition: ");
+    Serial.println(azimut);
     moveServos(azimut, elevation);
   }
 }
@@ -512,20 +515,25 @@ void moveServos(float azimut, float elevation)
       azimut = 360.0 - azimut;
       inverso = true;
     }
+    else
+    {
+      azimut -= 180;
+      inverso = false;
+    }
     myservoA.write(ceilf(azimut));
-    //Serial.print("Azimut: ");
-    //Serial.println(azimut);
+    Serial.print("Azimut: ");
+    Serial.println(ceilf(azimut));
   }
   if (elevation >= 0)
   {
     if (inverso)
     {
-      elevation = 180.0 - elevation;
+      elevation -= 180;
       myservoE.write(ceilf(elevation));
     }
     myservoE.write(ceilf(elevation));
-    //Serial.print("Elevation: ");
-    //Serial.println(elevation);
+    Serial.print("Elevation: ");
+    Serial.println(ceilf(elevation));
   }
 }
 
