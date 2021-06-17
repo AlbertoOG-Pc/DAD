@@ -507,7 +507,19 @@ String getDate()
 
 void moveServos(float azimut, float elevation)
 {
-  boolean inverso = false;
+  //boolean inverso = false;
+  if (azimut >= 0 && azimut <= 180)
+  {
+    myservoA.write(180 - azimut);
+    myservoE.write(elevation);
+  }
+  if (azimut > 180 && azimut <= 360)
+  {
+    myservoA.write(360 - azimut);
+    myservoE.write(180 - elevation);
+  }
+
+  /*
   if (azimut >= 0)
   {
     if (azimut > 180.0)
@@ -534,7 +546,7 @@ void moveServos(float azimut, float elevation)
     myservoE.write(ceilf(elevation));
     Serial.print("Elevation: ");
     Serial.println(ceilf(elevation));
-  }
+  }*/
 }
 
 float getProduction()
