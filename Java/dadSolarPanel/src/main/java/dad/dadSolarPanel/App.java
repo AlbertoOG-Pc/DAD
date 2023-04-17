@@ -17,8 +17,8 @@ import io.vertx.core.json.JsonObject;
  * 
  *         Proyecto Placas solares - DAD
  * 
- *         Class APP - Clase que comunica Verticles. Recibe la comunicacion
- *         a traves del eventBus de Vertx y ejecutara las funciones que
+ *         Class APP - Clase que comunica Verticles. Recibe la comunicacion a
+ *         traves del eventBus de Vertx y ejecutara las funciones que
  *         correspondan
  *
  */
@@ -63,9 +63,9 @@ public class App extends AbstractVerticle {
 	}
 
 	/**
-	 * @param message -- Recibe un Message en el cual el cuerpo debe tener un
-	 *                String que contiene la clase accedida en funcion de la
-	 *                consulta pedida
+	 * @param message -- Recibe un Message en el cual el cuerpo debe tener un String
+	 *                que contiene la clase accedida en funcion de la consulta
+	 *                pedida
 	 */
 	private void getQuery(Message<?> message) {
 		JsonArray result = new JsonArray();

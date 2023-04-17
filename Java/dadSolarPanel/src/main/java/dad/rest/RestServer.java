@@ -7,8 +7,11 @@ import dad.dadSolarPanel.Database;
 import dad.dadSolarPanel.Mqtt;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 
 /**
  * @author Alberto, Pablo
@@ -27,6 +30,17 @@ public class RestServer extends AbstractVerticle {
 
 		// Defining the router object
 		Router router = Router.router(vertx);
+		
+		router.route().handler(CorsHandler.create("*")
+			    .allowedMethod(io.vertx.core.http.HttpMethod.GET)
+			    .allowedMethod(io.vertx.core.http.HttpMethod.POST)
+			    .allowedMethod(io.vertx.core.http.HttpMethod.OPTIONS)
+			    .allowedHeader("Access-Control-Allow-Headers")
+			    .allowedHeader("Authorization")
+			    .allowedHeader("Access-Control-Allow-Method")
+			    .allowedHeader("Access-Control-Allow-Origin")
+			    .allowedHeader("Access-Control-Allow-Credentials")
+			    .allowedHeader("Content-Type"));
 
 		// Handling any server startup result
 		vertx.createHttpServer().requestHandler(router::handle).listen(8089, result -> {
@@ -52,6 +66,8 @@ public class RestServer extends AbstractVerticle {
 				}
 			});
 		});
+		
+		
 		
 		/* DEFINING GENERAL ROUTES */
 
