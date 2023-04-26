@@ -91,6 +91,10 @@ public class RestServer extends AbstractVerticle {
 		router.route("/api/sunPosition*").handler(BodyHandler.create());
 		router.route("/api/sunPosition*").handler(RestServerSunPosition.create(vertx, router));
 
+		
+		// User Router
+		router.route("/api/user*").handler(BodyHandler.create());
+		router.route("/api/user*").handler(RestServerUser.create(vertx, router));
 
 	}
 }

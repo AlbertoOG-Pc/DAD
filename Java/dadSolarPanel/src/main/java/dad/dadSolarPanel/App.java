@@ -5,6 +5,7 @@ import dad.entityImpl.BoardProductionImpl;
 import dad.entityImpl.CoordinatesImpl;
 import dad.entityImpl.LogImpl;
 import dad.entityImpl.SunPositionImpl;
+import dad.entityImpl.UserImpl;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -127,6 +128,12 @@ public class App extends AbstractVerticle {
 		case "sunPositionByDate":
 			SunPositionImpl.getSunPositionByDate(message);
 			break;
+		case "user_ALL":
+			UserImpl.getALLUser(message);
+			break;
+		case "user_ONE":
+			UserImpl.getOneUser(message);
+			break;
 		default:
 			result.add("{'Error': 'Method GET Comunicacion fallida entre verticle'}");
 			message.reply(result.toString());
@@ -160,6 +167,9 @@ public class App extends AbstractVerticle {
 		case "SunPosition":
 			SunPositionImpl.createSunPosition(message);
 			break;
+		case "User":
+			UserImpl.createUser(message);
+			break;
 		default:
 			result.add("{'Error': 'Method POST Comunicacion fallida entre verticle'}");
 			message.reply(result.toString());
@@ -188,6 +198,9 @@ public class App extends AbstractVerticle {
 			break;
 		case "SunPosition":
 			SunPositionImpl.updateSunPosition(message);
+			break;
+		case "User":
+			UserImpl.updateUser(message);
 			break;
 		default:
 			result.add("{'Error': 'Method PUT Comunicacion fallida entre verticle'}");
@@ -235,6 +248,9 @@ public class App extends AbstractVerticle {
 			break;
 		case "SunPosition":
 			SunPositionImpl.deleteSunPosition(message);
+			break;
+		case "User":
+			UserImpl.deleteUser(message);
 			break;
 		default:
 			result.add("{'Error': 'Method DELETE Comunicacion fallida entre verticle'}");
