@@ -60,7 +60,7 @@ public class BoardImpl {
 	 */
 	public static void getALLBoard(Message<?> message) {
 		JsonArray result = new JsonArray();
-		Database.mySqlClient.query("SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
+		Database.mySqlClient.query("SELECT board.*, coordinates.* FROM board INNER "
 				+ "JOIN coordinates ON board.id_coordinates = coordinates.id", res -> {
 					if (res.succeeded()) {
 						// Get the result set
@@ -114,10 +114,10 @@ public class BoardImpl {
 		String query = "";
 
 		if (data.containsKey("id")) {
-			query = "SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
+			query = "SELECT board.*, coordinates.* FROM board INNER "
 					+ "JOIN coordinates ON board.id_coordinates = coordinates.id WHERE board.id = ?";
 		} else if (data.containsKey("code")) {
-			query = "SELECT board.*, coordinates.latitude, coordinates.longitude FROM board INNER "
+			query = "SELECT board.*, coordinates.* FROM board INNER "
 					+ "JOIN coordinates ON board.id_coordinates = coordinates.id WHERE board.board_code = ?";
 		}
 		Database.mySqlClient.preparedQuery(query,

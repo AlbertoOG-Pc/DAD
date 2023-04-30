@@ -3,8 +3,6 @@ package dad.entityImpl;
 import java.util.List;
 
 import dad.dadSolarPanel.Database;
-import dad.entity.Board;
-import dad.entity.Coordinates;
 import dad.entity.User;
 import dad.entity.enums.UserType;
 import io.vertx.core.eventbus.Message;

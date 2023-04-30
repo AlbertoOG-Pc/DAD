@@ -60,7 +60,7 @@ public class CoordinatesImpl {
 				for (Row elem : resultSet) {
 					System.out.println("Elementos " + elem);
 					result.add(JsonObject.mapFrom(new Coordinates(elem.getInteger("id"), elem.getFloat("latitude"),
-							elem.getFloat("longitude"),elem.getString("description"))));
+							elem.getFloat("latitude"),elem.getString("description"))));
 				}
 			} else {
 				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));

@@ -46,6 +46,12 @@ public class BoardProduction {
 	 * Objeto construido para el formateo de la fecha
 	 */
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	
+	/**
+	 * Objeto construido para el formateo de la fecha sin hora
+	 */
+	private DateTimeFormatter formatterExcludeHour = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 
 	/**
 	 * Contructor vacio de la clase BoardProduction
@@ -140,12 +146,27 @@ public class BoardProduction {
 	public String getDate() {
 		return date.format(formatter);
 	}
+	
+	/**
+	 * @return devuelve Un String con el formato indicado en el objeto
+	 *         DateTimeFormatter de la fecha
+	 */
+	public String getDateExcludeHour() {
+		return date.format(formatterExcludeHour);
+	}
 
 	/**
 	 * @param date - LocalDateTime Establece la fecha del registro de la tupla
 	 */
 	public void setDate(LocalDateTime date) {
 		this.date = date;
+	}
+	
+	/**
+	 * @param date - String Establece la fecha del registro de la tupla
+	 */
+	public void setDate(String date) {
+		this.date = LocalDateTime.parse(date, formatter);;
 	}
 
 	/**

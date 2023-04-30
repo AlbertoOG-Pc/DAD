@@ -41,7 +41,7 @@ public class Coordinates {
 	 * 
 	 *                  Constructor parametrizado con todos los datos de la entidad
 	 */
-	public Coordinates(int id, Float longitude, Float latitude, String description) {
+	public Coordinates(int id, Float latitude, Float longitude, String description) {
 		super();
 		this.id = id;
 		this.longitude = longitude;

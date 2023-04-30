@@ -2,7 +2,11 @@ package dad.entityImpl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import dad.dadSolarPanel.Database;
 import dad.entity.BoardProduction;
@@ -62,11 +66,9 @@ public class BoardProductionImpl {
 				// Get the result set
 				RowSet<Row> resultSet = res.result();
 				for (Row elem : resultSet) {
-					System.out.println("Elementos " + elem);
-					result.add(
-							JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"), elem.getInteger("id_board"),
-									elem.getInteger("positionServoE"), elem.getInteger("positionServoA"),
-									elem.getLocalDateTime("date"), elem.getFloat("production"))));
+					result.add(JsonObject.mapFrom(new BoardProduction(elem.getInteger("id"), elem.getInteger("id_board"),
+							elem.getInteger("positionServoE"), elem.getInteger("positionServoA"),
+							elem.getLocalDateTime("date"), elem.getFloat("production"))));
 				}
 			} else {
 				result.add(JsonObject.mapFrom(new String("Error: " + res.cause().getLocalizedMessage())));
