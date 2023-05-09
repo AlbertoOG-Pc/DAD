@@ -173,9 +173,9 @@ public class BoardProductionImpl {
 		JsonObject data = JsonObject.mapFrom(message.body());
 		data.remove("CLASS");
 		Database.mySqlClient.preparedQuery("SELECT * FROM dad.board_production WHERE date BETWEEN ? AND ?", Tuple.of(
-				LocalDateTime.parse(data.getString("dateIni"), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+				LocalDateTime.parse(data.getString("dateIni").concat(" 00:00:00"), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
 						.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-				LocalDateTime.parse(data.getString("dateFin"), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
+				LocalDateTime.parse(data.getString("dateFin").concat(" 00:00:00"), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))
 						.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
 				res -> {
 					if (res.succeeded()) {

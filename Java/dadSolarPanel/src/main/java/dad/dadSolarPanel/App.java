@@ -129,12 +129,12 @@ public class App extends AbstractVerticle {
 			SunPositionImpl.getSunPositionByDate(message);
 			break;
 		case "user_ALL":
-			UserImpl.getALLUser(message);
 			break;
 		case "user_ONE":
 			UserImpl.getOneUser(message);
 			break;
 		default:
+			System.out.println("DEFAULT_GET QUERY");
 			result.add("{'Error': 'Method GET Comunicacion fallida entre verticle'}");
 			message.reply(result.toString());
 		}

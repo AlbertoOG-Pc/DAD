@@ -68,7 +68,7 @@ public class RestServerBoardProduction implements BoardProductionHandler, BasicO
 		router.get("/api/boardProduction/:id").handler(this::getOne);
 		router.get("/api/boardProduction/board/:id_board").handler(this::getBoardProductionByBoardID);
 		router.get("/api/boardProduction/board/:id_board/:production").handler(this::getBestsBoardProductionsOfBoardID);
-		router.get("/api/boardProduction/datesFilter/").handler(this::getBoardProductionByDates);
+		router.get("/api/boardProduction/dates/filter").handler(this::getBoardProductionByDates);
 
 		/* POST METHOD */
 		router.post("/api/boardProduction").handler(this::create);
@@ -78,6 +78,9 @@ public class RestServerBoardProduction implements BoardProductionHandler, BasicO
 
 		/* DELETE METHOD */
 		router.delete("/api/boardProduction/:id").handler(this::delete);
+		
+		
+	
 
 	}
 
@@ -165,8 +168,12 @@ public class RestServerBoardProduction implements BoardProductionHandler, BasicO
 	}
 
 	public void getBoardProductionByDates(RoutingContext routingContext) {
-		JsonObject obj = routingContext.getBodyAsJson();
-		obj.put("CLASS", "boardProductionByDates");
+		JsonObject obj = new JsonObject();
+		obj.put("CLASS", "boardProductionByDates")
+		.put("dateIni", routingContext.queryParam("dateIni").get(0))
+		.put("dateFin", routingContext.queryParam("dateFin").get(0));
+		//JsonObject obj = routingContext.getBodyAsJson();
+		//obj.put("CLASS", "boardProductionByDates");
 		eventBus.request("consulta", obj, reply -> {
 			if (reply.succeeded()) {
 				String replyMessage = (String) reply.result().body();
