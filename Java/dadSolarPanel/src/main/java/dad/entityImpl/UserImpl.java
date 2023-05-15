@@ -52,6 +52,7 @@ public class UserImpl {
 					if (res.succeeded()) {
 						// Get the result set
 						RowSet<Row> resultSet = res.result();
+						System.out.println("Elementos " + resultSet);
 						for (Row elem : resultSet) {
 							System.out.println("Elementos " + elem);
 							result.add(JsonObject.mapFrom(new User(elem.getInteger("id"),
